@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# bin/release <build-dir>
+
+cat <<EOF
+---
+config_vars:
+  PATH: .lein/bin:/usr/local/bin:/usr/bin:/bin
+  JAVA_OPTS: -Xmx500m
+EOF

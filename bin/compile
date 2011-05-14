@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+# fail fast
+set -e
+
+# parse args
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+# install leiningen jar
+LEIN_JAR_URL="https://github.com/downloads/technomancy/leiningen/leiningen-1.5.0-standalone.jar"
+LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-1.5.0-standalone.jar"
+echo "-----> Installing Leiningen"
+echo "       Downloading: leiningen-1.5.0-standalone.jar"
+mkdir -p $(dirname $LEIN_JAR_PATH)
+curl --max-time 60 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL > /dev/null 2>&1
+
+# install lein script
+LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein"
+LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
+echo "       Writing: lein script"
+mkdir -p $(dirname $LEIN_BIN_PATH)
+cp $LEIN_BIN_SOURCE $LEIN_BIN_PATH
+chmod +x $LEIN_BIN_PATH
+
+# unpack existing cache
+CACHE_STORE_DIR=$CACHE_DIR"/.m2"
+CACHE_TARGET_DIR=$BUILD_DIR"/.m2"
+rm -rf $CACHE_TARGET_DIR
+if [ -d $CACHE_STORE_DIR ]; then
+  cp -r $CACHE_STORE_DIR $CACHE_TARGET_DIR
+fi
+
+# fetch deps with lein
+echo "-----> Installing dependencies with Leiningen"
+echo "       Running: lein deps :skip-dev"
+cd $BUILD_DIR
+PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein deps :skip-dev  2>&1 | sed -u 's/^/       /'
+if [ "${PIPESTATUS[*]}" != "0 0" ]; then
+  echo " !     Failed to install dependencies with Leiningen"
+  exit 1
+fi
+
+# repack cache with new assets
+rm -rf $CACHE_STORE_DIR
+mkdir -p $(dirname $CACHE_STORE_DIR)
+cp -r $CACHE_TARGET_DIR $CACHE_STORE_DIR
+rm -rf $CACHE_TARGET_DIR
