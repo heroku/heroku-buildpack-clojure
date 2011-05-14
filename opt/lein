@@ -11,9 +11,9 @@ if [ "$1" == "repl" ]; then
     exec java $JAVA_OPTS -cp $CLASSPATH clojure.main --repl
   fi
 else
-  export LEIN_VERSION="1.5.0"
+  export LEIN_VERSION="1.5.2"
   LEIN_PLUGINS="$(ls -1 lib/dev/*jar 2> /dev/null | tr \\n \:)"
-  LEIN_JAR=".lein/leiningen-1.5.0-standalone.jar"
+  LEIN_JAR=".lein/leiningen-1.5.2-standalone.jar"
   CLASSPATH="$LEIN_JAR:$LEIN_PLUGINS:test/:src/:$CLASSPATH"
   exec java -client $JAVA_OPTS -Dleiningen.original.pwd=$PWD -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
 fi

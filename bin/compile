@@ -9,10 +9,10 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 
 # install leiningen jar
-LEIN_JAR_URL="https://github.com/downloads/technomancy/leiningen/leiningen-1.5.0-standalone.jar"
-LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-1.5.0-standalone.jar"
+LEIN_JAR_URL="https://github.com/downloads/technomancy/leiningen/leiningen-1.5.2-standalone.jar"
+LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-1.5.2-standalone.jar"
 echo "-----> Installing Leiningen"
-echo "       Downloading: leiningen-1.5.0-standalone.jar"
+echo "       Downloading: leiningen-1.5.2-standalone.jar"
 mkdir -p $(dirname $LEIN_JAR_PATH)
 curl --max-time 60 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL > /dev/null 2>&1
 
