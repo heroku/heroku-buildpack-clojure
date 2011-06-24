@@ -9,15 +9,15 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 
 # install leiningen jar
-LEIN_JAR_URL="https://s3.amazonaws.com/clojure-lp/leiningen-1.5.2-standalone.jar"
-LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-1.5.2-standalone.jar"
+LEIN_JAR_URL="https://s3.amazonaws.com/language-pack-clojure/leiningen-1.6.0-SNAPSHOT-standalone.jar"
+LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-1.6.0-SNAPSHOT-standalone.jar"
 echo "-----> Installing Leiningen"
-echo "       Downloading: leiningen-1.5.2-standalone.jar"
+echo "       Downloading: leiningen-1.6.0-SNAPSHOT-standalone.jar"
 mkdir -p $(dirname $LEIN_JAR_PATH)
 curl --max-time 60 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL > /dev/null 2>&1
 
 # install rlwrap binary
-RLWRAP_BIN_URL="https://s3.amazonaws.com/clojure-lp/rlwrap-0.3.7"
+RLWRAP_BIN_URL="https://s3.amazonaws.com/language-pack-clojure/rlwrap-0.3.7"
 RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
 echo "       Downloading: rlwrap-0.3.7"
 mkdir -p $(dirname $RLWRAP_BIN_PATH)
