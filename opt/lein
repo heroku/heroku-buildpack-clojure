@@ -10,6 +10,16 @@ if [ "$1" == "repl" ]; then
   else
     exec java $JAVA_OPTS -cp $CLASSPATH clojure.main --repl
   fi
+elif [ "$1" == "trampoline" ]; then
+  TRAMPOLINE_FILE="/tmp/lein-trampoline"
+  export LEIN_VERSION="1.6.0-SNAPSHOT"
+  LEIN_PLUGINS="$(ls -1 lib/dev/*jar 2> /dev/null | tr \\n \:)"
+  LEIN_JAR=".lein/leiningen-1.6.0-SNAPSHOT-standalone.jar"
+  CLASSPATH="$LEIN_JAR:$LEIN_PLUGINS:test/:src/:$CLASSPATH"
+  java -client $JAVA_OPTS -Dleiningen.original.pwd=$PWD -Dleiningen.trampoline-file=$TRAMPOLINE_FILE -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
+  if [ -r $TRAMPOLINE_FILE ]; then
+      (cat $TRAMPOLINE_FILE; rm $TRAMPOLINE_FILE) | exec sh -s
+  fi
 else
   export LEIN_VERSION="1.6.0-SNAPSHOT"
   LEIN_PLUGINS="$(ls -1 lib/dev/*jar 2> /dev/null | tr \\n \:)"
