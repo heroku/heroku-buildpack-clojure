@@ -22,6 +22,7 @@ RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
 echo "       Downloading: rlwrap-0.3.7"
 mkdir -p $(dirname $RLWRAP_BIN_PATH)
 curl --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL > /dev/null 2>&1
+chmod +x $RLWRAP_BIN_PATH
 
 # install lein script
 LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein"
