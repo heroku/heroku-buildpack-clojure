@@ -41,9 +41,9 @@ fi
 
 # fetch deps with lein
 echo "-----> Installing dependencies with Leiningen"
-echo "       Running: lein deps :skip-dev"
+echo "       Running: lein deps"
 cd $BUILD_DIR
-PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein deps :skip-dev  2>&1 | sed -u 's/^/       /'
+PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein deps  2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   echo " !     Failed to install dependencies with Leiningen"
   exit 1
