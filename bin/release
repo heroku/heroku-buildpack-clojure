@@ -5,5 +5,5 @@ cat <<EOF
 ---
 config_vars:
   PATH: .lein/bin:/usr/local/bin:/usr/bin:/bin
-  JAVA_OPTS: -Xmx500m
+  JAVA_OPTS: -Xmx256m
 EOF
