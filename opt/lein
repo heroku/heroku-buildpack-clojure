@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+# TODO: any way to DRY between this and bin/compile?
+export LEIN_VERSION="1.6.1.1"
+export LEIN_NO_DEV=y
+
+JAVA_OPTS="$JAVA_OPTS -client -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
+
 if [ "$1" == "repl" ]; then
   CLASSPATH=$(lein classpath)
-  JAVA_OPTS="$JAVA_OPTS -Duser.home=$HOME"
   if [ "$COLUMNS" != "" -a "$LINES" != "" ]; then
     stty columns $COLUMNS
     stty rows $LINES
@@ -11,19 +16,17 @@ if [ "$1" == "repl" ]; then
     exec java $JAVA_OPTS -cp $CLASSPATH clojure.main --repl
   fi
 elif [ "$1" == "trampoline" ]; then
-  TRAMPOLINE_FILE="/tmp/lein-trampoline"
-  export LEIN_VERSION="1.6.0-SNAPSHOT"
-  LEIN_PLUGINS="$(ls -1 lib/dev/*jar 2> /dev/null | tr \\n \:)"
-  LEIN_JAR=".lein/leiningen-1.6.0-SNAPSHOT-standalone.jar"
-  CLASSPATH="$LEIN_JAR:$LEIN_PLUGINS:test/:src/:$CLASSPATH"
-  java -client $JAVA_OPTS -Dleiningen.original.pwd=$PWD -Dleiningen.trampoline-file=$TRAMPOLINE_FILE -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
+  TRAMPOLINE_FILE="/tmp/lein-trampoline-$$"
+  LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
+  CLASSPATH="$CLASSPATH:src/:$LEIN_JAR"
+  java $JAVA_OPTS -Dleiningen.trampoline-file=$TRAMPOLINE_FILE -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
   if [ -r $TRAMPOLINE_FILE ]; then
-      (cat $TRAMPOLINE_FILE; rm $TRAMPOLINE_FILE) | exec sh -s
+    TRAMPOLINE="$(cat $TRAMPOLINE_FILE)"
+    rm $TRAMPOLINE_FILE
+    exec sh -c "$TRAMPOLINE"
   fi
 else
-  export LEIN_VERSION="1.6.0-SNAPSHOT"
-  LEIN_PLUGINS="$(ls -1 lib/dev/*jar 2> /dev/null | tr \\n \:)"
-  LEIN_JAR=".lein/leiningen-1.6.0-SNAPSHOT-standalone.jar"
-  CLASSPATH="$LEIN_JAR:$LEIN_PLUGINS:test/:src/:$CLASSPATH"
-  exec java -client $JAVA_OPTS -Dleiningen.original.pwd=$PWD -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
+  LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
+  CLASSPATH="$CLASSPATH:test/:src/:$LEIN_JAR"
+  exec java $JAVA_OPTS -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
 fi

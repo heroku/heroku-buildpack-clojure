@@ -9,15 +9,16 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 
 # install leiningen jar
-LEIN_JAR_URL="https://s3.amazonaws.com/language-pack-clojure/leiningen-1.6.0-SNAPSHOT-standalone.jar"
-LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-1.6.0-SNAPSHOT-standalone.jar"
+LEIN_VERSION="1.6.1.1"
+LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-1.6.1.1-standalone.jar"
+LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-$LEIN_VERSION-standalone.jar"
 echo "-----> Installing Leiningen"
-echo "       Downloading: leiningen-1.6.0-SNAPSHOT-standalone.jar"
+echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
 mkdir -p $(dirname $LEIN_JAR_PATH)
 curl --max-time 60 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL > /dev/null 2>&1
 
 # install rlwrap binary
-RLWRAP_BIN_URL="https://s3.amazonaws.com/language-pack-clojure/rlwrap-0.3.7"
+RLWRAP_BIN_URL="https://s3.amazonaws.com/clojure-lp/rlwrap-0.3.7"
 RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
 echo "       Downloading: rlwrap-0.3.7"
 mkdir -p $(dirname $RLWRAP_BIN_PATH)
@@ -38,13 +39,15 @@ CACHE_TARGET_DIR=$BUILD_DIR"/.m2"
 rm -rf $CACHE_TARGET_DIR
 if [ -d $CACHE_STORE_DIR ]; then
   cp -r $CACHE_STORE_DIR $CACHE_TARGET_DIR
+else
+  mkdir -p $CACHE_TARGET_DIR
 fi
 
 # fetch deps with lein
 echo "-----> Installing dependencies with Leiningen"
-echo "       Running: lein deps"
+echo "       Running: LEIN_NO_DEV=y lein deps"
 cd $BUILD_DIR
-PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein deps  2>&1 | sed -u 's/^/       /'
+PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" LEIN_NO_DEV=y lein deps 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   echo " !     Failed to install dependencies with Leiningen"
   exit 1
