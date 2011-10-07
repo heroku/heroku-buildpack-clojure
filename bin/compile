@@ -10,12 +10,19 @@ CACHE_DIR=$2
 
 # install leiningen jar
 LEIN_VERSION="1.6.1.1"
-LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-1.6.1.1-standalone.jar"
-LEIN_JAR_PATH=$BUILD_DIR"/.lein/leiningen-$LEIN_VERSION-standalone.jar"
-echo "-----> Installing Leiningen"
-echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
-mkdir -p $(dirname $LEIN_JAR_PATH)
-curl --max-time 60 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL > /dev/null 2>&1
+LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
+LEIN_JAR_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
+
+if [ ! -r "$LEIN_JAR_PATH" ]; then
+  echo "-----> Installing Leiningen"
+  echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
+  curl --max-time 120 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL > /dev/null 2>&1
+else
+  echo "-----> Using cached Leiningen $LEIN_VERSION"
+fi
+
+mkdir -p "$BUILD_DIR/.lein"
+cp "$LEIN_JAR_PATH" "$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
 
 # install rlwrap binary
 RLWRAP_BIN_URL="https://s3.amazonaws.com/clojure-lp/rlwrap-0.3.7"
