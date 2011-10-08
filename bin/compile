@@ -13,13 +13,11 @@ LEIN_VERSION="1.6.1.1"
 LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
 LEIN_JAR_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
 
-# Use the cached one if available.
 if [ ! -r "$LEIN_JAR_PATH" ]; then
   echo "-----> Installing Leiningen"
   echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
   mkdir -p $(dirname $LEIN_JAR_PATH)
-  # wget's timeout is a read_timeout, not an overall timeout!
-  wget -nv --timeout 10 -O $LEIN_JAR_PATH $LEIN_JAR_URL
+  curl --max-time 120 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL > /dev/null 2>&1
 else
   echo "-----> Using cached Leiningen $LEIN_VERSION"
 fi
@@ -32,7 +30,7 @@ RLWRAP_BIN_URL="https://s3.amazonaws.com/clojure-lp/rlwrap-0.3.7"
 RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
 echo "       Downloading: rlwrap-0.3.7"
 mkdir -p $(dirname $RLWRAP_BIN_PATH)
-wget -nv --timeout 10 -O $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
+curl --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL > /dev/null 2>&1
 chmod +x $RLWRAP_BIN_PATH
 
 # install lein script
