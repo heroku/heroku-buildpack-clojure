@@ -52,10 +52,10 @@ else
 fi
 
 # fetch deps with lein
-echo "-----> Installing dependencies with Leiningen"
-echo "       Running: LEIN_NO_DEV=y lein deps"
+echo "-----> Installing dependencies and compiling with Leiningen"
+echo "       Running: LEIN_NO_DEV=y lein compile :all"
 cd $BUILD_DIR
-PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" LEIN_NO_DEV=y lein deps 2>&1 | sed -u 's/^/       /'
+PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" LEIN_NO_DEV=y lein compile :all 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   echo " !     Failed to install dependencies with Leiningen"
   exit 1
