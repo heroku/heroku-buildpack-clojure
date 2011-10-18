@@ -39,9 +39,11 @@ Example usage for an app already stored in git:
     -----> Launching... done, v4
            http://gentle-water-8841.herokuapp.com deployed to Heroku
 
-The buildpack will detect your app as Clojure if it has the file
-`project.clj` in the root. It will `LEIN_NO_DEV lein compile :all` to
-copy your dependencies into the `lib` directory.
+The buildpack will detect your app as Clojure if it has a
+`project.clj` file in the root. If you use the
+[clojure-maven-plugin](https://github.com/talios/clojure-maven-plugin),
+[the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
+should work instead.
 
 ## Hacking
 
