@@ -45,16 +45,21 @@ The buildpack will detect your app as Clojure if it has a
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
 should work instead.
 
+This buildpack will call `LEIN_NO_DEV lein compile :all` to perform a
+full ahead-of-time compilation and copy your dependencies into the
+`lib` directory.
+
 ## Hacking
 
-To use this buildpack, fork it on Github. Push up changes to your
-fork, then create a test app with `--buildpack <your-github-url>` and
-push to it.
+To change this buildpack, fork it on GitHub. Push up changes to your
+fork, then create a test app with `--buildpack YOUR_GITHUB_URL` and
+push to it. If you already have an existing app you may use
+`heroku config add BUILDPACK_URL=YOUR_GITHUB_URL` instead.
 
 For example, you could adapt it to generate an uberjar at build time.
 
 Open `bin/compile` in your editor, and replace the block labeled
-"fetch deps with lein"
+"fetch deps with lein" with something like this:
 
     echo "-----> Generating uberjar with Leiningen:"
     echo "       Running: LEIN_NO_DEV=y lein uberjar"
@@ -65,6 +70,11 @@ Open `bin/compile` in your editor, and replace the block labeled
       exit 1
     fi
 
-Commit and push the changes to your buildpack to your Github fork, then push your sample app to Heroku to test.  You should see:
+The `LEIN_NO_DEV` environment variable will cause Leiningen to keep
+the test directories and dev dependencies off the classpath, so be
+sure to set it for every `lein` invocation.
+
+Commit and push the changes to your buildpack to your GitHub fork,
+then push your sample app to Heroku to test. You should see:
 
     -----> Generating uberjar with Leiningen:
