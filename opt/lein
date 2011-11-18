@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # TODO: any way to DRY between this and bin/compile?
-export LEIN_VERSION="1.6.1.1"
+export LEIN_VERSION="1.6.2"
 export LEIN_NO_DEV=y
 
 JAVA_OPTS="$JAVA_OPTS -client -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
