@@ -16,7 +16,6 @@ Example usage for an app already stored in git:
         `-- sample
             `-- core.clj
 
-
     $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-clojure.git
 
     $ git push heroku master
@@ -25,11 +24,11 @@ Example usage for an app already stored in git:
     -----> Fetching custom buildpack
     -----> Clojure app detected
     -----> Installing Leiningen
-           Downloading: leiningen-1.5.2-standalone.jar
+           Downloading: leiningen-1.6.2-standalone.jar
            Downloading: rlwrap-0.3.7
            Writing: lein script
     -----> Installing dependencies with Leiningen
-           Running: LEIN_NO_DEV=y lein compile :all
+           Running: LEIN_NO_DEV=y lein deps
            Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.pom from central
            Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.jar from central
            Copying 1 file to /tmp/build_2e5yol0778bcw/lib
@@ -45,9 +44,8 @@ The buildpack will detect your app as Clojure if it has a
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
 should work instead.
 
-This buildpack will call `LEIN_NO_DEV lein compile :all` to perform a
-full ahead-of-time compilation and copy your dependencies into the
-`lib` directory.
+This buildpack will call `LEIN_NO_DEV=y lein deps` to copy your
+dependencies into the `lib` directory.
 
 ## Hacking
 
@@ -78,3 +76,30 @@ Commit and push the changes to your buildpack to your GitHub fork,
 then push your sample app to Heroku to test. You should see:
 
     -----> Generating uberjar with Leiningen:
+
+## License
+
+Copyright © 2011 Heroku, Inc.
+
+Distributed under the MIT/X11 license:
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+ 
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+ 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
