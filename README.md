@@ -1,8 +1,13 @@
 # Heroku buildpack: Clojure
 
-This is a
-[Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for
-Clojure apps. It uses [Leiningen](https://github.com/technomancy/leiningen).
+This is a Heroku buildpack for Clojure apps. It uses
+[Leiningen](https://github.com/technomancy/leiningen).
+
+Note that you don't have to do anything special to use this buildpack
+with Clojure apps on Heroku; it will be used by default for all
+projects containing a project.clj file, though it may be an older
+revision than current master. This repository is made available so
+users can fork for their own needs and contribute patches back.
 
 ## Usage
 
@@ -52,7 +57,7 @@ dependencies into the `lib` directory.
 To change this buildpack, fork it on GitHub. Push up changes to your
 fork, then create a test app with `--buildpack YOUR_GITHUB_URL` and
 push to it. If you already have an existing app you may use
-`heroku config add BUILDPACK_URL=YOUR_GITHUB_URL` instead.
+`heroku config:add BUILDPACK_URL=YOUR_GITHUB_URL` instead.
 
 For example, you could adapt it to generate an uberjar at build time.
 
