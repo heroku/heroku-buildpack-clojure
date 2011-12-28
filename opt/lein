@@ -4,22 +4,23 @@
 export LEIN_VERSION="##LEIN_VERSION##"
 export LEIN_NO_DEV=y
 
-JAVA_OPTS="$JAVA_OPTS -client -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
+LEIN_JVM_OPTS="$LEIN_JVM_OPTS -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
 
 if [ "$1" == "repl" ]; then
   CLASSPATH=$(lein classpath)
   if [ "$COLUMNS" != "" -a "$LINES" != "" ]; then
     stty columns $COLUMNS
     stty rows $LINES
-    exec rlwrap java $JAVA_OPTS -cp $CLASSPATH clojure.main --repl
+    exec rlwrap java $LEIN_JVM_OPTS -cp $CLASSPATH clojure.main --repl
   else
-    exec java $JAVA_OPTS -cp $CLASSPATH clojure.main --repl
+    exec java $LEIN_JVM_OPTS -cp $CLASSPATH clojure.main --repl
   fi
 elif [ "$1" == "trampoline" ]; then
   TRAMPOLINE_FILE="/tmp/lein-trampoline-$$"
   LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
   CLASSPATH="$CLASSPATH:src/:$LEIN_JAR"
-  java $JAVA_OPTS -Dleiningen.trampoline-file=$TRAMPOLINE_FILE -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
+  java $LEIN_JVM_OPTS -Dleiningen.trampoline-file=$TRAMPOLINE_FILE -cp "$CLASSPATH" \
+    clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
   if [ -r $TRAMPOLINE_FILE ]; then
     TRAMPOLINE="$(cat $TRAMPOLINE_FILE)"
     rm $TRAMPOLINE_FILE
@@ -28,5 +29,6 @@ elif [ "$1" == "trampoline" ]; then
 else
   LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
   CLASSPATH="$CLASSPATH:test/:src/:$LEIN_JAR"
-  exec java $JAVA_OPTS -cp "$CLASSPATH" clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
+  exec java $LEIN_JVM_OPTS -cp "$CLASSPATH" \
+    clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
 fi
