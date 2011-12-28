@@ -5,6 +5,7 @@ export LEIN_VERSION="##LEIN_VERSION##"
 export LEIN_NO_DEV=y
 
 LEIN_JVM_OPTS="$LEIN_JVM_OPTS -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
+LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
 
 if [ "$1" == "repl" ]; then
   CLASSPATH=$(lein classpath)
@@ -17,7 +18,6 @@ if [ "$1" == "repl" ]; then
   fi
 elif [ "$1" == "trampoline" ]; then
   TRAMPOLINE_FILE="/tmp/lein-trampoline-$$"
-  LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
   CLASSPATH="$CLASSPATH:src/:$LEIN_JAR"
   java $LEIN_JVM_OPTS -Dleiningen.trampoline-file=$TRAMPOLINE_FILE -cp "$CLASSPATH" \
     clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
@@ -26,8 +26,10 @@ elif [ "$1" == "trampoline" ]; then
     rm $TRAMPOLINE_FILE
     exec sh -c "$TRAMPOLINE"
   fi
+elif [ "$1" == "self-repl" ]; then
+  CLASSPATH="$CLASSPATH:src/:$LEIN_JAR"
+  exec rlwrap java $LEIN_JVM_OPTS -cp "$CLASSPATH" clojure.main
 else
-  LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
   CLASSPATH="$CLASSPATH:test/:src/:$LEIN_JAR"
   exec java $LEIN_JVM_OPTS -cp "$CLASSPATH" \
     clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
