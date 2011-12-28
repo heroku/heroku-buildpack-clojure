@@ -82,6 +82,17 @@ then push your sample app to Heroku to test. You should see:
 
     -----> Generating uberjar with Leiningen:
 
+## Troubleshooting
+
+To see what the buildpack has produced, do `heroku run bash` and you
+will be logged into an environment with your compiled app available.
+From there you can explore the filesystem and run `lein` commands.
+
+Note that projects with the `:local-repo-classpath` option set in
+`project.clj` will cause dependencies to be re-fetched when each
+process is started, which is highly undesirable. It's recommended you
+disable this option.
+
 ## License
 
 Copyright © 2011 Heroku, Inc.
