@@ -2,7 +2,10 @@
 
 # This gets replaced by bin/compile for DRY purposes.
 export LEIN_VERSION="##LEIN_VERSION##"
-export LEIN_NO_DEV=y
+
+if [ "$LEIN_DEV" = "" ]; then
+  export LEIN_NO_DEV=y
+fi
 
 LEIN_JVM_OPTS="$LEIN_JVM_OPTS -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
 LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
