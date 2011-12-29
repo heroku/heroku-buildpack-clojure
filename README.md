@@ -49,8 +49,29 @@ The buildpack will detect your app as Clojure if it has a
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
 should work instead.
 
-This buildpack will call `LEIN_NO_DEV=y lein deps` to copy your
-dependencies into the `lib` directory.
+## Configuration
+
+Currently most of the build-level configurations require turning on the
+[user_env_compile](http://devcenter.heroku.com/articles/labs-user-env-compile)
+functionality so the build step will have access to environment variables.
+
+By default your project is built by running `lein deps`, which copies
+all the dependencies into the `lib` directory. You may wish to perform
+a full AOT compile during build; this is done by setting
+`LEIN_BUILD_TASK=compile :all`. This has the benefit of both speeding
+up dyno launch times and catching certain classes of error during push.
+
+By default your project will run in "no dev" mode, which means
+`:dev-dependencies` will not be available and the `test` and
+`test-resources` directories will not be on the classpath. You can set
+`LEIN_DEV=y` to disable this if you need access to a plugin at runtime.
+
+Finally, you can reduce memory consumption by using the `trampoline`
+task in your Procfile. This will cause Leiningen to calculate the
+classpath and code to run for your project, then exit and execute your
+project's JVM:
+
+    web: lein trampoline run -m myapp.web
 
 ## Hacking
 
