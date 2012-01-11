@@ -29,9 +29,6 @@ elif [ "$1" == "trampoline" ]; then
     rm $TRAMPOLINE_FILE
     exec sh -c "$TRAMPOLINE"
   fi
-elif [ "$1" == "self-repl" ]; then
-  CLASSPATH="$CLASSPATH:src/:$LEIN_JAR"
-  exec rlwrap java $LEIN_JVM_OPTS -cp "$CLASSPATH" clojure.main
 else
   CLASSPATH="$CLASSPATH:test/:src/:lib/dev/*:$LEIN_JAR"
   exec java $LEIN_JVM_OPTS -cp "$CLASSPATH" \
