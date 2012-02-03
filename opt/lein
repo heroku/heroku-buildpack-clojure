@@ -10,6 +10,9 @@ fi
 LEIN_JVM_OPTS="$LEIN_JVM_OPTS -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
 LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
 
+# Prefer JVM_OPTS, but fall back to JAVA_OPTS for compatibility
+export JVM_OPTS="${JVM_OPTS:-"$JAVA_OPTS"}"
+
 if [ "$1" == "repl" ]; then
   CLASSPATH=$(lein classpath)
   if [ "$COLUMNS" != "" -a "$LINES" != "" ]; then
