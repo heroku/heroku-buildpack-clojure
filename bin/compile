@@ -9,7 +9,7 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 
 # install leiningen jar
-LEIN_VERSION="1.7.0-SNAPSHOT"
+LEIN_VERSION="1.7.0"
 LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
 LEIN_JAR_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
 
@@ -67,7 +67,7 @@ fi
 
 cd $BUILD_DIR
 PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin \
-  JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" \
+  LEIN_JVM_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" \
   lein $LEIN_BUILD_TASK 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   echo " !     Failed to install dependencies with Leiningen"
