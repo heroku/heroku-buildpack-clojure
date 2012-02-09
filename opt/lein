@@ -25,12 +25,17 @@ if [ "$1" == "repl" ]; then
 else
   TRAMPOLINE_FILE="/tmp/lein-trampoline-$$"
   CLASSPATH="$CLASSPATH:test/:src/:.lein-plugins/*:lib/dev/*:$LEIN_JAR"
+
   java $LEIN_JVM_OPTS -cp "$CLASSPATH" \
     -Dleiningen.trampoline-file=$TRAMPOLINE_FILE \
     clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
+  EXIT_CODE=$?
+
   if [ -r $TRAMPOLINE_FILE ]; then
     TRAMPOLINE="$(cat $TRAMPOLINE_FILE)"
     rm $TRAMPOLINE_FILE
-    exec sh -c "$TRAMPOLINE"
+    exec sh -c "exec $TRAMPOLINE"
+  else
+    exit $EXIT_CODE
   fi
 fi
