@@ -22,21 +22,20 @@ if [ "$1" == "repl" ]; then
   else
     exec java $LEIN_JVM_OPTS -cp $CLASSPATH clojure.main --repl
   fi
-elif [ "$1" == "trampoline" ]; then
+else
   TRAMPOLINE_FILE="/tmp/lein-trampoline-$$"
-  CLASSPATH="$CLASSPATH:src/:$LEIN_JAR"
-  java $LEIN_JVM_OPTS -Dleiningen.trampoline-file=$TRAMPOLINE_FILE -cp "$CLASSPATH" \
+  CLASSPATH="$CLASSPATH:test/:src/:.lein-plugins/*:lib/dev/*:$LEIN_JAR"
+
+  java $LEIN_JVM_OPTS -cp "$CLASSPATH" \
+    -Dleiningen.trampoline-file=$TRAMPOLINE_FILE \
     clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
+  EXIT_CODE=$?
+
   if [ -r $TRAMPOLINE_FILE ]; then
     TRAMPOLINE="$(cat $TRAMPOLINE_FILE)"
     rm $TRAMPOLINE_FILE
-    exec sh -c "$TRAMPOLINE"
+    exec sh -c "exec $TRAMPOLINE"
+  else
+    exit $EXIT_CODE
   fi
-elif [ "$1" == "self-repl" ]; then
-  CLASSPATH="$CLASSPATH:src/:$LEIN_JAR"
-  exec rlwrap java $LEIN_JVM_OPTS -cp "$CLASSPATH" clojure.main
-else
-  CLASSPATH="$CLASSPATH:test/:src/:lib/dev/*:$LEIN_JAR"
-  exec java $LEIN_JVM_OPTS -cp "$CLASSPATH" \
-    clojure.main -e "(use 'leiningen.core)(-main)" /dev/null $@
 fi
