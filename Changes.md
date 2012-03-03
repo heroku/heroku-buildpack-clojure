@@ -1,5 +1,10 @@
 # History of Changes
 
+## Version 2 - 2012-02-10
+
+* Use Leiningen 1.7.0
+* Fix a bug where JAVA_OPTS were not honored.
+
 ## Version 1 - 2011-12-28
 
 * Use Leiningen 1.6.2

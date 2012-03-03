@@ -116,7 +116,7 @@ disable this option.
 
 ## License
 
-Copyright © 2011 Heroku, Inc.
+Copyright © 2011-2012 Heroku, Inc.
 
 Distributed under the MIT/X11 license:
 
