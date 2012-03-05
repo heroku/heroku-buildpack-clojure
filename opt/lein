@@ -38,6 +38,7 @@ else
   if [ -r $TRAMPOLINE_FILE ]; then
     TRAMPOLINE="$(cat $TRAMPOLINE_FILE)"
     rm $TRAMPOLINE_FILE
+    rm .lein-plugins/clojure-1.3.0.jar # TODO: better exclusion here
     exec sh -c "exec $TRAMPOLINE"
   else
     exit $EXIT_CODE
