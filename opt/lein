@@ -7,11 +7,15 @@ if [ "$LEIN_DEV" = "" ]; then
   export LEIN_NO_DEV=y
 fi
 
-LEIN_JVM_OPTS="$LEIN_JVM_OPTS -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
 LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
+
+export JAVA_CMD=${JAVA_CMD:-"java"}
+export LEIN_JAVA_CMD=${LEIN_JAVA_CMD:-$JAVA_CMD}
 
 # Prefer JVM_OPTS, but fall back to JAVA_OPTS for compatibility
 export JVM_OPTS="${JVM_OPTS:-"$JAVA_OPTS"}"
+export LEIN_JVM_OPTS=${LEIN_JVM_OPTS:-$JVM_OPTS}
+LEIN_JVM_OPTS="$LEIN_JVM_OPTS -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
 
 if [ "$1" == "repl" ]; then
   CLASSPATH=$(lein classpath)
