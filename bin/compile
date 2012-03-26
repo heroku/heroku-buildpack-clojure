@@ -54,9 +54,6 @@ fi
 
 LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"deps"}
 
-# fetch deps with lein
-echo "-----> Installing dependencies and compiling with Leiningen"
-
 # LEIN_NO_DEV should be optional.
 if [ "$LEIN_DEV" = "" ]; then
   export LEIN_NO_DEV=y
