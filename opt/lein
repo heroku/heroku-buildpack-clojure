@@ -14,8 +14,7 @@ export LEIN_JAVA_CMD=${LEIN_JAVA_CMD:-$JAVA_CMD}
 
 # Prefer JVM_OPTS, but fall back to JAVA_OPTS for compatibility
 export JVM_OPTS="${JVM_OPTS:-"$JAVA_OPTS"}"
-export LEIN_JVM_OPTS=${LEIN_JVM_OPTS:-$JVM_OPTS}
-LEIN_JVM_OPTS="$LEIN_JVM_OPTS -Duser.home=$HOME -Dleiningen.original.pwd=$PWD"
+export LEIN_JVM_OPTS="${LEIN_JVM_OPTS:-$JVM_OPTS} -Dleiningen.original.pwd=$PWD"
 
 if [ "$1" == "repl" ]; then
   CLASSPATH=$(lein classpath)

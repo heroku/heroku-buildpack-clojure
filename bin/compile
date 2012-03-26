@@ -39,7 +39,6 @@ LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
 echo "       Writing: lein script"
 mkdir -p $(dirname $LEIN_BIN_PATH)
 cp $LEIN_BIN_SOURCE $LEIN_BIN_PATH
-chmod +x $LEIN_BIN_PATH
 sed -i s/##LEIN_VERSION##/$LEIN_VERSION/ $LEIN_BIN_PATH
 
 # unpack existing cache
