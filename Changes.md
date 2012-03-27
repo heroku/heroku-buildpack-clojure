@@ -1,5 +1,14 @@
 # History of Changes
 
+## Version 4 - 20-12-03-27
+
+* Update to Leiningen 1.7.1.
+* Fix a bug where the cache wouldn't be used.
+
+## Version 3 - 2012-03-05
+
+* Don't let Clojure versions from plugins interfere with Leiningen.
+
 ## Version 2 - 2012-02-10
 
 * Use Leiningen 1.7.0
