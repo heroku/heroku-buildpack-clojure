@@ -29,7 +29,7 @@ Example usage for an app already stored in git:
     -----> Fetching custom buildpack
     -----> Clojure app detected
     -----> Installing Leiningen
-           Downloading: leiningen-1.6.2-standalone.jar
+           Downloading: leiningen-1.7.1-standalone.jar
            Downloading: rlwrap-0.3.7
            Writing: lein script
     -----> Installing dependencies with Leiningen
