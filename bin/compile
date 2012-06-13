@@ -26,7 +26,7 @@ mkdir -p "$BUILD_DIR/.lein"
 cp "$LEIN_JAR_PATH" "$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
 
 # install rlwrap binary
-RLWRAP_BIN_URL="https://s3.amazonaws.com/clojure-lp/rlwrap-0.3.7"
+RLWRAP_BIN_URL="https://s3.amazonaws.com/heroku-buildpack-clojure/rlwrap-0.3.7"
 RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
 echo "       Downloading: rlwrap-0.3.7"
 mkdir -p $(dirname $RLWRAP_BIN_PATH)
