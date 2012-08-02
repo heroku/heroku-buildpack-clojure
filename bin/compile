@@ -70,6 +70,17 @@ if [ "${PIPESTATUS[*]}" != "0 0" ]; then
   exit 1
 fi
 
+PROFILE_PATH="$BUILD_DIR/.profile.d/clojure.sh"
+mkdir -p $(dirname $PROFILE_PATH)
+
+echo "export JVM_OPTS=\"\${JVM_OPTS:--Xmx400m}\"" >> $PROFILE_PATH
+echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
+echo "export PATH=\"$PATH:\$HOME/.lein/bin\"" >> $PROFILE_PATH
+
+if [ ! -r $1/Procfile ]; then
+    echo "web: lein trampoline run" > $1/Procfile
+fi
+
 # repack cache with new assets
 rm -rf $CACHE_STORE_DIR
 mkdir -p $(dirname $CACHE_STORE_DIR)
