@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# This gets replaced by bin/compile for DRY purposes.
+export LEIN_VERSION="##LEIN_VERSION##"
+
+LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
+
+export LEIN_HOME=${LEIN_HOME:-".lein"}
+export JAVA_CMD=${JAVA_CMD:-"java"}
+export LEIN_JAVA_CMD=${LEIN_JAVA_CMD:-$JAVA_CMD}
+
+# Prefer JVM_OPTS, but fall back to JAVA_OPTS for compatibility
+export JVM_OPTS="${JVM_OPTS:-"$JAVA_OPTS"}"
+export LEIN_JVM_OPTS=${LEIN_JVM_OPTS:-"-Xbootclasspath/a:$LEIN_JAR -Duser.home=$PWD"}
+
+# apply context specific CLASSPATH entries
+if [ -r .lein-classpath ]; then
+    CLASSPATH="`cat .lein-classpath`:$LEIN_JAR"
+else
+    CLASSPATH="$LEIN_JAR"
+fi
+
+TRAMPOLINE_FILE="/tmp/lein-trampoline-$$"
+
+$LEIN_JAVA_CMD \
+    -client -XX:+TieredCompilation \
+    $LEIN_JVM_OPTS \
+    -Dfile.encoding=UTF-8 \
+    -Dmaven.wagon.http.ssl.easy=false \
+    -Dleiningen.original.pwd="$PWD" \
+    -Dleiningen.trampoline-file="$TRAMPOLINE_FILE" \
+    -cp "$CLASSPATH" \
+    clojure.main -m leiningen.core.main "$@"
+
+EXIT_CODE=$?
+
+if [ -r $TRAMPOLINE_FILE ]; then
+    TRAMPOLINE="$(cat $TRAMPOLINE_FILE)"
+    rm $TRAMPOLINE_FILE
+    exec sh -c "exec $TRAMPOLINE"
+else
+    exit $EXIT_CODE
+fi

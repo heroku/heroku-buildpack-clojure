@@ -8,8 +8,23 @@ set -e
 BUILD_DIR=$1
 CACHE_DIR=$2
 
+# Determine Leiningen version
+grep ":min-lein-version \"2" $1/project.clj > /dev/null
+if [ $? -eq 0 ]; then
+  LEIN_VERSION="2.0.0-preview7"
+  LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
+  LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production do compile :all, clean-m2"}
+else
+  LEIN_VERSION="1.7.1"
+  LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein1"
+  LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"deps"}
+  if [ "$LEIN_DEV" = "" ]; then
+    LEIN_NO_DEV=y
+  fi
+  RLWRAP=yes
+fi
+
 # install leiningen jar
-LEIN_VERSION="1.7.1"
 LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
 LEIN_JAR_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
 
@@ -25,21 +40,26 @@ fi
 mkdir -p "$BUILD_DIR/.lein"
 cp "$LEIN_JAR_PATH" "$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
 
-# install rlwrap binary
-RLWRAP_BIN_URL="https://s3.amazonaws.com/heroku-buildpack-clojure/rlwrap-0.3.7"
-RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
-echo "       Downloading: rlwrap-0.3.7"
-mkdir -p $(dirname $RLWRAP_BIN_PATH)
-curl --silent --show-error --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
-chmod +x $RLWRAP_BIN_PATH
+# install rlwrap binary on lein 1.x
+if [ "$RLWRAP" = "yes" ]; then
+  RLWRAP_BIN_URL="https://s3.amazonaws.com/heroku-buildpack-clojure/rlwrap-0.3.7"
+  RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
+  echo "       Downloading: rlwrap-0.3.7"
+  mkdir -p $(dirname $RLWRAP_BIN_PATH)
+  curl --silent --show-error --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
+  chmod +x $RLWRAP_BIN_PATH
+fi
 
 # install lein script
-LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein"
 LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
 echo "       Writing: lein script"
 mkdir -p $(dirname $LEIN_BIN_PATH)
 cp $LEIN_BIN_SOURCE $LEIN_BIN_PATH
 sed -i s/##LEIN_VERSION##/$LEIN_VERSION/ $LEIN_BIN_PATH
+
+# create user-level profiles
+LEIN_PROFILES_SOURCE="$(dirname $0)/../opt/profiles.clj"
+cp -n $LEIN_PROFILES_SOURCE "$BUILD_DIR/.lein/profiles.clj"
 
 # unpack existing cache
 CACHE_STORE_DIR=$CACHE_DIR"/.m2"
@@ -51,25 +71,31 @@ else
   mkdir -p $CACHE_TARGET_DIR
 fi
 
-LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"deps"}
-
-# LEIN_NO_DEV should be optional.
-if [ "$LEIN_DEV" = "" ]; then
-  export LEIN_NO_DEV=y
-  echo "       Running: LEIN_NO_DEV=y lein $LEIN_BUILD_TASK"
+# Calculate build command
+if [ -x $BUILD_DIR/bin/build ]; then
+  echo "       Found bin/build; running it instead of default lein invocation."
+  BUILD_COMMAND=bin/build
 else
-  echo "       Running: lein $LEIN_BUILD_TASK"
+  if [ "$LEIN_NO_DEV" = "" ]; then
+    BUILD_COMMAND="lein $LEIN_BUILD_TASK"
+  else
+    # should only happen on 1.x
+    BUILD_COMMAND="LEIN_NO_DEV=$LEIN_NO_DEV lein $LEIN_BUILD_TASK"
+  fi
 fi
+
+echo "       Running: $BUILD_COMMAND"
 
 cd $BUILD_DIR
 PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin \
   LEIN_JVM_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" \
-  lein $LEIN_BUILD_TASK 2>&1 | sed -u 's/^/       /'
+  $BUILD_COMMAND 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  echo " !     Failed to install dependencies with Leiningen"
+  echo " !     Failed to build."
   exit 1
 fi
 
+# populate profile.d
 PROFILE_PATH="$BUILD_DIR/.profile.d/clojure.sh"
 mkdir -p $(dirname $PROFILE_PATH)
 
@@ -77,8 +103,10 @@ echo "export JVM_OPTS=\"\${JVM_OPTS:--Xmx400m}\"" >> $PROFILE_PATH
 echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
 echo "export PATH=\"$PATH:\$HOME/.lein/bin\"" >> $PROFILE_PATH
 
+# default Procfile
 if [ ! -r $1/Procfile ]; then
-    echo "web: lein trampoline run" > $1/Procfile
+  echo "       No Procfile found; defaulting to \"web: lein trampoline run\"."
+  echo "web: lein trampoline run" > $1/Procfile
 fi
 
 # repack cache with new assets
@@ -86,3 +114,5 @@ rm -rf $CACHE_STORE_DIR
 mkdir -p $(dirname $CACHE_STORE_DIR)
 cp -r $CACHE_TARGET_DIR $CACHE_STORE_DIR
 rm -rf $CACHE_TARGET_DIR
+
+# TODO: cache clearing in 1.x

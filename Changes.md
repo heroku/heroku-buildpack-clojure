@@ -1,5 +1,10 @@
 # History of Changes
 
+## Version 5 - ???
+
+* Run [clean-m2](https://github.com/technomancy/lein-clean-m2) task to avoid unbounded cache growth.
+* Support Leiningen 1.x and 2.x in the same branch.
+
 ## Version 4 - 20-12-03-27
 
 * Update to Leiningen 1.7.1.
@@ -13,6 +18,7 @@
 
 * Use Leiningen 1.7.0
 * Fix a bug where JAVA_OPTS were not honored.
+* Honor :plugins.
 
 ## Version 1 - 2011-12-28
 
