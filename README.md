@@ -67,19 +67,17 @@ dependency fetching from S3; if you place a `:production` profile in
 your project.clj you should do the same:
 
 ```clj
-{:production {:misc "configuration"
-              :mirrors {#"central|clojars"
-                        "http://s3pository.herokuapp.com/clojure"}}}
+  :production {:misc "configuration"
+               :mirrors {#"central|clojars"
+                         "http://s3pository.herokuapp.com/clojure"}}
 ```
 
-You can reduce memory consumption by using the `trampoline` task in
+You should reduce memory consumption by using the `trampoline` task in
 your Procfile. This will cause Leiningen to calculate the classpath
 and code to run for your project, then exit and execute your project's
 JVM:
 
     web: lein trampoline with-profile production run -m myapp.web
-
-By default
 
 ## Hacking
 
@@ -103,9 +101,11 @@ Open `bin/compile` in your editor, and replace the block labeled
     fi
 
 Commit and push the changes to your buildpack to your GitHub fork,
-then push your sample app to Heroku to test. You should see:
+then push your sample app to Heroku to test. The output should include:
 
     -----> Generating uberjar with Leiningen:
+
+If it's something other users would find useful, pull requests are welcome.
 
 ## Troubleshooting
 

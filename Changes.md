@@ -1,6 +1,6 @@
 # History of Changes
 
-## Version 5 - ???
+## Version 5 - 2012-08-09
 
 * Run [clean-m2](https://github.com/technomancy/lein-clean-m2) task to avoid unbounded cache growth.
 * Use S3 mirror with Leiningen 2.
@@ -8,7 +8,7 @@
 * Support Leiningen 1.x and 2.x in the same branch.
   Set :min-lein-version "2.0.0" to trigger Leiningen 2.
 
-## Version 4 - 20-12-03-27
+## Version 4 - 2012-03-27
 
 * Update to Leiningen 1.7.1.
 * Fix a bug where the cache wouldn't be used.
