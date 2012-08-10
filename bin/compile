@@ -70,6 +70,8 @@ else
   mkdir -p $CACHE_TARGET_DIR
 fi
 
+echo "-----> Building with Leiningen"
+
 # Calculate build command
 if [ -x $BUILD_DIR/bin/build ]; then
   echo "       Found bin/build; running it instead of default lein invocation."

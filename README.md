@@ -1,13 +1,15 @@
 # Heroku buildpack: Clojure
 
 This is a Heroku buildpack for Clojure apps. It uses
-[Leiningen](https://github.com/technomancy/leiningen).
+[Leiningen](http://leiningen.org).
 
 Note that you don't have to do anything special to use this buildpack
 with Clojure apps on Heroku; it will be used by default for all
 projects containing a project.clj file, though it may be an older
-revision than current master. This repository is made available so
-users can fork for their own needs and contribute patches back.
+revision than current master. 
+
+This repository is made available so users can fork for their own
+needs and contribute patches back as well as for transparency.
 
 ## Usage
 
@@ -29,11 +31,10 @@ Example usage for an app already stored in git:
     -----> Fetching custom buildpack
     -----> Clojure app detected
     -----> Installing Leiningen
-           Downloading: leiningen-1.7.1-standalone.jar
-           Downloading: rlwrap-0.3.7
+           Downloading: leiningen-2.0.0-preview7-standalone.jar
            Writing: lein script
-    -----> Installing dependencies with Leiningen
-           Running: LEIN_NO_DEV=y lein deps
+    -----> Building with Leiningen
+           Running: with-profile production do compile :all, clean-m2
            Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.pom from central
            Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.jar from central
            Copying 1 file to /tmp/build_2e5yol0778bcw/lib
@@ -47,31 +48,38 @@ The buildpack will detect your app as Clojure if it has a
 `project.clj` file in the root. If you use the
 [clojure-maven-plugin](https://github.com/talios/clojure-maven-plugin),
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
-should work instead.
+should work instead. Leiningen 1.7.1 will be used by default, but if
+you have `:min-lein-version "2.0.0"` in project.clj then Leiningen 2.x
+will be used instead.
 
 ## Configuration
 
-Currently most of the build-level configurations require turning on the
-[user_env_compile](http://devcenter.heroku.com/articles/labs-user-env-compile)
-functionality so the build step will have access to environment variables.
+By default your project is built by running `lein deps` under
+Leiningen 1.x and `lein compile :all` under Leiningen 2.x. To
+customize this, check in a `bin/build` script into your project and it
+will be run instead of invoking `lein` directly.
 
-By default your project is built by running `lein deps`, which copies
-all the dependencies into the `lib` directory. You may wish to perform
-a full AOT compile during build; this is done by setting
-`LEIN_BUILD_TASK=compile :all`. This has the benefit of both speeding
-up dyno launch times and catching certain classes of error during push.
+If you are using Leiningen 2.x, it's highly recommended that you use
+the `:production` profile to avoid having tests and development
+dependencies on your classpath in production. By default the
+`:production` profile configures a mirror setting for faster
+dependency fetching from S3; if you place a `:production` profile in
+your project.clj you should do the same:
 
-By default your project will run in "no dev" mode, which means
-`:dev-dependencies` will not be available and the `test` and
-`test-resources` directories will not be on the classpath. You can set
-`LEIN_DEV=y` to disable this if you need access to a plugin at runtime.
+```clj
+{:production {:misc "configuration"
+              :mirrors {#"central|clojars"
+                        "http://s3pository.herokuapp.com/clojure"}}}
+```
 
-Finally, you can reduce memory consumption by using the `trampoline`
-task in your Procfile. This will cause Leiningen to calculate the
-classpath and code to run for your project, then exit and execute your
-project's JVM:
+You can reduce memory consumption by using the `trampoline` task in
+your Procfile. This will cause Leiningen to calculate the classpath
+and code to run for your project, then exit and execute your project's
+JVM:
 
-    web: lein trampoline run -m myapp.web
+    web: lein trampoline with-profile production run -m myapp.web
+
+By default
 
 ## Hacking
 
@@ -94,10 +102,6 @@ Open `bin/compile` in your editor, and replace the block labeled
       exit 1
     fi
 
-The `LEIN_NO_DEV` environment variable will cause Leiningen to keep
-the test directories and dev dependencies off the classpath, so be
-sure to set it for every `lein` invocation.
-
 Commit and push the changes to your buildpack to your GitHub fork,
 then push your sample app to Heroku to test. You should see:
 
@@ -108,8 +112,3 @@ then push your sample app to Heroku to test. You should see:
 To see what the buildpack has produced, do `heroku run bash` and you
 will be logged into an environment with your compiled app available.
 From there you can explore the filesystem and run `lein` commands.
-
-Note that projects with the `:local-repo-classpath` option set in
-`project.clj` will cause dependencies to be re-fetched when each
-process is started, which is highly undesirable. It's recommended you
-disable this option.
