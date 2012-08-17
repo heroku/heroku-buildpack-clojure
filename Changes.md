@@ -1,5 +1,9 @@
 # History of Changes
 
+## Version 6 - 2012-06-16
+
+* Use Leiningen 2.0.0-preview8 for 2.x compiles.
+
 ## Version 5 - 2012-08-09
 
 * Run [clean-m2](https://github.com/technomancy/lein-clean-m2) task to avoid unbounded cache growth.
