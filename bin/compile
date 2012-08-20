@@ -73,11 +73,13 @@ fi
 echo "-----> Building with Leiningen"
 
 # Calculate build command
-if [ -x $BUILD_DIR/bin/build ]; then
-  echo "       Found bin/build; running it instead of default lein invocation."
-  BUILD_COMMAND=bin/build
-else
-  BUILD_COMMAND="lein $LEIN_BUILD_TASK"
+if [ "$BUILD_COMMAND" != "" ]; then
+    if [ -x $BUILD_DIR/bin/build ]; then
+        echo "       Found bin/build; running it instead of default lein invocation."
+        BUILD_COMMAND=bin/build
+    else
+        BUILD_COMMAND="lein $LEIN_BUILD_TASK"
+    fi
 fi
 
 echo "       Running: $BUILD_COMMAND"
