@@ -77,7 +77,7 @@ your Procfile. This will cause Leiningen to calculate the classpath
 and code to run for your project, then exit and execute your project's
 JVM:
 
-    web: lein trampoline with-profile production run -m myapp.web
+    web: lein with-profile production trampoline run -m myapp.web
 
 ## Hacking
 
