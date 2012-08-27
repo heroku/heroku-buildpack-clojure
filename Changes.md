@@ -1,6 +1,11 @@
 # History of Changes
 
-## Version 6 - 2012-06-16
+## Version 7 - 2012-08-27
+
+* Use Leiningen 2.0.0-preview10 for 2.x compiles.
+* Fix a bug where dependencies would be fetched at dyno launch time.
+
+## Version 6 - 2012-08-16
 
 * Use Leiningen 2.0.0-preview8 for 2.x compiles.
 
