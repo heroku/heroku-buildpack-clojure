@@ -10,7 +10,7 @@ CACHE_DIR=$2
 
 # Determine Leiningen version
 if [ "$(grep ":min-lein-version \"2" $1/project.clj)" != "" ]; then
-  LEIN_VERSION="2.0.0-preview8"
+  LEIN_VERSION="2.0.0-preview10"
   LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
   LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production do compile :all, clean-m2"}
 else
@@ -34,6 +34,10 @@ if [ ! -r "$LEIN_JAR_PATH" ]; then
   curl --silent --show-error --max-time 120 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL
 else
   echo "-----> Using cached Leiningen $LEIN_VERSION"
+fi
+
+if [ "$LEIN_VERSION" = "1.7.1" ]; then
+  echo "       To use Leiningen 2.x, add this to project.clj: :min-lein-version \"2.0.0\""
 fi
 
 mkdir -p "$BUILD_DIR/.lein"
@@ -73,7 +77,7 @@ fi
 echo "-----> Building with Leiningen"
 
 # Calculate build command
-if [ "$BUILD_COMMAND" != "" ]; then
+if [ "$BUILD_COMMAND" = "" ]; then
     if [ -x $BUILD_DIR/bin/build ]; then
         echo "       Found bin/build; running it instead of default lein invocation."
         BUILD_COMMAND=bin/build
@@ -111,6 +115,10 @@ fi
 rm -rf $CACHE_STORE_DIR
 mkdir -p $(dirname $CACHE_STORE_DIR)
 cp -r $CACHE_TARGET_DIR $CACHE_STORE_DIR
-rm -rf $CACHE_TARGET_DIR
+
+if [ "$LEIN_VERSION" = "1.7.1" ]; then
+    rm -rf $CACHE_TARGET_DIR
+fi
+
 
 # TODO: cache clearing in 1.x

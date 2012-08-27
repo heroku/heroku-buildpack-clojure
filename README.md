@@ -31,10 +31,10 @@ Example usage for an app already stored in git:
     -----> Fetching custom buildpack
     -----> Clojure app detected
     -----> Installing Leiningen
-           Downloading: leiningen-2.0.0-preview7-standalone.jar
+           Downloading: leiningen-2.0.0-preview10-standalone.jar
            Writing: lein script
     -----> Building with Leiningen
-           Running: with-profile production do compile :all, clean-m2
+           Running: with-profile production compile :all
            Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.pom from central
            Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.jar from central
            Copying 1 file to /tmp/build_2e5yol0778bcw/lib
