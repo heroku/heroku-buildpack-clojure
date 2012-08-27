@@ -12,7 +12,7 @@ CACHE_DIR=$2
 if [ "$(grep ":min-lein-version \"2" $1/project.clj)" != "" ]; then
   LEIN_VERSION="2.0.0-preview10"
   LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
-  LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production do compile :all, clean-m2"}
+  LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production compile :all"}
 else
   LEIN_VERSION="1.7.1"
   LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein1"
@@ -119,6 +119,3 @@ cp -r $CACHE_TARGET_DIR $CACHE_STORE_DIR
 if [ "$LEIN_VERSION" = "1.7.1" ]; then
     rm -rf $CACHE_TARGET_DIR
 fi
-
-
-# TODO: cache clearing in 1.x
