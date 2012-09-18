@@ -1,5 +1,10 @@
 # History of Changes
 
+## Version 35 - 2012-09-18
+
+* Alias `lein repl` to `lein standalone-repl` to work around firewall issues.
+  See https://github.com/heroku/heroku-buildpack-clojure/issues/14
+
 ## Version 7 - 2012-08-27
 
 * Use Leiningen 2.0.0-preview10 for 2.x compiles.
