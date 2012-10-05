@@ -23,7 +23,7 @@ Example usage for an app already stored in git:
         `-- sample
             `-- core.clj
 
-    $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-clojure.git
+    $ heroku create
 
     $ git push heroku master
     ...
@@ -60,16 +60,20 @@ customize this, check in a `bin/build` script into your project and it
 will be run instead of invoking `lein` directly.
 
 If you are using Leiningen 2.x, it's highly recommended that you use
-the `:production` profile to avoid having tests and development
-dependencies on your classpath in production. By default the
-`:production` profile configures a mirror setting for faster
-dependency fetching from S3; if you place a `:production` profile in
-your project.clj you should do the same:
+the `:production` profile in your `Procfile` and/or `bin/build` to avoid
+having tests and development dependencies on your classpath in
+production.
+
+If you don't need to add anything to the `:production` profile then
+you can leave it out and the one from `opt/profiles.clj` in the
+buildpack will be used. If you do need to add something, it's
+recommended you include `:mirrors` for faster dependency resolution
+from S3:
 
 ```clj
-  :production {:misc "configuration"
-               :mirrors {#"central|clojars"
-                         "http://s3pository.herokuapp.com/clojure"}}
+:production {:app-specific "config"
+             :mirrors {"central" "http://s3pository.herokuapp.com/maven-central"
+                        "clojars" "http://s3pository.herokuapp.com/clojars"}}
 ```
 
 You should reduce memory consumption by using the `trampoline` task in
@@ -77,7 +81,7 @@ your Procfile. This will cause Leiningen to calculate the classpath
 and code to run for your project, then exit and execute your project's
 JVM:
 
-    web: lein trampoline with-profile production run -m myapp.web
+    web: lein with-profile offline,production trampoline run -m myapp.web
 
 ## Hacking
 
@@ -92,9 +96,9 @@ Open `bin/compile` in your editor, and replace the block labeled
 "fetch deps with lein" with something like this:
 
     echo "-----> Generating uberjar with Leiningen:"
-    echo "       Running: LEIN_NO_DEV=y lein uberjar"
+    echo "       Running: lein uberjar"
     cd $BUILD_DIR
-    PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" LEIN_NO_DEV=y lein uberjar 2>&1 | sed -u 's/^/       /'
+    PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein uberjar 2>&1 | sed -u 's/^/       /'
     if [ "${PIPESTATUS[*]}" != "0 0" ]; then
       echo " !     Failed to create uberjar with Leiningen"
       exit 1
