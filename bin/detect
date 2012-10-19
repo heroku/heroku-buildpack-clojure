@@ -2,7 +2,7 @@
 # bin/use <build-dir>
 
 if [ -f $1/project.clj ]; then
-  grep ":min-lein-version \"2" $1/project.clj > /dev/null
+  grep ":min-lein-version[[:space:]]\+\"2" $1/project.clj > /dev/null
   if [ $? -eq 0 ]; then
     echo "Clojure (Leiningen 2)" && exit 0
   else
