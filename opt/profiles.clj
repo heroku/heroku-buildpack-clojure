@@ -1,8 +1,12 @@
 {:user {:mirrors {"central" "http://s3pository.herokuapp.com/maven-central"
-                  "clojars" "http://s3pository.herokuapp.com/clojars"}
+                  ;; TODO: re-enable once clojars releases repo is up
+                  ;; "clojars" "http://s3pository.herokuapp.com/clojars"
+                  }
         :aliases {"repl" "standalone-repl"}
         :plugins [[lein-standalone-repl "0.1.3"]]}
  :production {:mirrors {"central" "http://s3pository.herokuapp.com/maven-central"
-                        "clojars" "http://s3pository.herokuapp.com/clojars"}}
+                        ;; "clojars" "http://s3pository.herokuapp.com/clojars"
+                        }}
  :heroku {:mirrors {"central" "http://s3pository.herokuapp.com/maven-central"
-                    "clojars" "http://s3pository.herokuapp.com/clojars"}}}
+                    ;; "clojars" "http://s3pository.herokuapp.com/clojars"
+                    }}}

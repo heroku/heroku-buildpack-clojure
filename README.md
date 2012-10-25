@@ -68,13 +68,16 @@ If you don't need to add anything to the `:production` profile then
 you can leave it out and the one from `opt/profiles.clj` in the
 buildpack will be used. If you do need to add something, it's
 recommended you include `:mirrors` for faster dependency resolution
-from S3:
+from S3 for Central:
 
 ```clj
 :production {:app-specific "config"
-             :mirrors {"central" "http://s3pository.herokuapp.com/maven-central"
-                        "clojars" "http://s3pository.herokuapp.com/clojars"}}
+             :mirrors {"central" "http://s3pository.herokuapp.com/maven-central"}}
 ```
+
+Since Clojars currently mixes snapshots and releases it's currently
+not appropriate to mirror to S3 unless you know for sure you're not
+using any snapshots even transitively.
 
 You should reduce memory consumption by using the `trampoline` task in
 your Procfile. This will cause Leiningen to calculate the classpath
