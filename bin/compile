@@ -33,6 +33,9 @@ else
     exit 1
 fi
 
+# Make sure new JDK is visible to Leiningen
+export PATH="$HOME/.jdk/bin:$PATH"
+
 # Determine Leiningen version
 if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $1/project.clj)" != "" ]; then
   LEIN_VERSION="2.0.0"
@@ -128,7 +131,7 @@ mkdir -p $(dirname $PROFILE_PATH)
 
 echo "export JVM_OPTS=\"\${JVM_OPTS:--Xmx400m}\"" >> $PROFILE_PATH
 echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
-echo "export PATH=\"$PATH:\$HOME/.lein/bin:$HOME/.jdk/bin\"" >> $PROFILE_PATH
+echo "export PATH=\"$HOME/.jdk/bin:$PATH:\$HOME/.lein/bin\"" >> $PROFILE_PATH
 
 # default Procfile
 if [ ! -r $1/Procfile ]; then
