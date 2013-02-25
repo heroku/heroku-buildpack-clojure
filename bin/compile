@@ -10,7 +10,8 @@ CACHE_DIR=$2
 
 # Load common JVM functionality from https://github.com/heroku/heroku-buildpack-jvm-common
 JVM_COMMON_BUILDPACK=https://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz
-curl --silent --location $JVM_COMMON_BUILDPACK | tar -x bin/java -zO | source /dev/stdin
+curl --silent --location $JVM_COMMON_BUILDPACK | tar -x bin/java -zO > /tmp/jvm-common
+source /tmp/jvm-common
 
 # JDK version
 if [ -z "$JAVA_VERSION" ]; then # could be set using user_env_compile
