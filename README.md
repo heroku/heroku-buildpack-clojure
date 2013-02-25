@@ -8,9 +8,6 @@ with Clojure apps on Heroku; it will be used by default for all
 projects containing a project.clj file, though it may be an older
 revision than current master. 
 
-This repository is made available so users can fork for their own
-needs and contribute patches back as well as for transparency.
-
 ## Usage
 
 Example usage for an app already stored in git:
@@ -85,6 +82,17 @@ and code to run for your project, then exit and execute your project's
 JVM:
 
     web: lein with-profile offline,production trampoline run -m myapp.web
+
+## JDK Version
+
+By default you will get OpenJDK 1.6. To use a different version, you
+can commit a `system.properties` file to your app.
+
+```
+$ echo "java.runtime.version=1.7" > system.properties
+$ git add system.properties
+$ git commit -m "JDK 7"
+```
 
 ## Hacking
 
