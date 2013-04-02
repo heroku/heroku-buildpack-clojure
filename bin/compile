@@ -135,8 +135,8 @@ echo "export PATH=\"$HOME/.jdk/bin:$PATH:\$HOME/.lein/bin\"" >> $PROFILE_PATH
 
 # default Procfile
 if [ ! -r $1/Procfile ]; then
-  echo "       No Procfile found; defaulting to \"web: lein trampoline run\"."
-  echo "web: lein trampoline run" > $1/Procfile
+  echo "       No Procfile; using \"web: lein with-profile production trampoline run\"."
+  echo "web: lein with-profile production trampoline run" > $1/Procfile
 fi
 
 # repack cache with new assets
