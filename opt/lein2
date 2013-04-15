@@ -4,6 +4,7 @@
 export LEIN_VERSION="##LEIN_VERSION##"
 
 LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
+LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
 
 export LEIN_HOME=${LEIN_HOME:-".lein"}
 export JAVA_CMD=${JAVA_CMD:-"java"}
@@ -12,6 +13,12 @@ export LEIN_JAVA_CMD=${LEIN_JAVA_CMD:-$JAVA_CMD}
 # Prefer JVM_OPTS, but fall back to JAVA_OPTS for compatibility
 export JVM_OPTS="${JVM_OPTS:-"$JAVA_OPTS"}"
 export LEIN_JVM_OPTS=${LEIN_JVM_OPTS:-"-Xbootclasspath/a:$LEIN_JAR -Duser.home=$PWD"}
+
+if [ ! -r "$LEIN_JAR" ]; then
+    echo "Downloading Leiningen to $LEIN_JAR now..."
+    mkdir -p "$(dirname "$LEIN_JAR")"
+    curl --silent --show-error --max-time 120 -L -o "$LEIN_JAR" $LEIN_JAR_URL
+fi
 
 # apply context specific CLASSPATH entries
 if [ -r .lein-classpath ]; then

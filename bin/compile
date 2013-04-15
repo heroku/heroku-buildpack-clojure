@@ -53,13 +53,14 @@ fi
 
 # install leiningen jar
 LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
-LEIN_JAR_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
+LEIN_JAR_CACHE_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
+LEIN_JAR_SLUG_PATH="$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
 
-if [ ! -r "$LEIN_JAR_PATH" ]; then
+if [ ! -r "$LEIN_JAR_CACHE_PATH" ]; then
   echo "-----> Installing Leiningen"
   echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
-  mkdir -p $(dirname $LEIN_JAR_PATH)
-  curl --silent --show-error --max-time 120 -L -o $LEIN_JAR_PATH $LEIN_JAR_URL
+  mkdir -p $(dirname $LEIN_JAR_CACHE_PATH)
+  curl --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
 else
   echo "-----> Using cached Leiningen $LEIN_VERSION"
 fi
@@ -69,7 +70,7 @@ if [ "$LEIN_VERSION" = "1.7.1" ]; then
 fi
 
 mkdir -p "$BUILD_DIR/.lein"
-cp "$LEIN_JAR_PATH" "$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
+cp "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_SLUG_PATH"
 
 # install rlwrap binary on lein 1.x
 if [ "$RLWRAP" = "yes" ]; then
@@ -136,6 +137,10 @@ echo "export PATH=\"$HOME/.jdk/bin:$PATH:\$HOME/.lein/bin\"" >> $PROFILE_PATH
 if [ ! -r $1/Procfile ]; then
   echo "       No Procfile; using \"web: lein with-profile production trampoline run\"."
   echo "web: lein with-profile production trampoline run" > $1/Procfile
+fi
+
+if [ "$LEIN_INCLUDE_IN_SLUG" = "no" ]; then
+    rm "$LEIN_JAR_SLUG_PATH"
 fi
 
 # repack cache with new assets
