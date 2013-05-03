@@ -98,6 +98,16 @@ This will reduce the size of your slug since Leiningen will not be
 included. If you need Leiningen in a `heroku run` session, it will be
 downloaded automatically.
 
+Adding `:uberjar-name` to `project.clj` will prevent the uberjar
+filename from changing when your version number changes, which will
+make your Procfile easier to maintain.
+
+Note that uberjars require a `:main` in `project.clj`. Usually you
+would also include a `:gen-class` directive in the `ns` form of the
+main namespace, though you can skip this by using `clojure.main` as
+the `:main` namespace and using the `-m` argument to specify your
+application's namespace.
+
 ## JDK Version
 
 By default you will get OpenJDK 1.6. To use a different version, you
