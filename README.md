@@ -51,15 +51,25 @@ will be used instead.
 
 ## Configuration
 
-By default your project is built by running `lein deps` under
-Leiningen 1.x and `lein compile :all` under Leiningen 2.x. To
-customize this, check in a `bin/build` script into your project and it
-will be run instead of invoking `lein` directly.
+If your project uses Leiningen 2 (highly recommended) you should
+include `:min-lein-version "2.0.0"` (or higher) in your
+`project.clj`.
 
-If you are using Leiningen 2.x, it's highly recommended that you use
-the `:production` profile in your `Procfile` and/or `bin/build` to avoid
-having tests and development dependencies on your classpath in
-production.
+Your `Procfile` should declare what process types which make up your
+app. Typically in development Leiningen projects are launched using
+`lein run -m my.project.namespace`, but this is not recommended in
+production because it leaves Leiningen running in addition to your
+project's process.
+
+### Leiningen at Runtime
+
+One way to avoid this is with the `trampoline` task. This will cause
+Leiningen to calculate the classpath and code to run for your project,
+then exit and execute your project's JVM. If you do this it's
+recommended you use the `:production` profile to avoid having
+development or test dependencies or configuration visible:
+
+    web: lein with-profile offline,production trampoline run -m myapp.web
 
 If you don't need to add anything to the `:production` profile then
 you can leave it out and the one from `opt/profiles.clj` in the
@@ -76,12 +86,17 @@ Since Clojars currently mixes snapshots and releases it's currently
 not appropriate to mirror to S3 unless you know for sure you're not
 using any snapshots even transitively.
 
-You should reduce memory consumption by using the `trampoline` task in
-your Procfile. This will cause Leiningen to calculate the classpath
-and code to run for your project, then exit and execute your project's
-JVM:
+### Uberjars
 
-    web: lein with-profile offline,production trampoline run -m myapp.web
+Another simpler way is to create an uberjar during build and not
+involve Leiningen at all at runtime. If your `Procfile` does not
+mention `lein` at all, then the buildpack will run `lein
+uberjar`. Then your `Procfile` entries should just consist of `java
+-jar ...` invocations.
+
+This will reduce the size of your slug since Leiningen will not be
+included. If you need Leiningen in a `heroku run` session, it will be
+downloaded automatically.
 
 ## JDK Version
 
