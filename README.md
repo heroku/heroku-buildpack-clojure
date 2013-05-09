@@ -91,8 +91,15 @@ using any snapshots even transitively.
 Another simpler way is to create an uberjar during build and not
 involve Leiningen at all at runtime. If your `Procfile` does not
 mention `lein` at all, then the buildpack will run `lein
-uberjar`. Then your `Procfile` entries should just consist of `java
-$JVM_OPTS -jar ...` invocations.
+uberjar`. Then your `Procfile` entries should just consist of `java`
+invocations.
+
+If you have `:main` in `project.clj` and `:gen-class` in your main
+namespace you can just use `java $JVM_OPTS -jar
+target/myproject-standalone.jar`. If you're not using `:main` then you
+can use `clojure.main/main` as your entry and point it to your app
+using the `-m` argument: `java $JVM_OPTS -cp
+target/myproject-standalone.jar clojure.main -m myproject.web`.
 
 This will reduce the size of your slug since Leiningen will not be
 included. If you need Leiningen in a `heroku run` session, it will be
