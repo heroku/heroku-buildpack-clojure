@@ -92,7 +92,7 @@ Another simpler way is to create an uberjar during build and not
 involve Leiningen at all at runtime. If your `Procfile` does not
 mention `lein` at all, then the buildpack will run `lein
 uberjar`. Then your `Procfile` entries should just consist of `java
--jar ...` invocations.
+$JVM_OPTS -jar ...` invocations.
 
 This will reduce the size of your slug since Leiningen will not be
 included. If you need Leiningen in a `heroku run` session, it will be
