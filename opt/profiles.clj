@@ -6,8 +6,7 @@
         :plugins [[lein-standalone-repl "0.1.5"]]}
  :production {:mirrors {"central" "http://s3pository.herokuapp.com/maven-central"
                         ;; "clojars" "http://s3pository.herokuapp.com/clojars"
-                        }
-              :offline true}
+                        }}
  :heroku {:mirrors {"central" "http://s3pository.herokuapp.com/maven-central"
                     ;; "clojars" "http://s3pository.herokuapp.com/clojars"
                     }}}
