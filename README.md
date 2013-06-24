@@ -77,16 +77,15 @@ buildpack will be used.
 
 ### Uberjars
 
-Another simpler way is to create an uberjar during build and not
-involve Leiningen at all at runtime. If your `Procfile` does not
-mention `lein` at all, then the buildpack will run `lein
-uberjar`. Then your `Procfile` entries should just consist of `java`
-invocations.
+A simpler way is to create an uberjar during build and not involve
+Leiningen at all at runtime. If your `Procfile` does not include
+`lein`, then the buildpack will run `lein uberjar`. Then your
+`Procfile` entries should just consist of `java` invocations.
 
 If you have `:main` in `project.clj` and `:gen-class` in your main
 namespace you can just use `java $JVM_OPTS -jar
 target/myproject-standalone.jar`. If you're not using `:main` then you
-can use `clojure.main/main` as your entry and point it to your app
+can use `clojure.main` as your entry and point it to your app
 using the `-m` argument: `java $JVM_OPTS -cp
 target/myproject-standalone.jar clojure.main -m myproject.web`.
 
@@ -97,12 +96,6 @@ downloaded automatically.
 Adding `:uberjar-name` to `project.clj` will prevent the uberjar
 filename from changing when your version number changes, which will
 make your Procfile easier to maintain.
-
-Note that uberjars require a `:main` in `project.clj`. Usually you
-would also include a `:gen-class` directive in the `ns` form of the
-main namespace, though you can skip this by using `clojure.main` as
-the `:main` namespace and using the `-m` argument to specify your
-application's namespace.
 
 ## JDK Version
 
