@@ -78,7 +78,7 @@ recommended you include `:mirrors` for faster dependency resolution
 from S3 for Central:
 
 ```clj
-:production {:app-specific "config"
+:production {:app-specific "config" ; put your own config here if needed
              :mirrors {"central" "http://s3pository.herokuapp.com/maven-central"}}
 ```
 
