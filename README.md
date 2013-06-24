@@ -115,24 +115,24 @@ fork, then create a test app with `--buildpack YOUR_GITHUB_URL` and
 push to it. If you already have an existing app you may use
 `heroku config:add BUILDPACK_URL=YOUR_GITHUB_URL` instead.
 
-For example, you could adapt it to generate an uberjar at build time.
+For example, you could adapt it to generate a tarball at build time.
 
 Open `bin/compile` in your editor, and replace the block labeled
-"fetch deps with lein" with something like this:
+"Calculate build command" with something like this:
 
-    echo "-----> Generating uberjar with Leiningen:"
-    echo "       Running: lein uberjar"
+    echo "-----> Generating tar with Leiningen:"
+    echo "       Running: lein tar"
     cd $BUILD_DIR
-    PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein uberjar 2>&1 | sed -u 's/^/       /'
+    PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein tar 2>&1 | sed -u 's/^/       /'
     if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-      echo " !     Failed to create uberjar with Leiningen"
+      echo " !     Failed to create tar with Leiningen"
       exit 1
     fi
 
 Commit and push the changes to your buildpack to your GitHub fork,
 then push your sample app to Heroku to test. The output should include:
 
-    -----> Generating uberjar with Leiningen:
+    -----> Generating tar with Leiningen:
 
 If it's something other users would find useful, pull requests are welcome.
 
