@@ -144,15 +144,16 @@ if [ ! -r $1/Procfile ]; then
   echo "web: lein with-profile production trampoline run" > $1/Procfile
 fi
 
-if [ "$LEIN_INCLUDE_IN_SLUG" = "no" ]; then
-    rm "$LEIN_JAR_SLUG_PATH"
-fi
-
 # repack cache with new assets
 rm -rf $CACHE_STORE_DIR
 mkdir -p $(dirname $CACHE_STORE_DIR)
 cp -r $CACHE_TARGET_DIR $CACHE_STORE_DIR
 
+if [ "$LEIN_INCLUDE_IN_SLUG" = "no" ]; then
+    rm "$LEIN_JAR_SLUG_PATH"
+    rm -rf "$CACHE_TARGET_DIR"
+fi
+
 if [ "$LEIN_VERSION" = "1.7.1" ]; then
-    rm -rf $CACHE_TARGET_DIR
+    rm -rf "$CACHE_TARGET_DIR"
 fi
