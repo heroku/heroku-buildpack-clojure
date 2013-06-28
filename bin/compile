@@ -40,7 +40,7 @@ export PATH="$HOME/.jdk/bin:$PATH"
 if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $1/project.clj)" != "" ]; then
   LEIN_VERSION="2.2.0"
   LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
-  if [ -r "$1/Procfile" ] && [ "$(grep lein $1/Procfile)" = "" ]; then
+  if [ "$(grep :uberjar-name $1/project.clj)" = "" ]; then
       LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
       LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
   else
