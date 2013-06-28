@@ -6,7 +6,7 @@ This is a Heroku buildpack for Clojure apps. It uses
 Note that you don't have to do anything special to use this buildpack
 with Clojure apps on Heroku; it will be used by default for all
 projects containing a project.clj file, though it may be an older
-revision than current master. 
+revision than what you're currently looking at.
 
 ## Usage
 
@@ -28,7 +28,7 @@ Example usage for an app already stored in git:
     -----> Fetching custom buildpack
     -----> Clojure app detected
     -----> Installing Leiningen
-           Downloading: leiningen-2.0.0-preview10-standalone.jar
+           Downloading: leiningen-2.2.0-standalone.jar
            Writing: lein script
     -----> Building with Leiningen
            Running: with-profile production compile :all
@@ -45,57 +45,56 @@ The buildpack will detect your app as Clojure if it has a
 `project.clj` file in the root. If you use the
 [clojure-maven-plugin](https://github.com/talios/clojure-maven-plugin),
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
-should work instead. Leiningen 1.7.1 will be used by default, but if
-you have `:min-lein-version "2.0.0"` in project.clj then Leiningen 2.x
-will be used instead.
+should work instead.
 
 ## Configuration
 
-If your project uses Leiningen 2 (highly recommended) you should
-include `:min-lein-version "2.0.0"` (or higher) in your
-`project.clj`.
+Leiningen 1.7.1 will be used by default, but if you have
+`:min-lein-version "2.0.0"` in project.clj (highly recommended) then
+the latest Leiningen 2.x release will be used instead.
 
 Your `Procfile` should declare what process types which make up your
-app. Typically in development Leiningen projects are launched using
-`lein run -m my.project.namespace`, but this is not recommended in
+app. Often in development Leiningen projects are launched using `lein
+run -m my.project.namespace`, but this is not recommended in
 production because it leaves Leiningen running in addition to your
-project's process.
+project's process. It also uses profiles that are intended for
+development, which can let test libraries and test configuration sneak
+into production.
+
+### Uberjar
+
+If your `project.clj` contains an `:uberjar-name` setting, then the
+buildpack will run `lein uberjar`. If you do this, your `Procfile`
+entries should consist of just `java` invocations.
+
+If your main namespace doesn't have a `:gen-class` then you can use
+`clojure.main` as your entry point and indicate your app's main
+namespace using the `-m` argument in your `Procfile`:
+
+    web: java $JVM_OPTS -cp target/myproject-standalone.jar clojure.main -m myproject.web
+
+If you have custom settings you would like to only apply during build,
+you can place them in an `:uberjar` profile. This can be useful to use
+AOT-compiled classes in production but not during development where
+they can cause reloading issues:
+
+```clj
+  :profiles {:uberjar {:main myproject.web, :aot :all}}
+```
+
+If you need Leiningen in a `heroku run` session, it will be downloaded on-demand.
 
 ### Leiningen at Runtime
 
-One way to avoid this is with the `trampoline` task. This will cause
-Leiningen to calculate the classpath and code to run for your project,
-then exit and execute your project's JVM. If you do this it's
-recommended you use the `:production` profile to avoid having
-development or test dependencies or configuration visible:
+Another option is to use Leiningen in your Procfile. If you do this,
+be sure to use the `trampoline` and `with-profile` tasks. Trampolining
+will cause Leiningen to calculate the classpath and code to run for
+your project, then exit and execute your project's JVM, while
+`with-profile` will omit development profiles:
 
-    web: lein with-profile offline,production trampoline run -m myapp.web
+    web: lein with-profile production trampoline run -m myapp.web
 
-If you don't need to add anything to the `:production` profile then
-you can leave it out and the one from `opt/profiles.clj` in the
-buildpack will be used.
-
-### Uberjars
-
-A simpler way is to create an uberjar during build and not involve
-Leiningen at all at runtime. If your `Procfile` does not include
-`lein`, then the buildpack will run `lein uberjar`. Then your
-`Procfile` entries should just consist of `java` invocations.
-
-If you have `:main` in `project.clj` and `:gen-class` in your main
-namespace you can just use `java $JVM_OPTS -jar
-target/myproject-standalone.jar`. If you're not using `:main` then you
-can use `clojure.main` as your entry and point it to your app
-using the `-m` argument: `java $JVM_OPTS -cp
-target/myproject-standalone.jar clojure.main -m myproject.web`.
-
-This will reduce the size of your slug since Leiningen will not be
-included. If you need Leiningen in a `heroku run` session, it will be
-downloaded automatically.
-
-Adding `:uberjar-name` to `project.clj` will prevent the uberjar
-filename from changing when your version number changes, which will
-make your Procfile easier to maintain.
+Including Leiningen in your slug will add about ten megabytes to its size.
 
 ## JDK Version
 
