@@ -63,8 +63,8 @@ into production.
 
 ### Uberjar
 
-If your `project.clj` contains an `:uberjar-name` setting, then the
-buildpack will run `lein uberjar`. If you do this, your `Procfile`
+If your `project.clj` contains an `:uberjar-name` setting, then
+`lein uberjar` will run during deploys. If you do this, your `Procfile`
 entries should consist of just `java` invocations.
 
 If your main namespace doesn't have a `:gen-class` then you can use
