@@ -82,19 +82,28 @@ they can cause reloading issues:
   :profiles {:uberjar {:main myproject.web, :aot :all}}
 ```
 
-If you need Leiningen in a `heroku run` session, it will be downloaded on-demand.
+If you need Leiningen in a `heroku run` session, it will be downloaded
+on-demand.
+
+Note that if you use Leiningen features which affect runtime like
+`:jvm-opts`, extraction of native dependencies, or `:java-agents`,
+then you'll need to do a little extra work to ensure your Procfile's
+`java` invocation includes these things. In these cases it might be
+simpler to use Leiningen at runtime instead.
 
 ### Leiningen at Runtime
 
-Another option is to use Leiningen in your Procfile. If you do this,
-be sure to use the `trampoline` and `with-profile` tasks. Trampolining
-will cause Leiningen to calculate the classpath and code to run for
-your project, then exit and execute your project's JVM, while
+Instead of putting a direct `java` invocation into your Procfile, you
+can have Leiningen handle launching your app. If you do this, be sure
+to use the `trampoline` and `with-profile` tasks. Trampolining will
+cause Leiningen to calculate the classpath and code to run for your
+project, then exit and execute your project's JVM, while
 `with-profile` will omit development profiles:
 
     web: lein with-profile production trampoline run -m myapp.web
 
-Including Leiningen in your slug will add about ten megabytes to its size.
+Including Leiningen in your slug will add about ten megabytes to its
+size and will add a second or two of overhead to your app's boot time.
 
 ## JDK Version
 
