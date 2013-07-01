@@ -105,6 +105,12 @@ project, then exit and execute your project's JVM, while
 Including Leiningen in your slug will add about ten megabytes to its
 size and will add a second or two of overhead to your app's boot time.
 
+### Overriding build behavior
+
+If neither of these options get you quite what you need, you can check
+in your own executable `bin/build` script into your app's repo and it
+will be run instead of `compile` or `uberjar` after setting up Leiningen.
+
 ## JDK Version
 
 By default you will get OpenJDK 1.6. To use a different version, you
