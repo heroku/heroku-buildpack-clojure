@@ -6,7 +6,7 @@ This is a Heroku buildpack for Clojure apps. It uses
 Note that you don't have to do anything special to use this buildpack
 with Clojure apps on Heroku; it will be used by default for all
 projects containing a project.clj file, though it may be an older
-revision than current master. 
+revision than what you're currently looking at.
 
 ## Usage
 
@@ -28,7 +28,7 @@ Example usage for an app already stored in git:
     -----> Fetching custom buildpack
     -----> Clojure app detected
     -----> Installing Leiningen
-           Downloading: leiningen-2.0.0-preview10-standalone.jar
+           Downloading: leiningen-2.2.0-standalone.jar
            Writing: lein script
     -----> Building with Leiningen
            Running: with-profile production compile :all
@@ -45,43 +45,71 @@ The buildpack will detect your app as Clojure if it has a
 `project.clj` file in the root. If you use the
 [clojure-maven-plugin](https://github.com/talios/clojure-maven-plugin),
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
-should work instead. Leiningen 1.7.1 will be used by default, but if
-you have `:min-lein-version "2.0.0"` in project.clj then Leiningen 2.x
-will be used instead.
+should work instead.
 
 ## Configuration
 
-By default your project is built by running `lein deps` under
-Leiningen 1.x and `lein compile :all` under Leiningen 2.x. To
-customize this, check in a `bin/build` script into your project and it
-will be run instead of invoking `lein` directly.
+Leiningen 1.7.1 will be used by default, but if you have
+`:min-lein-version "2.0.0"` in project.clj (highly recommended) then
+the latest Leiningen 2.x release will be used instead.
 
-If you are using Leiningen 2.x, it's highly recommended that you use
-the `:production` profile in your `Procfile` and/or `bin/build` to avoid
-having tests and development dependencies on your classpath in
-production.
+Your `Procfile` should declare what process types which make up your
+app. Often in development Leiningen projects are launched using `lein
+run -m my.project.namespace`, but this is not recommended in
+production because it leaves Leiningen running in addition to your
+project's process. It also uses profiles that are intended for
+development, which can let test libraries and test configuration sneak
+into production.
 
-If you don't need to add anything to the `:production` profile then
-you can leave it out and the one from `opt/profiles.clj` in the
-buildpack will be used. If you do need to add something, it's
-recommended you include `:mirrors` for faster dependency resolution
-from S3 for Central:
+### Uberjar
+
+If your `project.clj` contains an `:uberjar-name` setting, then
+`lein uberjar` will run during deploys. If you do this, your `Procfile`
+entries should consist of just `java` invocations.
+
+If your main namespace doesn't have a `:gen-class` then you can use
+`clojure.main` as your entry point and indicate your app's main
+namespace using the `-m` argument in your `Procfile`:
+
+    web: java $JVM_OPTS -cp target/myproject-standalone.jar clojure.main -m myproject.web
+
+If you have custom settings you would like to only apply during build,
+you can place them in an `:uberjar` profile. This can be useful to use
+AOT-compiled classes in production but not during development where
+they can cause reloading issues:
 
 ```clj
-:production {:app-specific "config" ; put your own config here if needed
-             :mirrors {"central" "http://s3pository.herokuapp.com/maven-central"}}
+  :profiles {:uberjar {:main myproject.web, :aot :all}}
 ```
 
-Since Clojars currently mixes snapshots and releases it's currently
-not appropriate to mirror to S3 unless you know for sure you're not
-using any snapshots even transitively.
+If you need Leiningen in a `heroku run` session, it will be downloaded
+on-demand.
 
-You should reduce memory consumption by using the `trampoline` task in
-your Procfile. This will cause Leiningen to calculate the classpath
-and code to run for your project, then exit and execute your project's
-JVM:
+Note that if you use Leiningen features which affect runtime like
+`:jvm-opts`, extraction of native dependencies, or `:java-agents`,
+then you'll need to do a little extra work to ensure your Procfile's
+`java` invocation includes these things. In these cases it might be
+simpler to use Leiningen at runtime instead.
 
-    web: lein with-profile offline,production trampoline run -m myapp.web
+### Leiningen at Runtime
+
+Instead of putting a direct `java` invocation into your Procfile, you
+can have Leiningen handle launching your app. If you do this, be sure
+to use the `trampoline` and `with-profile` tasks. Trampolining will
+cause Leiningen to calculate the classpath and code to run for your
+project, then exit and execute your project's JVM, while
+`with-profile` will omit development profiles:
+
+    web: lein with-profile production trampoline run -m myapp.web
+
+Including Leiningen in your slug will add about ten megabytes to its
+size and will add a second or two of overhead to your app's boot time.
+
+### Overriding build behavior
+
+If neither of these options get you quite what you need, you can check
+in your own executable `bin/build` script into your app's repo and it
+will be run instead of `compile` or `uberjar` after setting up Leiningen.
 
 ## JDK Version
 
@@ -101,24 +129,24 @@ fork, then create a test app with `--buildpack YOUR_GITHUB_URL` and
 push to it. If you already have an existing app you may use
 `heroku config:add BUILDPACK_URL=YOUR_GITHUB_URL` instead.
 
-For example, you could adapt it to generate an uberjar at build time.
+For example, you could adapt it to generate a tarball at build time.
 
 Open `bin/compile` in your editor, and replace the block labeled
-"fetch deps with lein" with something like this:
+"Calculate build command" with something like this:
 
-    echo "-----> Generating uberjar with Leiningen:"
-    echo "       Running: lein uberjar"
+    echo "-----> Generating tar with Leiningen:"
+    echo "       Running: lein tar"
     cd $BUILD_DIR
-    PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein uberjar 2>&1 | sed -u 's/^/       /'
+    PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein tar 2>&1 | sed -u 's/^/       /'
     if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-      echo " !     Failed to create uberjar with Leiningen"
+      echo " !     Failed to create tar with Leiningen"
       exit 1
     fi
 
 Commit and push the changes to your buildpack to your GitHub fork,
 then push your sample app to Heroku to test. The output should include:
 
-    -----> Generating uberjar with Leiningen:
+    -----> Generating tar with Leiningen:
 
 If it's something other users would find useful, pull requests are welcome.
 
