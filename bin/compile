@@ -5,8 +5,8 @@
 set -e
 
 # parse args
-BUILD_DIR=$1
-CACHE_DIR=$2
+export BUILD_DIR=$1
+export CACHE_DIR=$2
 
 # Load common JVM functionality from https://github.com/heroku/heroku-buildpack-jvm-common
 JVM_COMMON_BUILDPACK=https://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz
