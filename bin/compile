@@ -7,6 +7,7 @@ set -e
 # parse args
 export BUILD_DIR=$1
 export CACHE_DIR=$2
+export ENV_DIR=$3
 
 # Load common JVM functionality from https://github.com/heroku/heroku-buildpack-jvm-common
 JVM_COMMON_BUILDPACK=https://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz
@@ -110,6 +111,23 @@ else
 fi
 
 echo "-----> Building with Leiningen"
+
+# extract environment
+if [ -d "$ENV_DIR" ]; then
+    # if BUILD_CONFIG_WHITELIST is set, read it to know which configs to export
+    if [ -r $ENV_DIR/BUILD_CONFIG_WHITELIST ]; then
+        for e in $(cat $ENV_DIR/BUILD_CONFIG_WHITELIST); do
+            export "$e=$(cat $ENV_DIR/$e)"
+        done
+    # otherwise behave like user_env_compile, but with a blacklist
+    else
+        blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+        for e in $(ls $ENV_DIR); do
+            echo "$e" | grep -qvE "$blacklist_regex" && export "$e=$(cat $ENV_DIR/$e)"
+            :
+        done
+    fi
+fi
 
 # Calculate build command
 if [ "$BUILD_COMMAND" = "" ]; then
