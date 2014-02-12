@@ -119,12 +119,12 @@ if [ -d "$ENV_DIR" ]; then
         for e in $(cat $ENV_DIR/BUILD_CONFIG_WHITELIST); do
             export "$e=$(cat $ENV_DIR/$e)"
         done
-    # otherwise behave like user_env_compile, but with a blacklist
+    # otherwise default BUILD_CONFIG_WHITELIST to just private repo creds
     else
-        blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
-        for e in $(ls $ENV_DIR); do
-            echo "$e" | grep -qvE "$blacklist_regex" && export "$e=$(cat $ENV_DIR/$e)"
-            :
+        for e in LEIN_USERNAME LEIN_PASSWORD LEIN_PASSPHRASE; do
+            if [ -r $ENV_DIR/$e ]; then
+                export "$e=$(cat $ENV_DIR/$e)"
+            fi
         done
     fi
 fi
