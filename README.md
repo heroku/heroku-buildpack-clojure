@@ -61,6 +61,18 @@ project's process. It also uses profiles that are intended for
 development, which can let test libraries and test configuration sneak
 into production.
 
+In order to ensure consistent builds, normally values set with `heroku
+config:add ...` (other than `LEIN_USERNAME`, `LEIN_PASSWORD`, and
+`LEIN_PASSPHRASE`) will not be visible at compile time. To expose more
+to the compilation process, set a `BUILD_CONFIG_WHITELIST` config var
+containing a space-delimited list of config var names. Note that this
+can result in unpredictable behaviour since changing your app's config
+does not result in a rebuild of your app. So it's easy to get into a
+situation where your build is broken, but you don't notice it until
+later when you push. For this reason it's recommended to take care
+with this feature and always push after changing a whitelisted config
+value.
+
 ### Uberjar
 
 If your `project.clj` contains an `:uberjar-name` setting, then
