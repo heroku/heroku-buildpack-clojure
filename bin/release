@@ -4,9 +4,6 @@
 cat <<EOF
 ---
 config_vars:
-  PATH: .lein/bin:/usr/local/bin:/usr/bin:/bin
-  JVM_OPTS: -Xmx400m -Dfile.encoding=UTF-8
-  LEIN_NO_DEV: yes
 default_process_types:
   web: lein trampoline run
 EOF
