@@ -160,8 +160,13 @@ echo "export PATH=\"\$HOME/.jdk/bin:$PATH:\$HOME/.lein/bin\"" >> $PROFILE_PATH
 
 # default Procfile
 if [ ! -r $BUILD_DIR/Procfile ]; then
-  echo "       No Procfile; using \"web: lein with-profile production trampoline run\"."
-  echo "web: lein with-profile production trampoline run" > $BUILD_DIR/Procfile
+  if [ "$LEIN_VERSION" = "1.7.1" ]; then
+    echo "       No Procfile; using \"web: lein trampoline run\"."
+    echo "web: lein trampoline run" > $BUILD_DIR/Procfile
+  else
+    echo "       No Procfile; using \"web: lein with-profile production trampoline run\"."
+    echo "web: lein with-profile production trampoline run" > $BUILD_DIR/Procfile
+  fi
 fi
 
 # repack cache with new assets
