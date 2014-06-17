@@ -46,10 +46,11 @@ if [ "$INPUT_CHECKSUM" != "" ] && [ -r "$TRAMPOLINE_FILE" ]; then
 else
     export TRAMPOLINE_FILE
     $LEIN_JAVA_CMD \
-        -client -XX:+TieredCompilation \
+        -XX:+TieredCompilation \
         $LEIN_JVM_OPTS \
         -Dfile.encoding=UTF-8 \
         -Dmaven.wagon.http.ssl.easy=false \
+        -Dmaven.wagon.rto=10000 \
         -Dleiningen.original.pwd="$PWD" \
         -Dleiningen.trampoline-file="$TRAMPOLINE_FILE" \
         -cp "$CLASSPATH" \
