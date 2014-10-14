@@ -10,7 +10,7 @@ export CACHE_DIR=$2
 export ENV_DIR=$3
 
 # Load common JVM functionality from https://github.com/heroku/heroku-buildpack-jvm-common
-JVM_COMMON_BUILDPACK=https://heroku-jvm-common.s3.amazonaws.com/jvm-buildpack-common.tar.gz
+JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v3.tar.gz
 curl --silent --location $JVM_COMMON_BUILDPACK | tar -x bin/java -zO > /tmp/jvm-common
 source /tmp/jvm-common
 
