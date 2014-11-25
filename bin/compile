@@ -10,32 +10,18 @@ export CACHE_DIR=$2
 export ENV_DIR=$3
 
 # Load common JVM functionality from https://github.com/heroku/heroku-buildpack-jvm-common
-JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v3.tar.gz
-curl --silent --location $JVM_COMMON_BUILDPACK | tar -x ./bin/java -zO > /tmp/jvm-common
-source /tmp/jvm-common
-
-# JDK version
-if [ -z "$JAVA_VERSION" ]; then # could be set using user_env_compile
-    if [ -f "${BUILD_DIR}/system.properties" ]; then
-        JAVA_VERSION=$(get_app_system_value ${BUILD_DIR}/system.properties "java.runtime.version")
-    else
-        JAVA_VERSION=$DEFAULT_JDK_VERSION
-    fi
-fi
+JVM_COMMON_BUILDPACK=http://lang-jvm.s3.amazonaws.com/jvm-buildpack-common-v8.tar.gz
+mkdir -p /tmp/jvm-common
+curl --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common
+. /tmp/jvm-common/bin/util
+. /tmp/jvm-common/bin/java
 
 # Install JDK
-if [ "$(is_supported_java_version ${JAVA_VERSION})" = "true" ]; then
-    echo -n "-----> Installing OpenJDK ${JAVA_VERSION}..."
-    install_java ${BUILD_DIR} ${JAVA_VERSION}
-    jdk_overlay ${BUILD_DIR}
-    echo "done"
-else
-    echo " !     Unsupported Java version: $JAVA_VERSION"
-    exit 1
-fi
-
-# Make sure new JDK is visible to Leiningen
-export PATH="$HOME/.jdk/bin:$PATH"
+javaVersion=$(detect_java_version ${BUILD_DIR})
+echo -n "-----> Installing OpenJDK ${javaVersion}..."
+install_java ${BUILD_DIR} ${javaVersion}
+jdk_overlay ${BUILD_DIR}
+echo "done"
 
 # Determine Leiningen version
 if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $BUILD_DIR/project.clj)" != "" ]; then
