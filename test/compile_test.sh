@@ -37,6 +37,7 @@ EOF
 
 testCompileJdk6() {
   _createProject
+  _createSysProps "1.6"
   compile
   assertCapturedSuccess
   assertCaptured "Installing OpenJDK 1.6...done"
@@ -54,7 +55,6 @@ testCompileJdk7() {
 
 testCompileJdk8() {
   _createProject
-  _createSysProps "1.8"
   compile
   assertCapturedSuccess
   assertCaptured "Installing OpenJDK 1.8...done"
