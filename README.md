@@ -1,4 +1,4 @@
-# Heroku buildpack: Clojure
+# Heroku buildpack: Clojure [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-clojure.svg?branch=master)](https://travis-ci.org/heroku/heroku-buildpack-clojure)
 
 This is a Heroku buildpack for Clojure apps. It uses
 [Leiningen](http://leiningen.org).
