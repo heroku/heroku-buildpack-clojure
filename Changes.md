@@ -1,5 +1,9 @@
 # History of Changes
 
+## Version 63
+
+* Upgrade to Leiningen 2.5.0
+
 ## Version 36 - 2012-09-18
 
 * Alias `lein repl` to `lein standalone-repl` to work around firewall issues.
