@@ -1,5 +1,9 @@
 # History of Changes
 
+## Master
+
+* Added support for configuration variables during compile phase
+
 ## Version 63
 
 * Upgrade to Leiningen 2.5.0
