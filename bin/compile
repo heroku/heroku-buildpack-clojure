@@ -27,7 +27,7 @@ echo "done"
 
 # Determine Leiningen version
 if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $BUILD_DIR/project.clj)" != "" ]; then
-  LEIN_VERSION="2.5.0"
+  LEIN_VERSION="2.5.1"
   LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
   if [ "$(grep :uberjar-name $BUILD_DIR/project.clj)" != "" ]; then
       LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
