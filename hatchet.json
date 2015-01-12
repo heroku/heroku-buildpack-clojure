@@ -1,0 +1,8 @@
+{
+  "hatchet": {
+    "directory": "spec/fixtures"
+  },
+  "immutant": [
+    "kissaten/immutant-feature-demo"
+  ]
+}
