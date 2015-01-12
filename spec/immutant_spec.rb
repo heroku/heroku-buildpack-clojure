@@ -7,7 +7,7 @@ describe "Immutant" do
 
   %w{1.8}.each do |version|
     context "on jdk-#{version}" do
-      let(:app) { Hatchet::Runner.new("clojure-minimal") }
+      let(:app) { Hatchet::Runner.new("immutant-feature-demo") }
       let(:jdk_version) { version }
       it "deploys successfully" do
         app.deploy do |app|

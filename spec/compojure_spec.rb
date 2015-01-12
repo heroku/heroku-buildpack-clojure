@@ -7,7 +7,7 @@ describe "Compojure" do
 
   %w{1.8}.each do |version|
     context "on jdk-#{version}" do
-      let(:app) { Hatchet::Runner.new("immutant-feature-demo") }
+      let(:app) { Hatchet::Runner.new("clojure-minimal") }
       let(:jdk_version) { version }
       it "deploy successfully" do
         app.deploy do |app|
