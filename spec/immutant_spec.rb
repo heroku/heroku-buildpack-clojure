@@ -7,12 +7,12 @@ describe "Immutant" do
 
   %w{1.8}.each do |version|
     context "on jdk-#{version}" do
-      let(:app) { Hatchet::Runner.new("immutant-feature-demo") }
+      let(:app) { Hatchet::Runner.new("clojure-minimal") }
       let(:jdk_version) { version }
-      it "deploy successfully" do
+      it "deploys successfully" do
         app.deploy do |app|
           expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-          expect(app.output).to include("Downloading: leiningen-2.5.1-standalone.jar")
+          expect(app.output).to match(/Downloading: leiningen-2.5.[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein uberjar")
           expect(app.output).to include("Compiling demo.core")
           expect(app).to be_deployed

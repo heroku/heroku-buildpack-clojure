@@ -4,5 +4,8 @@
   },
   "immutant": [
     "kissaten/immutant-feature-demo"
+  ],
+  "compojure": [
+    "kissaten/clojure-minimal"
   ]
 }
