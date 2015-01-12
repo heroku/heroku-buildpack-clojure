@@ -2,6 +2,8 @@
 
 ## Master
 
+* Upgrade JVM common package to v11
+* Upgrade to Leiningen 2.5.1
 * Added support for configuration variables during compile phase
 
 ## Version 63
