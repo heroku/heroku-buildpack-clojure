@@ -125,7 +125,7 @@ will be run instead of `compile` or `uberjar` after setting up Leiningen.
 
 ## JDK Version
 
-By default you will get OpenJDK 1.6. To use a different version, you
+By default you will get OpenJDK 1.8. To use a different version, you
 can commit a `system.properties` file to your app.
 
 ```
