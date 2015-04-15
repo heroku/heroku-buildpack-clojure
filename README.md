@@ -1,6 +1,6 @@
 # Heroku buildpack: Clojure [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-clojure.svg?branch=master)](https://travis-ci.org/heroku/heroku-buildpack-clojure)
 
-This is a Heroku buildpack for Clojure apps. It uses
+This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Clojure apps. It uses
 [Leiningen](http://leiningen.org).
 
 Note that you don't have to do anything special to use this buildpack
@@ -8,44 +8,61 @@ with Clojure apps on Heroku; it will be used by default for all
 projects containing a project.clj file, though it may be an older
 revision than what you're currently looking at.
 
-## Usage
-
-Example usage for an app already stored in git:
-
-    $ tree
-    |-- Procfile
-    |-- project.clj
-    |-- README
-    `-- src
-        `-- sample
-            `-- core.clj
-
-    $ heroku create
-
-    $ git push heroku master
-    ...
-    -----> Heroku receiving push
-    -----> Fetching custom buildpack
-    -----> Clojure app detected
-    -----> Installing Leiningen
-           Downloading: leiningen-2.2.0-standalone.jar
-           Writing: lein script
-    -----> Building with Leiningen
-           Running: with-profile production compile :all
-           Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.pom from central
-           Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.jar from central
-           Copying 1 file to /tmp/build_2e5yol0778bcw/lib
-    -----> Discovering process types
-           Procfile declares types -> core
-    -----> Compiled slug size is 10.0MB
-    -----> Launching... done, v4
-           http://gentle-water-8841.herokuapp.com deployed to Heroku
+## How it works
 
 The buildpack will detect your app as Clojure if it has a
 `project.clj` file in the root. If you use the
 [clojure-maven-plugin](https://github.com/talios/clojure-maven-plugin),
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
 should work instead.
+
+## Documentation
+
+For more information about using Clojure and buildpacks on Heroku, see these Dev Center articles:
+
++ [Getting Started with Clojure on Heroku](https://devcenter.heroku.com/articles/getting-started-with-clojure)
++ [Heroku Clojure Support](https://devcenter.heroku.com/articles/clojure-support)
++ [Building a Database-Backed Clojure Web Application](https://devcenter.heroku.com/articles/clojure-web-application)
++ [Database Connection Pooling with Clojure](https://devcenter.heroku.com/articles/database-connection-pooling-with-clojure)
++ [Live-Debugging Remote Clojure Apps with Drawbridge](https://devcenter.heroku.com/articles/debugging-clojure)
++ [WebSockets on Heroku with Clojure and Immutant](https://devcenter.heroku.com/articles/using-websockets-on-heroku-with-clojure-and-immutant)
++ [Queuing in Clojure with Langohr and RabbitMQ](https://devcenter.heroku.com/articles/queuing-in-clojure-with-langohr-and-rabbitmq)
+
+## Usage
+
+Example usage for an app already stored in git:
+
+```sh-session
+$ tree
+|-- Procfile
+|-- project.clj
+|-- README
+`-- src
+    `-- sample
+        `-- core.clj
+
+$ heroku create
+...
+
+$ git push heroku master
+...
+-----> Heroku receiving push
+-----> Fetching custom buildpack
+-----> Clojure app detected
+-----> Installing Leiningen
+       Downloading: leiningen-2.2.0-standalone.jar
+       Writing: lein script
+-----> Building with Leiningen
+       Running: with-profile production compile :all
+       Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.pom from central
+       Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.jar from central
+       Copying 1 file to /tmp/build_2e5yol0778bcw/lib
+-----> Discovering process types
+       Procfile declares types -> core
+-----> Compiled slug size is 10.0MB
+-----> Launching... done, v4
+       http://gentle-water-8841.herokuapp.com deployed to Heroku
+```
 
 ## Configuration
 
@@ -91,7 +108,7 @@ AOT-compiled classes in production but not during development where
 they can cause reloading issues:
 
 ```clj
-  :profiles {:uberjar {:main myproject.web, :aot :all}}
+:profiles {:uberjar {:main myproject.web, :aot :all}}
 ```
 
 If you need Leiningen in a `heroku run` session, it will be downloaded
@@ -128,7 +145,7 @@ will be run instead of `compile` or `uberjar` after setting up Leiningen.
 By default you will get OpenJDK 1.8. To use a different version, you
 can commit a `system.properties` file to your app.
 
-```
+```sh-session
 $ echo "java.runtime.version=1.7" > system.properties
 $ git add system.properties
 $ git commit -m "JDK 7"
@@ -146,14 +163,16 @@ For example, you could adapt it to generate a tarball at build time.
 Open `bin/compile` in your editor, and replace the block labeled
 "Calculate build command" with something like this:
 
-    echo "-----> Generating tar with Leiningen:"
-    echo "       Running: lein tar"
-    cd $BUILD_DIR
-    PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein tar 2>&1 | sed -u 's/^/       /'
-    if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-      echo " !     Failed to create tar with Leiningen"
-      exit 1
-    fi
+```bash
+echo "-----> Generating tar with Leiningen:"
+echo "       Running: lein tar"
+cd $BUILD_DIR
+PATH=.lein/bin:/usr/local/bin:/usr/bin:/bin JAVA_OPTS="-Xmx500m -Duser.home=$BUILD_DIR" lein tar 2>&1 | sed -u 's/^/       /'
+if [ "${PIPESTATUS[*]}" != "0 0" ]; then
+    echo " !     Failed to create tar with Leiningen"
+    exit 1
+fi
+```
 
 Commit and push the changes to your buildpack to your GitHub fork,
 then push your sample app to Heroku to test. The output should include:
