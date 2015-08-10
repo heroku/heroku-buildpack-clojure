@@ -1,6 +1,8 @@
 # Clojure Buildpack Changelog
 
-## Master
+## v68
+
+Upgrade to Leiningen 2.5.2
 
 * Upgrade to Leiningen 2.5.2
 * Moved all binaries to lang-jvm bucket
