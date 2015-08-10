@@ -4,7 +4,7 @@
 export LEIN_VERSION="##LEIN_VERSION##"
 
 LEIN_JAR=".lein/leiningen-$LEIN_VERSION-standalone.jar"
-LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
+LEIN_JAR_URL="https://lang-jvm.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
 
 export LEIN_HOME=${LEIN_HOME:-".lein"}
 export JAVA_CMD=${JAVA_CMD:-"java"}
