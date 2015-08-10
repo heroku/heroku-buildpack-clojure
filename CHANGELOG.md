@@ -1,5 +1,10 @@
 # Clojure Buildpack Changelog
 
+## v69
+
+Fixed a regression in launching applications with `lein`. The old S3 bucket was
+being used instead of the new one.
+
 ## v68
 
 Upgrade to Leiningen 2.5.2
