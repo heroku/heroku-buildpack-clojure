@@ -47,22 +47,24 @@ $ heroku create
 
 $ git push heroku master
 ...
------> Heroku receiving push
------> Fetching custom buildpack
------> Clojure app detected
------> Installing Leiningen
-       Downloading: leiningen-2.2.0-standalone.jar
-       Writing: lein script
------> Building with Leiningen
-       Running: with-profile production compile :all
-       Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.pom from central
-       Downloading: org/clojure/clojure/1.2.1/clojure-1.2.1.jar from central
-       Copying 1 file to /tmp/build_2e5yol0778bcw/lib
------> Discovering process types
-       Procfile declares types -> core
------> Compiled slug size is 10.0MB
------> Launching... done, v4
-       http://gentle-water-8841.herokuapp.com deployed to Heroku
+remote: -----> Fetching custom tar buildpack... done
+remote: -----> Clojure (Leiningen 2) app detected
+remote: -----> Installing OpenJDK 1.8...done
+remote: -----> Installing Leiningen
+remote:        Downloading: leiningen-2.5.2-standalone.jar
+remote:        Writing: lein script
+remote: -----> Building with Leiningen
+remote:        Running: lein uberjar
+remote:        Created /tmp/build_37f1ae84b9f8b63c3ddef2a4b691ef41/target/clojure-getting-started-1.0.0-SNAPSHOT.jar
+remote:        Created /tmp/build_37f1ae84b9f8b63c3ddef2a4b691ef41/target/clojure-getting-started-standalone.jar
+remote: -----> Discovering process types
+remote:        Procfile declares types -> web
+remote:
+remote: -----> Compressing... done, 53.6MB
+remote: -----> Launching... done, v5
+remote:        https://gentle-water-6857.herokuapp.com/ deployed to Heroku
+remote:
+remote: Verifying deploy.... done.
 ```
 
 ## Configuration
