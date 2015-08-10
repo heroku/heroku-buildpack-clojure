@@ -62,7 +62,7 @@ else
 fi
 
 # install leiningen jar
-LEIN_JAR_URL="https://heroku-buildpack-clojure.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
+LEIN_JAR_URL="https://lang-jvm.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
 LEIN_JAR_CACHE_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
 LEIN_JAR_SLUG_PATH="$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
 
@@ -84,7 +84,7 @@ cp "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_SLUG_PATH"
 
 # install rlwrap binary on lein 1.x
 if [ "$RLWRAP" = "yes" ]; then
-  RLWRAP_BIN_URL="https://s3.amazonaws.com/heroku-buildpack-clojure/rlwrap-0.3.7"
+  RLWRAP_BIN_URL="https://lang-jvm.s3.amazonaws.com/rlwrap-0.3.7"
   RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
   echo "       Downloading: rlwrap-0.3.7"
   mkdir -p $(dirname $RLWRAP_BIN_PATH)
