@@ -103,7 +103,7 @@ If your main namespace doesn't have a `:gen-class` then you can use
 `clojure.main` as your entry point and indicate your app's main
 namespace using the `-m` argument in your `Procfile`:
 
-    web: java $JVM_OPTS -cp target/myproject-standalone.jar clojure.main -m myproject.web
+    web: java -cp target/myproject-standalone.jar clojure.main -m myproject.web
 
 If you have custom settings you would like to only apply during build,
 you can place them in an `:uberjar` profile. This can be useful to use
