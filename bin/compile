@@ -158,6 +158,7 @@ PROFILE_PATH="$BUILD_DIR/.profile.d/clojure.sh"
 mkdir -p $(dirname $PROFILE_PATH)
 echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
 echo 'export PATH="$HOME/.jdk/bin:$HOME/.lein/bin:$PATH"' >> $PROFILE_PATH
+echo 'export RING_ENV="${RING_ENV:-production}"' >> $PROFILE_PATH
 
 # default Procfile
 if [ ! -r $BUILD_DIR/Procfile ]; then
