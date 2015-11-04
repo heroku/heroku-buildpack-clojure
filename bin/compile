@@ -9,45 +9,10 @@ export BUILD_DIR=$1
 export CACHE_DIR=$2
 export ENV_DIR=$3
 
-cache_copy() {
-  rel_dir=$1
-  from_dir=$2
-  to_dir=$3
-  rm -rf $to_dir/$rel_dir
-  if [ -d $from_dir/$rel_dir ]; then
-    mkdir -p $to_dir/$rel_dir
-    cp -pr $from_dir/$rel_dir/. $to_dir/$rel_dir
-  fi
-}
-
-# Install node.js
-install_nodejs() {
-  local version="$1"
-  local dir="$2"
-  local os="linux"
-  local cpu="x64"
-
-  echo "Downloading and installing node $version..."
-  local download_url="http://s3pository.heroku.com/node/v$version/node-v$version-$os-$cpu.tar.gz"
-  curl "$download_url" --silent --fail -o /tmp/node.tar.gz || (echo "Unable to download node $version; does it exist?" && false)
-  tar xzf /tmp/node.tar.gz -C /tmp
-  mv /tmp/node-v$version-$os-$cpu $dir
-  chmod +x $dir/bin/*
-}
-
-# Load config vars into environment
-export_env_dir() {
-  env_dir=$1
-  whitelist_regex=${2:-''}
-  blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|JAVA_OPTS)$'}
-  if [ -d "$env_dir" ]; then
-    for e in $(ls $env_dir); do
-      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
-      export "$e=$(cat $env_dir/$e)"
-      :
-    done
-  fi
-}
+BP_DIR=$(cd $(dirname $0)/..; pwd)
+BIN_DIR=$BP_DIR/bin
+LIB_DIR=$BP_DIR/lib
+. $LIB_DIR/common.sh
 
 export_env_dir $ENV_DIR
 
@@ -57,23 +22,10 @@ mkdir -p /tmp/jvm-common
 curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
+install_java_with_overlay ${BUILD_DIR}
 
-# Install JDK
-javaVersion=$(detect_java_version ${BUILD_DIR})
-echo -n "-----> Installing OpenJDK ${javaVersion}..."
-install_java ${BUILD_DIR} ${javaVersion}
-jdk_overlay ${BUILD_DIR}
-echo "done"
-
-# Install Node.js
-if [ ! -d ${BUILD_DIR}/.heroku/nodejs ] && [ "true" != "$SKIP_NODEJS_INSTALL" ]; then
-  if [ "$(grep lein-npm $BUILD_DIR/project.clj)" != "" ] || [ -n "$NODEJS_VERSION"  ]; then
-    nodejsVersion=${NODEJS_VERSION:-4.2.1}
-    echo "-----> Installing Node.js ${nodejsVersion}..."
-    install_nodejs ${nodejsVersion} ${BUILD_DIR}/.heroku/nodejs 2>&1 | sed -u 's/^/       /'
-    PATH=${BUILD_DIR}/.heroku/nodejs/bin:$PATH
-  fi
-fi
+# Install Node.js if needed
+detect_and_install_nodejs ${BUILD_DIR}
 
 # Determine Leiningen version
 if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $BUILD_DIR/project.clj)" != "" ]; then
