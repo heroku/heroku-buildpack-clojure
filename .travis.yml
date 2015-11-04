@@ -2,12 +2,14 @@ language: clojure
 sudo: false
 branches:
   only:
-    - master
+  - master
 before_install:
-  - curl --silent https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar xz -C /tmp/
-  - git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
+- curl --silent https://shunit2.googlecode.com/files/shunit2-2.1.6.tgz | tar xz -C
+  /tmp/
+- git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
 install: true
-script: /tmp/testrunner/bin/run -c .
+script: "/tmp/testrunner/bin/run -c ."
 env:
   global:
-    - SHUNIT_HOME="/tmp/shunit2-2.1.6"
+  - SHUNIT_HOME="/tmp/shunit2-2.1.6"
+  - secure: LOKS+AWNmBQP6LbWLQwgPtZlBCSWO7p+MlBwipk1PMc8VUyOdWk6KvLH5vnB13/4DHk0+wksGUnh6bM+OsEnhArrgB6EaAVlbFrzsLHN5YgT/zF5u/a8eW1+xAYL90Ju9ioblSroFCyPd03oPqwkTZ0svhk6UUaa7WlSq4ym1xI=
