@@ -14,6 +14,7 @@ describe "ClojureScript" do
           expect(app.output).to include("Installing OpenJDK #{jdk_version}")
           expect(app.output).to match(/Downloading: leiningen-2.5.[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein uberjar")
+          sleep 3
           expect(app).to be_deployed
           expect(successful_body(app)).to include('Welcome from ClojureScript')
         end
