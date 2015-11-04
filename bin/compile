@@ -9,6 +9,17 @@ export BUILD_DIR=$1
 export CACHE_DIR=$2
 export ENV_DIR=$3
 
+cache_copy() {
+  rel_dir=$1
+  from_dir=$2
+  to_dir=$3
+  rm -rf $to_dir/$rel_dir
+  if [ -d $from_dir/$rel_dir ]; then
+    mkdir -p $to_dir/$rel_dir
+    cp -pr $from_dir/$rel_dir/. $to_dir/$rel_dir
+  fi
+}
+
 # Install node.js
 install_nodejs() {
   local version="$1"
@@ -56,7 +67,7 @@ echo "done"
 
 # Install Node.js
 if [ ! -d ${BUILD_DIR}/.heroku/nodejs ] && [ "true" != "$SKIP_NODEJS_INSTALL" ]; then
-  if [ "$(grep lein-npm $BUILD_DIR/project.clj)" != "" ] || [ -z "$NODEJS_VERSION"  ]; then
+  if [ "$(grep lein-npm $BUILD_DIR/project.clj)" != "" ] || [ -n "$NODEJS_VERSION"  ]; then
     nodejsVersion=${NODEJS_VERSION:-4.2.1}
     echo "-----> Installing Node.js ${nodejsVersion}..."
     install_nodejs ${nodejsVersion} ${BUILD_DIR}/.heroku/nodejs 2>&1 | sed -u 's/^/       /'
@@ -131,14 +142,10 @@ LEIN_PROFILES_SOURCE="$(dirname $0)/../opt/profiles.clj"
 cp -n $LEIN_PROFILES_SOURCE "$BUILD_DIR/.lein/profiles.clj"
 
 # unpack existing cache
-CACHE_STORE_DIR=$CACHE_DIR"/.m2"
-CACHE_TARGET_DIR=$BUILD_DIR"/.m2"
-rm -rf $CACHE_TARGET_DIR
-if [ -d $CACHE_STORE_DIR ]; then
-  cp -r $CACHE_STORE_DIR $CACHE_TARGET_DIR
-else
-  mkdir -p $CACHE_TARGET_DIR
-fi
+CACHED_DIRS=".m2 node_modules"
+for DIR in $CACHED_DIRS; do
+  cache_copy $DIR $CACHE_DIR $BUILD_DIR
+done
 
 echo "-----> Building with Leiningen"
 
@@ -199,15 +206,16 @@ if [ ! -r $BUILD_DIR/Procfile ]; then
 fi
 
 # repack cache with new assets
-rm -rf $CACHE_STORE_DIR
-mkdir -p $(dirname $CACHE_STORE_DIR)
-cp -r $CACHE_TARGET_DIR $CACHE_STORE_DIR
+mkdir -p $CACHE_DIR
+for DIR in $CACHED_DIRS; do
+  cache_copy $DIR $BUILD_DIR $CACHE_DIR
+done
 
 if [ "$LEIN_INCLUDE_IN_SLUG" = "no" ]; then
     rm "$LEIN_JAR_SLUG_PATH"
-    rm -rf "$CACHE_TARGET_DIR"
+    rm -rf $CACHED_DIRS
 fi
 
 if [ "$LEIN_VERSION" = "1.7.1" ]; then
-    rm -rf "$CACHE_TARGET_DIR"
+    rm -rf $CACHED_DIRS
 fi
