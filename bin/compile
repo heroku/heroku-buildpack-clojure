@@ -96,7 +96,9 @@ cp -n $LEIN_PROFILES_SOURCE "$BUILD_DIR/.lein/profiles.clj"
 # unpack existing cache
 CACHED_DIRS=".m2 node_modules"
 for DIR in $CACHED_DIRS; do
-  cache_copy $DIR $CACHE_DIR $BUILD_DIR
+  if [ ! -d $BUILD_DIR/$DIR ]; then
+    cache_copy $DIR $CACHE_DIR $BUILD_DIR
+  fi
 done
 
 echo "-----> Building with Leiningen"
