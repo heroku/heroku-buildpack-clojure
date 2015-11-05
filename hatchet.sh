@@ -1,5 +1,24 @@
 #!/usr/bin/env bash
 
+if [ -n "`git config --get user.email`" ]; then
+  echo 'already set'; else `git config --global user.email 'buildpack@example.com'`
+fi
+if [ -n "`git config --get user.name`" ]; then
+  echo 'already set'; else `git config --global user.name 'BuildpackTester'`
+fi
+
+cat <<EOF
+EOF > ~/.ssh/config
+Host heroku.com
+    StrictHostKeyChecking no
+    CheckHostIP no
+    UserKnownHostsFile=/dev/null
+Host github.com
+    StrictHostKeyChecking no
+EOF
+
+yes | heroku keys:add
+
 gem install heroku_hatchet
 gem install rspec-retry
 gem install rspec-expectations
