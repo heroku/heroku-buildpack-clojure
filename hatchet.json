@@ -9,6 +9,8 @@
     "kissaten/clojure-minimal"
   ],
   "cljs": [
-    "kissaten/clojurescript-example"
+    "kissaten/clojurescript-example",
+    "kissaten/cljs-nodejs-example",
+    "kissaten/cljs-lein-npm-example"
   ]
 }
