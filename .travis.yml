@@ -8,8 +8,16 @@ before_install:
   /tmp/
 - git clone https://github.com/heroku/heroku-buildpack-testrunner.git /tmp/testrunner
 install: true
-script: "/tmp/testrunner/bin/run -c ."
+script: eval "$TEST_CMD"
+after_script: heroku keys:remove $USER@`hostname`
 env:
   global:
+  - IS_RUNNING_ON_TRAVIS=true
+  - HATCHET_RETRIES=3
+  - HATCHET_DEPLOY_STRATEGY=git
+  - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-clojure.git"
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
   - secure: LOKS+AWNmBQP6LbWLQwgPtZlBCSWO7p+MlBwipk1PMc8VUyOdWk6KvLH5vnB13/4DHk0+wksGUnh6bM+OsEnhArrgB6EaAVlbFrzsLHN5YgT/zF5u/a8eW1+xAYL90Ju9ioblSroFCyPd03oPqwkTZ0svhk6UUaa7WlSq4ym1xI=
+  matrix:
+  - TEST_CMD="/tmp/testrunner/bin/run -c ."
+  - TEST_CMD="sh hatchet.sh"
