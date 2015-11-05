@@ -47,8 +47,8 @@ else
     export LEIN_NO_DEV=y
   fi
   RLWRAP=yes
-  echo "       WARNING: no :min-lein-version found in project.clj; using $LEIN_VERSION."
-  echo "       You probably don't want this!"
+  warning "No :min-lein-version found in project.clj; using $LEIN_VERSION.
+You probably don't want this!"
 fi
 
 # install leiningen jar
