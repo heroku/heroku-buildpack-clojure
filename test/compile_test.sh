@@ -95,7 +95,7 @@ testMinLeinVersion() {
   compile
   assertCapturedSuccess
   assertNotCaptured "WARNING: no :min-lein-version found in project.clj; using 1.7.1."
-  assertCaptured "Downloading: leiningen-2.5.2-standalone.jar"
+  assertCaptured "Downloading: leiningen-2.5.3-standalone.jar"
   assertCaptured "No Procfile; using \"web: lein with-profile production trampoline run\"."
 }
 
