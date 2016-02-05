@@ -12,7 +12,7 @@ describe "Compojure" do
       it "deploy successfully" do
         app.deploy do |app|
           expect(app.output).to include("Installing OpenJDK #{jdk_version}")
-          expect(app.output).to match(/Downloading: leiningen-2.5.[0-9]-standalone.jar/)
+          expect(app.output).to match(/Downloading: leiningen-2.[0-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein uberjar")
           expect(app).to be_deployed
           expect(successful_body(app)).to include('["Hello" :from Heroku]')
