@@ -18,7 +18,7 @@ env:
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-clojure.git"
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
-  - secure: CIfGR0cTq9AimpLfiL1ruj+0Gjh+fy2jrUFd99gmRpZghV5lwN58xGXVDJyscfqw/h4ZWy2NGiiT5szf57H9m/nxWxwDSM7hf8W3RT3lRaam8bMJfmDqpehzith5ra/8ZOvPCKB5fjc+nVFr7hS5w9Qrj045CUzC6NySe2IJFGs=
+  - secure: PbUTXodL344qvV7odDBujiBFH2XQOS6phV0qP/Cfzbnum8oFPEvmwNWUW8hSW1qwUer4EtHm5wgxcIeje97p0AoDYnV6D6BtuPi+YTPtYy1fDJpEAPIK769T3ohNlq4RqVj/GmgQ62d2M19gJtbj5DNFlaLGFyUAMNLNfH6diKA=
   matrix:
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
   - TEST_CMD="sh hatchet.sh"
