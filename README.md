@@ -1,5 +1,5 @@
 # Heroku buildpack: Clojure [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-clojure.svg?branch=master)](https://travis-ci.org/heroku/heroku-buildpack-clojure)
-![clojure](https://cloud.githubusercontent.com/assets/51578/8882795/b87f77b6-3217-11e5-88a4-8f0d3270834d.jpg)
+![clojure](https://cloud.githubusercontent.com/assets/51578/13712844/d37ac78c-e793-11e5-9f0a-d033eb4f6f9f.png)
 
 This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Clojure apps. It uses
 [Leiningen](http://leiningen.org).
