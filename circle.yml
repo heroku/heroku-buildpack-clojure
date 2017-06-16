@@ -1,0 +1,17 @@
+machine:
+  ruby:
+    version: 2.4.0
+  environment:
+    HATCHET_RETRIES: 3
+    HATCHET_DEPLOY_STRATEGY: git
+    HATCHET_APP_LIMIT: 10
+    SHUNIT_HOME: /tmp/shunit2-2.1.6
+
+test:
+  pre:
+    - bash etc/ci-setup.sh
+  override:
+    - bash etc/hatchet-test.sh
+    - /tmp/testrunner/bin/run -c .
+  post:
+    - heroku keys:remove $USER@`hostname`

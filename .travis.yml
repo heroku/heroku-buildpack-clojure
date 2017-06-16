@@ -4,7 +4,7 @@ sudo: true
 branches:
   only:
   - master
-before_install: bash etc/travis-setup.sh
+before_install: bash etc/ci-setup.sh
 install: true
 script: eval "$TEST_CMD"
 after_script: heroku keys:remove $USER@`hostname`
@@ -15,7 +15,6 @@ env:
   - HATCHET_DEPLOY_STRATEGY=git
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-clojure.git"
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
-  - secure: rEuSa4bLpl/tt+kCRIwyDNz9V6u0APfr6bBLXehS1Wv699+F9Rw23hD3GEihGtDrCRcg4tiNUQjmuFjd60hQIl9oaH6f4RqLv6AwdAZJgXV+5NnYck8Eu8IQxYNfh0B6T5p2nMywzGHV3t6/QhyBkDc854TIAznhARo+jlekyrw=
   matrix:
   - TEST_CMD="/tmp/testrunner/bin/run -c ."
-  - TEST_CMD="sh hatchet.sh"
+  - TEST_CMD="bash etc/hatchet-test.sh"
