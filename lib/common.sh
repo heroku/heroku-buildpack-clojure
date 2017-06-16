@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export BUILDPACK_STDLIB_URL="https://lang-common.s3.amazonaws.com/buildpack-stdlib/v7/stdlib.sh"
+
 cache_copy() {
   rel_dir=$1
   from_dir=$2
@@ -38,16 +40,19 @@ detect_and_install_nodejs() {
   fi
 }
 
-# Load config vars into environment
-export_env_dir() {
-  env_dir=$1
-  whitelist_regex=${2:-''}
-  blacklist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|JAVA_OPTS)$'}
-  if [ -d "$env_dir" ]; then
-    for e in $(ls $env_dir); do
-      echo "$e" | grep -E "$whitelist_regex" | grep -qvE "$blacklist_regex" &&
-      export "$e=$(cat $env_dir/$e)"
-      :
-    done
-  fi
+install_jdk() {
+  local install_dir=${1}
+
+  let start=$(nowms)
+  JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz}
+  mkdir -p /tmp/jvm-common
+  curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+  source /tmp/jvm-common/bin/util
+  source /tmp/jvm-common/bin/java
+  source /tmp/jvm-common/opt/jdbc.sh
+  mtime "jvm-common.install.time" "${start}"
+
+  let start=$(nowms)
+  install_java_with_overlay ${install_dir}
+  mtime "jvm.install.time" "${start}"
 }

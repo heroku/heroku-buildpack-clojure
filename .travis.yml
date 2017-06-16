@@ -1,4 +1,5 @@
 language: clojure
+dist: trusty
 sudo: true
 branches:
   only:
