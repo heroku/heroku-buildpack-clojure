@@ -14,4 +14,4 @@ test:
     - bash etc/hatchet-test.sh
     - /tmp/testrunner/bin/run -c .
   post:
-    - heroku keys:remove $USER@`hostname`
+    - heroku keys:remove $USER@`hostname | sed -e "s/\.localdomain//g"`
