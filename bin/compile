@@ -4,6 +4,8 @@
 # fail fast
 set -e
 
+BPLOG_PREFIX="buildpack.clojure"
+
 # parse args
 export BUILD_DIR=$1
 export CACHE_DIR=$2
@@ -12,17 +14,14 @@ export ENV_DIR=$3
 BP_DIR=$(cd $(dirname $0)/..; pwd)
 BIN_DIR=$BP_DIR/bin
 LIB_DIR=$BP_DIR/lib
-. $LIB_DIR/common.sh
 
-export_env_dir $ENV_DIR
+source $LIB_DIR/common.sh
+source <(curl --retry 3 -fsSL $BUILDPACK_STDLIB_URL)
 
-# Load common JVM functionality from https://github.com/heroku/heroku-buildpack-jvm-common
-JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz}
-mkdir -p /tmp/jvm-common
-curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
-. /tmp/jvm-common/bin/util
-. /tmp/jvm-common/bin/java
-install_java_with_overlay ${BUILD_DIR}
+export_env $ENV_DIR "." "JAVA_OPTS"
+
+# Install JDK from jvm-common
+install_jdk ${BUILD_DIR}
 
 # Install Node.js if needed
 detect_and_install_nodejs ${BUILD_DIR}
