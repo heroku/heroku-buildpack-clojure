@@ -11,12 +11,3 @@ curl -o $LEIN_FILE --location https://github.com/technomancy/leiningen/releases/
 echo "---> Uploading leiningen-$LEIN_VERSION-standalone.jar to S3"
 aws s3 cp $LEIN_FILE s3://lang-jvm --profile lang-jvm --acl public-read
 rm $LEIN_FILE
-
-echo "---> Updating scripts..."
-CUR_VERSION="$(grep "LEIN_VERSION=\"2" bin/compile | sed -E -e 's/LEIN_VERSION=//g' | sed 's/[" ]//g')"
-sed -e s/${CUR_VERSION}/${LEIN_VERSION}/g bin/compile > bin/compile.tmp
-mv bin/compile.tmp bin/compile
-chmod +x bin/compile
-
-echo "---> WARNING: Update test files manually!"
-grep -nr "$CUR_VERSION" .
