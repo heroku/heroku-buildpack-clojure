@@ -26,69 +26,71 @@ install_jdk ${BUILD_DIR}
 # Install Node.js if needed
 detect_and_install_nodejs ${BUILD_DIR}
 
-# Determine Leiningen version
-if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $BUILD_DIR/project.clj)" != "" ]; then
-  LEIN_VERSION="${LEIN_VERSION:-2.7.1}"
-  LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
-  if [ "$(grep :uberjar-name $BUILD_DIR/project.clj)" != "" ]; then
-      LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
-      LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
-  elif [ "$(grep lein-npm $BUILD_DIR/project.clj)" != "" ]; then
-      LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production do deps, compile :all"}
+# Check for vendored lein script
+if [ -x $BUILD_DIR/bin/lein ]; then
+  echo "-----> Using vendored Leiningen at bin/lein"
+  LEIN_BIN_PATH="$BUILD_DIR/bin/lein"
+  calculate_lein_build_task $BUILD_DIR
+  $LEIN_BIN_PATH version 2>/dev/null | sed -u 's/^/       /'
+else
+  # Determine Leiningen version
+  if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $BUILD_DIR/project.clj)" != "" ]; then
+    LEIN_VERSION="2.7.1"
+    LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
+    calculate_lein_build_task $BUILD_DIR
   else
-      LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production compile :all"}
+    LEIN_VERSION="1.7.1"
+    LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein1"
+    LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"deps"}
+    if [ "$LEIN_DEV" = "" ]; then
+      export LEIN_NO_DEV=y
+    fi
+    RLWRAP=yes
+    warning "No :min-lein-version found in project.clj; using $LEIN_VERSION.
+  You probably don't want this!"
   fi
-else
-  LEIN_VERSION="1.7.1"
-  LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein1"
-  LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"deps"}
-  if [ "$LEIN_DEV" = "" ]; then
-    export LEIN_NO_DEV=y
+
+  # install leiningen jar
+  LEIN_JAR_URL="https://lang-jvm.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
+  LEIN_JAR_CACHE_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
+  LEIN_JAR_SLUG_PATH="$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
+
+  if [ ! -r "$LEIN_JAR_CACHE_PATH" ]; then
+    echo "-----> Installing Leiningen"
+    echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
+    mkdir -p $(dirname $LEIN_JAR_CACHE_PATH)
+    curl --retry 3 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
+  else
+    echo "-----> Using cached Leiningen $LEIN_VERSION"
   fi
-  RLWRAP=yes
-  warning "No :min-lein-version found in project.clj; using $LEIN_VERSION.
-You probably don't want this!"
+
+  if [ "$LEIN_VERSION" = "1.7.1" ]; then
+    echo "       To use Leiningen 2.x, add this to project.clj: :min-lein-version \"2.0.0\""
+  fi
+
+  mkdir -p "$BUILD_DIR/.lein"
+  cp "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_SLUG_PATH"
+
+  # install rlwrap binary on lein 1.x
+  if [ "$RLWRAP" = "yes" ]; then
+    RLWRAP_BIN_URL="https://lang-jvm.s3.amazonaws.com/rlwrap-0.3.7"
+    RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
+    echo "       Downloading: rlwrap-0.3.7"
+    mkdir -p $(dirname $RLWRAP_BIN_PATH)
+    curl --retry 3 --silent --show-error --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
+    chmod +x $RLWRAP_BIN_PATH
+  fi
+
+  # install lein script
+  LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
+  echo "       Writing: lein script"
+  mkdir -p $(dirname $LEIN_BIN_PATH)
+  cp $LEIN_BIN_SOURCE $LEIN_BIN_PATH
+  sed -i s/##LEIN_VERSION##/$LEIN_VERSION/ $LEIN_BIN_PATH
 fi
-
-# install leiningen jar
-LEIN_JAR_URL="https://lang-jvm.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
-LEIN_JAR_CACHE_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
-LEIN_JAR_SLUG_PATH="$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
-
-if [ ! -r "$LEIN_JAR_CACHE_PATH" ]; then
-  echo "-----> Installing Leiningen"
-  echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
-  mkdir -p $(dirname $LEIN_JAR_CACHE_PATH)
-  curl --retry 3 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
-else
-  echo "-----> Using cached Leiningen $LEIN_VERSION"
-fi
-
-if [ "$LEIN_VERSION" = "1.7.1" ]; then
-  echo "       To use Leiningen 2.x, add this to project.clj: :min-lein-version \"2.0.0\""
-fi
-
-mkdir -p "$BUILD_DIR/.lein"
-cp "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_SLUG_PATH"
-
-# install rlwrap binary on lein 1.x
-if [ "$RLWRAP" = "yes" ]; then
-  RLWRAP_BIN_URL="https://lang-jvm.s3.amazonaws.com/rlwrap-0.3.7"
-  RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
-  echo "       Downloading: rlwrap-0.3.7"
-  mkdir -p $(dirname $RLWRAP_BIN_PATH)
-  curl --retry 3 --silent --show-error --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
-  chmod +x $RLWRAP_BIN_PATH
-fi
-
-# install lein script
-LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
-echo "       Writing: lein script"
-mkdir -p $(dirname $LEIN_BIN_PATH)
-cp $LEIN_BIN_SOURCE $LEIN_BIN_PATH
-sed -i s/##LEIN_VERSION##/$LEIN_VERSION/ $LEIN_BIN_PATH
 
 # create user-level profiles
+mkdir -p $BUILD_DIR/.lein
 LEIN_PROFILES_SOURCE="$(dirname $0)/../opt/profiles.clj"
 cp -n $LEIN_PROFILES_SOURCE "$BUILD_DIR/.lein/profiles.clj"
 
@@ -132,7 +134,7 @@ fi
 echo "       Running: $BUILD_COMMAND"
 
 cd $BUILD_DIR
-PATH=.lein/bin:$PATH JVM_OPTS="-Xmx600m" \
+PATH=$(dirname $LEIN_BIN_PATH):$PATH JVM_OPTS="-Xmx600m" \
   LEIN_JVM_OPTS="-Xmx400m -Duser.home=$BUILD_DIR" \
   $BUILD_COMMAND 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
@@ -165,7 +167,7 @@ for DIR in $CACHED_DIRS; do
 done
 
 if [ "$LEIN_INCLUDE_IN_SLUG" = "no" ]; then
-    rm "$LEIN_JAR_SLUG_PATH"
+    rm -f "$LEIN_JAR_SLUG_PATH"
     rm -rf $CACHED_DIRS
 fi
 

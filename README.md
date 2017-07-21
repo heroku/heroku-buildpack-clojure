@@ -143,6 +143,12 @@ If neither of these options get you quite what you need, you can check
 in your own executable `bin/build` script into your app's repo and it
 will be run instead of `compile` or `uberjar` after setting up Leiningen.
 
+## Leiningen Version
+
+The buildpack will check for a `bin/lein` script in the repo, and run it instead
+of the default `lein` command. This allows you to control the exact version of
+Leiningen used to build the app.
+
 ## JDK Version
 
 By default you will get OpenJDK 1.8. To use a different version, you
