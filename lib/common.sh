@@ -27,14 +27,27 @@ cache_copy() {
 
 # Install node.js
 install_nodejs() {
-  local version="$1"
-  local dir="$2"
+  local version="${1:?}"
+  local dir="${2:?}"
   local os="linux"
   local cpu="x64"
+  local platform="$os-$cpu"
+
+  echo "Resolving node version $version..."
+  if ! read number url < <(curl --silent --get --retry 5 --retry-max-time 15 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt"); then
+    local error=$(curl --silent --get --retry 5 --retry-max-time 15 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt")
+    if [[ $error = "No result" ]]; then
+      echo "Could not find Node version corresponding to version requirement: $version";
+    else
+      echo "Error: Invalid semantic version \"$version\""
+    fi
+  fi
 
   echo "Downloading and installing node $version..."
-  local download_url="https://s3pository.heroku.com/node/v$version/node-v$version-$os-$cpu.tar.gz"
-  curl "$download_url" --silent --show-error --fail -o /tmp/node.tar.gz || (echo "Unable to download node $version; does it exist?" && false)
+  local code=$(curl "$url" -L --silent --fail --retry 5 --retry-max-time 15 -o /tmp/node.tar.gz --write-out "%{http_code}")
+  if [ "$code" != "200" ]; then
+    echo "Unable to download node: $code" && false
+  fi
   tar xzf /tmp/node.tar.gz -C /tmp
   mv /tmp/node-v$version-$os-$cpu $dir
   chmod +x $dir/bin/*
