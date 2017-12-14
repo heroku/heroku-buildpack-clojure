@@ -11,7 +11,7 @@ describe "ClojureScript" do
       let(:jdk_version) { version }
       it "deploy successfully" do
         app.deploy do |app|
-          expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+          expect(app.output).to include("Installing JDK #{jdk_version}")
           expect(app.output).to match(/Downloading: leiningen-2.[5-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein uberjar")
           sleep 3
@@ -28,7 +28,7 @@ describe "ClojureScript" do
       let(:jdk_version) { version }
       it "deploy successfully" do
         app.deploy do |app|
-          expect(app.output).to include("Installing OpenJDK #{jdk_version}")
+          expect(app.output).to include("Installing JDK #{jdk_version}")
           expect(app.output).to match(/Downloading: leiningen-2.[5-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein with-profile production do deps, compile :all")
           sleep 3
