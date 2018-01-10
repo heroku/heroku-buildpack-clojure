@@ -1,16 +1,20 @@
 # Clojure Buildpack Changelog
 
+## v78
+
+* Use nodebin to download Node.js instead of s3pository
+
 ## v75
 
-Upgraded to Leiningen 2.6.1
+* Upgraded to Leiningen 2.6.1
 
 ## v74
 
-Upgraded to Leiningen 2.6.0
+* Upgraded to Leiningen 2.6.0
 
 ## v69
 
-Fixed a regression in launching applications with `lein`. The old S3 bucket was
+* Fixed a regression in launching applications with `lein`. The old S3 bucket was
 being used instead of the new one.
 
 ## v68
