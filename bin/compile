@@ -16,6 +16,7 @@ BIN_DIR=$BP_DIR/bin
 LIB_DIR=$BP_DIR/lib
 
 source $LIB_DIR/common.sh
+source $LIB_DIR/lein.sh
 source <(curl --retry 3 -fsSL $BUILDPACK_STDLIB_URL)
 
 export_env $ENV_DIR "." "JAVA_OPTS"
@@ -34,7 +35,7 @@ if [ -x $BUILD_DIR/bin/lein ]; then
   $LEIN_BIN_PATH version 2>/dev/null | sed -u 's/^/       /'
 else
   # Determine Leiningen version
-  if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $BUILD_DIR/project.clj)" != "" ]; then
+  if is_lein_2 $BUILD_DIR; then
     LEIN_VERSION="2.7.1"
     LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
     calculate_lein_build_task $BUILD_DIR
@@ -148,17 +149,6 @@ mkdir -p $(dirname $PROFILE_PATH)
 echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
 echo 'export PATH="$HOME/.heroku/nodejs/bin:$HOME/.jdk/bin:$HOME/.lein/bin:$PATH"' >> $PROFILE_PATH
 echo 'export RING_ENV="${RING_ENV:-production}"' >> $PROFILE_PATH
-
-# default Procfile
-if [ ! -r $BUILD_DIR/Procfile ]; then
-  if [ "$LEIN_VERSION" = "1.7.1" ]; then
-    echo "       No Procfile; using \"web: lein trampoline run\"."
-    echo "web: lein trampoline run" > $BUILD_DIR/Procfile
-  else
-    echo "       No Procfile; using \"web: lein with-profile production trampoline run\"."
-    echo "web: lein with-profile production trampoline run" > $BUILD_DIR/Procfile
-  fi
-fi
 
 # repack cache with new assets
 mkdir -p $CACHE_DIR
