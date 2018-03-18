@@ -86,7 +86,6 @@ testCompileJdk8() {
   assertCaptured "No :min-lein-version found in project.clj; using 1.7.1."
   assertCaptured "To use Leiningen 2.x, add this to project.clj: :min-lein-version \"2.0.0\""
   assertCaptured "Downloading: leiningen-1.7.1-standalone.jar"
-  assertCaptured "No Procfile; using \"web: lein trampoline run\"."
 }
 
 testMinLeinVersion() {
@@ -96,7 +95,6 @@ testMinLeinVersion() {
   assertCapturedSuccess
   assertNotCaptured "WARNING: no :min-lein-version found in project.clj; using 1.7.1."
   assertCaptured "Downloading: leiningen-2.7.1-standalone.jar"
-  assertCaptured "No Procfile; using \"web: lein with-profile production trampoline run\"."
 }
 
 testUberJar() {
