@@ -2,15 +2,24 @@
 
 set -e
 
-BP_VERSION=${1:?}
-BP_NAME=${2:-"heroku/clojure"}
+BP_NAME=${1:-"heroku/clojure"}
+
+curVersion=$(heroku buildpacks:versions $BP_NAME | awk 'FNR == 3 { print $1 }')
+newVersion="v$((curVersion + 1))"
+
+read -p "Deploy as version: $newVersion [y/n]? " choice
+case "$choice" in
+  y|Y ) echo "";;
+  n|N ) exit 0;;
+  * ) exit 1;;
+esac
 
 originMaster=$(git rev-parse origin/master)
-echo "Tagging commit $originMaster with $BP_VERSION... "
-git tag $BP_VERSION ${originMaster:?}
-git push --tags
+echo "Tagging commit $originMaster with $newVersion... "
+git tag $newVersion ${originMaster:?}
+git push origin refs/tags/$newVersion
 
-heroku buildpacks:publish $BP_NAME $BP_VERSION
+heroku buildpacks:publish $BP_NAME $newVersion
 
 echo "Updating previous-version tag"
 git tag -d previous-version
