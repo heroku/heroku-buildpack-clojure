@@ -1,5 +1,9 @@
 # Clojure Buildpack Changelog
 
+## master
+
+* Update jvm-common URL to use buildpack-registry
+
 ## v78
 
 * Use nodebin to download Node.js instead of s3pository
