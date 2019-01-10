@@ -27,6 +27,26 @@ install_jdk ${BUILD_DIR}
 # Install Node.js if needed
 detect_and_install_nodejs ${BUILD_DIR}
 
+# install rlwrap binary, always needed for clj command, and also on old lein 1.x
+RLWRAP_BIN_URL="https://lang-jvm.s3.amazonaws.com/rlwrap-0.3.7"
+RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
+echo "       Downloading: rlwrap-0.3.7"
+mkdir -p $(dirname $RLWRAP_BIN_PATH)
+curl --retry 3 --silent --show-error --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
+chmod +x $RLWRAP_BIN_PATH
+export PATH=$BUILD_DIR"/.lein/bin":$PATH
+
+# Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
+echo "-----> Installing clojure 1.10.0.411 for availability of cli tools"
+CLOJURE_INSTALL_NAME="linux-install-1.10.0.411.sh"
+CLOJURE_INSTALL_URL="https://download.clojure.org/install/"$CLOJURE_INSTALL_NAME
+curl --retry 3 --silent --show-error --max-time 60 -O $CLOJURE_INSTALL_URL
+chmod +x $CLOJURE_INSTALL_NAME
+"./"$CLOJURE_INSTALL_NAME --prefix $BUILD_DIR | sed -u 's/^/       /'
+rm $CLOJURE_INSTALL_NAME
+export PATH=$BUILD_DIR"/bin":$PATH
+export CLJ_CACHE=$CACHE_DIR"/clojure"
+
 # Check for vendored lein script
 if [ -x $BUILD_DIR/bin/lein ]; then
   echo "-----> Using vendored Leiningen at bin/lein"
@@ -71,16 +91,6 @@ else
 
   mkdir -p "$BUILD_DIR/.lein"
   cp "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_SLUG_PATH"
-
-  # install rlwrap binary on lein 1.x
-  if [ "$RLWRAP" = "yes" ]; then
-    RLWRAP_BIN_URL="https://lang-jvm.s3.amazonaws.com/rlwrap-0.3.7"
-    RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
-    echo "       Downloading: rlwrap-0.3.7"
-    mkdir -p $(dirname $RLWRAP_BIN_PATH)
-    curl --retry 3 --silent --show-error --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
-    chmod +x $RLWRAP_BIN_PATH
-  fi
 
   # install lein script
   LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
