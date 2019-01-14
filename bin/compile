@@ -28,13 +28,7 @@ install_jdk ${BUILD_DIR}
 detect_and_install_nodejs ${BUILD_DIR}
 
 # install rlwrap binary, always needed for clj command, and also on old lein 1.x
-RLWRAP_BIN_URL="https://lang-jvm.s3.amazonaws.com/rlwrap-0.3.7"
-RLWRAP_BIN_PATH=$BUILD_DIR"/.lein/bin/rlwrap"
-echo "       Downloading: rlwrap-0.3.7"
-mkdir -p $(dirname $RLWRAP_BIN_PATH)
-curl --retry 3 --silent --show-error --max-time 60 -L -o $RLWRAP_BIN_PATH $RLWRAP_BIN_URL
-chmod +x $RLWRAP_BIN_PATH
-export PATH=$BUILD_DIR"/.lein/bin":$PATH
+install_rlwrap "${BUILD_DIR}" "${CACHE_DIR}"
 
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
 CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
@@ -45,8 +39,8 @@ curl --retry 3 -sfL --max-time 60 -o "/tmp/$CLOJURE_INSTALL_NAME" "$CLOJURE_INST
 chmod +x /tmp/$CLOJURE_INSTALL_NAME
 mkdir -p $BUILD_DIR/.heroku/clj
 "/tmp/$CLOJURE_INSTALL_NAME" --prefix $BUILD_DIR/.heroku/clj 2>/dev/null | sed -u 's/^/       /'
-export PATH="$BUILD_DIR/.heroku/clj/bin":$PATH
-export CLJ_CACHE=$CACHE_DIR"/clojure"
+chmod +x $BUILD_DIR/.heroku/clj/bin/*
+export PATH=$BUILD_DIR/.heroku/clj/bin:$PATH
 
 # Check for vendored lein script
 if [ -x $BUILD_DIR/bin/lein ]; then
@@ -167,6 +161,11 @@ mkdir -p $(dirname $PROFILE_PATH)
 echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
 echo 'export PATH="$HOME/.heroku/nodejs/bin:$HOME/.heroku/clj/bin:$HOME/.jdk/bin:$HOME/.lein/bin:$PATH"' >> $PROFILE_PATH
 echo 'export RING_ENV="${RING_ENV:-production}"' >> $PROFILE_PATH
+
+# rewrite Clojure CLI path
+mv $BUILD_DIR/.heroku/clj/bin/clojure $BUILD_DIR/.heroku/clj/bin/clojure.old
+cat $BUILD_DIR/.heroku/clj/bin/clojure.old | sed -e "s/\/tmp\/$(basename $BUILD_DIR)/\/app/g" > $BUILD_DIR/.heroku/clj/bin/clojure
+chmod +x $BUILD_DIR/.heroku/clj/bin/clojure
 
 # repack cache with new assets
 mkdir -p $CACHE_DIR
