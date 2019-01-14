@@ -37,14 +37,15 @@ chmod +x $RLWRAP_BIN_PATH
 export PATH=$BUILD_DIR"/.lein/bin":$PATH
 
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
-echo "-----> Installing clojure 1.10.0.411 for availability of cli tools"
-CLOJURE_INSTALL_NAME="linux-install-1.10.0.411.sh"
-CLOJURE_INSTALL_URL="https://download.clojure.org/install/"$CLOJURE_INSTALL_NAME
-curl --retry 3 --silent --show-error --max-time 60 -O $CLOJURE_INSTALL_URL
-chmod +x $CLOJURE_INSTALL_NAME
-"./"$CLOJURE_INSTALL_NAME --prefix $BUILD_DIR | sed -u 's/^/       /'
-rm $CLOJURE_INSTALL_NAME
-export PATH=$BUILD_DIR"/bin":$PATH
+CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
+echo "-----> Installing Clojure $CLOJURE_CLI_VERSION CLI tools"
+CLOJURE_INSTALL_NAME="linux-install-${CLOJURE_CLI_VERSION}.sh"
+CLOJURE_INSTALL_URL="https://download.clojure.org/install/$CLOJURE_INSTALL_NAME"
+curl --retry 3 -sfL --max-time 60 -o "/tmp/$CLOJURE_INSTALL_NAME" "$CLOJURE_INSTALL_URL"
+chmod +x /tmp/$CLOJURE_INSTALL_NAME
+mkdir -p $BUILD_DIR/.heroku/clj
+"/tmp/$CLOJURE_INSTALL_NAME" --prefix $BUILD_DIR/.heroku/clj 2>/dev/null | sed -u 's/^/       /'
+export PATH="$BUILD_DIR/.heroku/clj/bin":$PATH
 export CLJ_CACHE=$CACHE_DIR"/clojure"
 
 # Check for vendored lein script
@@ -85,7 +86,7 @@ else
 
   if [ ! -r "$LEIN_JAR_CACHE_PATH" ]; then
     echo "-----> Installing Leiningen"
-    echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
+    echo "       Downloading: leiningen-$LEIN_VERSION-standalone"
     mkdir -p $(dirname $LEIN_JAR_CACHE_PATH)
     curl --retry 3 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
   else
@@ -164,7 +165,7 @@ fi
 PROFILE_PATH="$BUILD_DIR/.profile.d/clojure.sh"
 mkdir -p $(dirname $PROFILE_PATH)
 echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
-echo 'export PATH="$HOME/.heroku/nodejs/bin:$HOME/.jdk/bin:$HOME/.lein/bin:$PATH"' >> $PROFILE_PATH
+echo 'export PATH="$HOME/.heroku/nodejs/bin:$HOME/.heroku/clj/bin:$HOME/.jdk/bin:$HOME/.lein/bin:$PATH"' >> $PROFILE_PATH
 echo 'export RING_ENV="${RING_ENV:-production}"' >> $PROFILE_PATH
 
 # repack cache with new assets
