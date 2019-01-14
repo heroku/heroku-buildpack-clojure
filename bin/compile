@@ -80,7 +80,7 @@ else
 
   if [ ! -r "$LEIN_JAR_CACHE_PATH" ]; then
     echo "-----> Installing Leiningen"
-    echo "       Downloading: leiningen-$LEIN_VERSION-standalone"
+    echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
     mkdir -p $(dirname $LEIN_JAR_CACHE_PATH)
     curl --retry 3 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
   else
