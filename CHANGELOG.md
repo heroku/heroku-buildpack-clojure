@@ -2,6 +2,12 @@
 
 ## master
 
+* Update default lein to 2.8.3
+* Install rlwrap from apt package
+* Install clj CLI tools
+
+## v79
+
 * Update jvm-common URL to use buildpack-registry
 
 ## v78
