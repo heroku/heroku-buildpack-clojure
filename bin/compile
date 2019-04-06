@@ -42,6 +42,9 @@ mkdir -p $BUILD_DIR/.heroku/clj
 chmod +x $BUILD_DIR/.heroku/clj/bin/*
 export PATH=$BUILD_DIR/.heroku/clj/bin:$PATH
 
+# Start ssh agent (newer cli tools use it to access private repositories)
+eval "$(ssh-agent -s)"
+
 # Check for vendored lein script
 if [ -x $BUILD_DIR/bin/lein ]; then
   echo "-----> Using vendored Leiningen at bin/lein"
