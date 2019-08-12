@@ -2,6 +2,10 @@
 
 ## master
 
+* Update default lein to 2.9.1
+
+## v83
+
 * Update default lein to 2.8.3
 * Install rlwrap from apt package
 * Install clj CLI tools
