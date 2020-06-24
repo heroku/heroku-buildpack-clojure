@@ -1,6 +1,10 @@
 # Clojure Buildpack Changelog
 
-## master
+## v85
+
+* Rename `BUILD_CONFIG_WHITELIST` to `BUILD_CONFIG_ALLOWLIST`
+
+## v84
 
 * Update default lein to 2.9.1
 

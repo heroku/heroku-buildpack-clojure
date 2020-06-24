@@ -19,5 +19,5 @@ env:
   - HATCHET_BUILDPACK_BASE="https://github.com/heroku/heroku-buildpack-clojure.git"
   - SHUNIT_HOME="/tmp/shunit2-2.1.6"
   matrix:
-  - TEST_CMD="/tmp/testrunner/bin/run -c ."
+  - TEST_CMD="/tmp/testrunner/bin/run ."
   - TEST_CMD="bash etc/hatchet-test.sh"
