@@ -118,20 +118,23 @@ done
 echo "-----> Building with Leiningen"
 
 # extract environment
-if [ -d "$ENV_DIR" ]; then
-    # if BUILD_CONFIG_WHITELIST is set, read it to know which configs to export
-    if [ -r $ENV_DIR/BUILD_CONFIG_WHITELIST ]; then
-        for e in $(cat $ENV_DIR/BUILD_CONFIG_WHITELIST); do
-            export "$e=$(cat $ENV_DIR/$e)"
-        done
-    # otherwise default BUILD_CONFIG_WHITELIST to just private repo creds
-    else
-        for e in LEIN_USERNAME LEIN_PASSWORD LEIN_PASSPHRASE; do
-            if [ -r $ENV_DIR/$e ]; then
-                export "$e=$(cat $ENV_DIR/$e)"
-            fi
-        done
-    fi
+if [ -d "${ENV_DIR}" ]; then
+  # Be default, only export private repo credentials
+  config_vars="LEIN_USERNAME LEIN_PASSWORD LEIN_PASSPHRASE"
+
+  if [ -r "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST" ]; then
+    config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST")
+
+  # Backwards compatibility for legacy configuration
+  elif [ -r "${ENV_DIR}/BUILD_CONFIG_WHITELIST" ]; then
+    config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_WHITELIST")
+  fi
+
+  for config_var in $config_vars; do
+      if [ -r "${ENV_DIR}/${config_var}" ]; then
+          export "${config_var}=$(cat "${ENV_DIR}/${config_var}")"
+      fi
+  done
 fi
 
 # Calculate build command
