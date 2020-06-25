@@ -8,6 +8,7 @@ before_install:
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
   - sudo apt-get update
   - bash etc/ci-setup.sh
+  - gem update --system
 install: true
 script: eval "$TEST_CMD"
 after_script: heroku keys:remove $USER@`hostname`
