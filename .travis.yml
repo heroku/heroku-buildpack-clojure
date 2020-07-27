@@ -3,7 +3,7 @@ dist: xenial
 sudo: true
 branches:
   only:
-  - master
+  - main
 before_install:
   - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157
   - sudo apt-get update

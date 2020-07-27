@@ -1,4 +1,4 @@
-# Heroku buildpack: Clojure [![Build Status](https://travis-ci.org/heroku/heroku-buildpack-clojure.svg?branch=master)](https://travis-ci.org/heroku/heroku-buildpack-clojure)
+# Heroku buildpack: Clojure [![Build Status](https://travis-ci.com/heroku/heroku-buildpack-clojure.svg?branch=main)](https://travis-ci.com/heroku/heroku-buildpack-clojure)
 ![clojure](https://cloud.githubusercontent.com/assets/51578/13712844/d37ac78c-e793-11e5-9f0a-d033eb4f6f9f.png)
 
 This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Clojure apps. It uses
@@ -45,7 +45,7 @@ $ tree
 $ heroku create
 ...
 
-$ git push heroku master
+$ git push heroku main
 ...
 remote: -----> Fetching custom tar buildpack... done
 remote: -----> Clojure (Leiningen 2) app detected
