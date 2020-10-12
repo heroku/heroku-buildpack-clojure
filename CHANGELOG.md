@@ -1,5 +1,9 @@
 # Clojure Buildpack Changelog
 
+## v86
+
+* Update tests
+
 ## v85
 
 * Rename `BUILD_CONFIG_WHITELIST` to `BUILD_CONFIG_ALLOWLIST`
