@@ -1,5 +1,9 @@
 # Clojure Buildpack Changelog
 
+## main
+
+* Enable heroku-20 testing
+
 ## v86
 
 * Update tests
