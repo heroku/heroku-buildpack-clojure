@@ -1,11 +1,11 @@
 ---
-- - spec/fixtures/repos/cljs/cljs-lein-npm-example
-  - 00244ba91e1d8d8c0d4c32abf369d69df1b02c01
-- - spec/fixtures/repos/cljs/cljs-nodejs-example
+- - test/spec/fixtures/repos/cljs/cljs-lein-npm-example
+  - 770f0c29fd0bafba95725ab7bea991c6f30481e6
+- - test/spec/fixtures/repos/cljs/cljs-nodejs-example
   - f7e8c0d4a2eb59caa4788c8bf47b02c85110210e
-- - spec/fixtures/repos/cljs/clojurescript-example
+- - test/spec/fixtures/repos/cljs/clojurescript-example
   - 703fc4436bdca02c6dd69a535ca0b1ff0d56cc68
-- - spec/fixtures/repos/compojure/clojure-minimal
-  - 023a2315b61bccaaa83a1acb1cb4b571bfbe18c2
-- - spec/fixtures/repos/immutant/immutant-feature-demo
+- - test/spec/fixtures/repos/compojure/clojure-minimal
+  - b7707a2c9d89c4aa056ce7be13166cb928b3c284
+- - test/spec/fixtures/repos/immutant/immutant-feature-demo
   - d4ff28d348ab03810baa5a2d56280c55981d6b5f

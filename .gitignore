@@ -1,2 +1,5 @@
 .DS_Store
 .idea
+test/spec/fixtures/repos/cljs
+test/spec/fixtures/repos/compojure
+test/spec/fixtures/repos/immutant

@@ -1,9 +1,9 @@
-require_relative 'spec_helper'
+require_relative "spec_helper"
 
 describe "Heroku's Clojure Support" do
 
   it "compiles a project without min-lein-version with JDK 1.7" do
-    Hatchet::Runner.new("test/spec/fixtures/repos/lein-1-jdk-7", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
+    new_default_hatchet_runner("test/spec/fixtures/repos/lein-1-jdk-7").tap do |app|
       app.deploy do
         expect(app.output).to include("Installing JDK 1.7... done")
         expect(app.output).to include("No :min-lein-version found in project.clj; using 1.7.1.")
@@ -14,7 +14,7 @@ describe "Heroku's Clojure Support" do
   end
 
   it "compiles a project without :min-lein-version with the default JDK version" do
-    Hatchet::Runner.new("test/spec/fixtures/repos/lein-1-jdk-8", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
+    new_default_hatchet_runner("test/spec/fixtures/repos/lein-1-jdk-8").tap do |app|
       app.deploy do
         expect(app.output).to include("Installing JDK 1.8... done")
         expect(app.output).to include("No :min-lein-version found in project.clj; using 1.7.1.")
@@ -25,7 +25,7 @@ describe "Heroku's Clojure Support" do
   end
 
   it "compiles a project with :min-lein-version set to 2.0.0 with the default JDK version" do
-    Hatchet::Runner.new("test/spec/fixtures/repos/lein-2-jdk-8", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
+    new_default_hatchet_runner("test/spec/fixtures/repos/lein-2-jdk-8").tap do |app|
       app.deploy do
         expect(app.output).to include("Installing JDK 1.8... done")
         expect(app.output).to include("Downloading: leiningen-2.9.1-standalone.jar")
@@ -35,7 +35,7 @@ describe "Heroku's Clojure Support" do
   end
 
   it "runs `lein uberjar` when the project has a :uberjar-name setting" do
-    Hatchet::Runner.new("test/spec/fixtures/repos/lein-2-jdk-8-uberjar", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
+    new_default_hatchet_runner("test/spec/fixtures/repos/lein-2-jdk-8-uberjar").tap do |app|
       app.deploy do
         expect(app.output).to include("Installing JDK 1.8... done")
         expect(app.output).to include("Running: lein uberjar")
@@ -44,7 +44,7 @@ describe "Heroku's Clojure Support" do
   end
 
   it "uses a cached Leiningen for subsequent builds" do
-    Hatchet::Runner.new("test/spec/fixtures/repos/lein-1-jdk-7", stack: ENV["HEROKU_TEST_STACK"]).tap do |app|
+    new_default_hatchet_runner("test/spec/fixtures/repos/lein-1-jdk-7").tap do |app|
       app.deploy do
         expect(app.output).not_to include("Using cached Leiningen")
 
