@@ -1,55 +1,64 @@
-require 'rspec/core'
-require 'hatchet'
-require 'fileutils'
-require 'hatchet'
-require 'rspec/retry'
-require 'date'
+require "rspec/core"
+require "rspec/retry"
+require "hatchet"
+require "java-properties"
 
-ENV['RACK_ENV'] = 'test'
+DEFAULT_OPENJDK_VERSION="1.8"
 
 RSpec.configure do |config|
-  config.filter_run focused: true unless ENV['CI']
-  config.run_all_when_everything_filtered = true
-  config.alias_example_to :fit, focused: true
+  config.fail_if_no_examples = true
   config.full_backtrace      = true
-  config.verbose_retry       = true # show retry status in spec process
-  config.default_retry_count = 2 if ENV['CI'] # retry all tests that fail again
-
-  config.expect_with :rspec do |c|
-    c.syntax = :expect
-  end
-  #config.mock_with :none
+  # rspec-retry
+  config.verbose_retry       = true
+  config.default_retry_count = 2 if ENV["CI"]
 end
 
-def git_repo
-  "https://github.com/heroku/heroku-buildpack-clojure.git"
-end
+def new_default_hatchet_runner(*args, **kwargs)
+  kwargs[:stack] ||= ENV["DEFAULT_APP_STACK"]
+  kwargs[:config] ||= {}
 
-def add_database(app, heroku)
-  Hatchet::RETRIES.times.retry do
-    heroku.post_addon(app.name, 'heroku-postgresql:hobby-dev')
-    _, value = heroku.get_config_vars(app.name).body.detect {|key, value| key.match(/HEROKU_POSTGRESQL_[A-Z]+_URL/) }
-    heroku.put_config_vars(app.name, 'DATABASE_URL' => value)
-  end
-end
-
-def successful_body(app, options = {})
-  retry_limit = options[:retry_limit] || 50
-  path = options[:path] ? "/#{options[:path]}" : ''
-  Excon.get("http://#{app.name}.herokuapp.com#{path}", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
-end
-
-def create_file_with_size_in(size, dir)
-  name = File.join(dir, SecureRandom.hex(16))
-  File.open(name, 'w') {|f| f.print([ 1 ].pack("C") * size) }
-  Pathname.new name
-end
-
-def set_java_version(d, v)
-  Dir.chdir(d) do
-    File.open('system.properties', 'w') do |f|
-      f.puts "java.runtime.version=#{v}"
+  ENV.keys.each do |key|
+    if key.start_with?("DEFAULT_APP_CONFIG_")
+      kwargs[:config][key.delete_prefix("DEFAULT_APP_CONFIG_")] ||= ENV[key]
     end
-    `git commit -am "setting jdk version"`
   end
+
+  Hatchet::Runner.new(*args, **kwargs)
+end
+
+def set_java_version(version_string)
+  set_system_properties_key("java.runtime.version", version_string)
+end
+
+def set_maven_version(version_string)
+  set_system_properties_key("maven.version", version_string)
+end
+
+def set_system_properties_key(key, value)
+  properties = {}
+
+  if File.file?("system.properties")
+    properties = JavaProperties.load("system.properties")
+  end
+
+  properties[key.to_sym] = value
+  JavaProperties.write(properties, "system.properties")
+end
+
+def write_to_procfile(content)
+  File.open("Procfile", "w") do |file|
+    file.write(content)
+  end
+end
+
+def run(cmd)
+  out = `#{cmd}`
+  raise "Command #{cmd} failed with output #{out}" unless $?.success?
+  out
+end
+
+def http_get(app, options = {})
+  retry_limit = options[:retry_limit] || 50
+  path = options[:path] ? "/#{options[:path]}" : ""
+  Excon.get("https://#{app.name}.herokuapp.com#{path}", :idempotent => true, :expects => 200, :retry_limit => retry_limit).body
 end

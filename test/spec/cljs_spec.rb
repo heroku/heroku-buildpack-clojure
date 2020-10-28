@@ -1,39 +1,35 @@
-require_relative 'spec_helper'
+require_relative "spec_helper"
 
 describe "ClojureScript" do
-  before(:each) do
-    set_java_version(app.directory, jdk_version)
-  end
+  context "on jdk-#{DEFAULT_OPENJDK_VERSION}" do
+    it "deploys clojurescript-example successfully" do
+      new_default_hatchet_runner("clojurescript-example").tap do |app|
+        app.before_deploy do
+          set_java_version(DEFAULT_OPENJDK_VERSION)
+        end
 
-  %w{1.8}.each do |version|
-    context "on jdk-#{version}" do
-      let(:app) { Hatchet::Runner.new("clojurescript-example") }
-      let(:jdk_version) { version }
-      it "deploy successfully" do
-        app.deploy do |app|
-          expect(app.output).to include("Installing JDK #{jdk_version}")
+        app.deploy do
+          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).to match(/Downloading: leiningen-2.[5-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein uberjar")
-          sleep 3
-          expect(app).to be_deployed
-          expect(successful_body(app)).to include('Welcome from ClojureScript')
+
+          expect(http_get(app)).to include("Welcome from ClojureScript")
         end
       end
     end
-  end
 
-  %w{1.8}.each do |version|
-    context "on jdk-#{version}" do
-      let(:app) { Hatchet::Runner.new("cljs-lein-npm-example") }
-      let(:jdk_version) { version }
-      it "deploy successfully" do
-        app.deploy do |app|
-          expect(app.output).to include("Installing JDK #{jdk_version}")
+    it "deploys cljs-lein-npm-example successfully" do
+      new_default_hatchet_runner("cljs-lein-npm-example").tap do |app|
+        app.before_deploy do
+          set_java_version(DEFAULT_OPENJDK_VERSION)
+        end
+
+        app.deploy do
+          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).to match(/Downloading: leiningen-2.[5-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein with-profile production do deps, compile :all")
-          sleep 3
-          expect(app).to be_deployed
-          expect(successful_body(app)).to include('Jokes')
+
+          expect(http_get(app)).to include("Jokes")
         end
       end
     end
