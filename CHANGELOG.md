@@ -2,6 +2,8 @@
 
 ## main
 
+* Remove heroku-16 testing
+
 ## v87
 
 * Enable heroku-20 testing
