@@ -94,6 +94,10 @@ For example, if your `deps.edn` has something like this:
 web: clojure -X:web
 ```
 
+If your project is missing a `Procfile` the one above will generated
+automatically on deploy. So you can just setup a `:web` alias with the fn you
+want to run in its `:exec-fn` in your `deps.edn` file.
+
 ### Leiningen
 
 Leiningen 1.7.1 will be used by default, but if you have
