@@ -6,9 +6,11 @@ if [ -f $1/project.clj ]; then
   if [ $? -eq 0 ]; then
     echo "Clojure (Leiningen 2)" && exit 0
   else
-    echo "Clojure" && exit 0
+    echo "Clojure (Leiningen 1)" && exit 0
   fi
+elif [ -f $1/deps.edn ]; then
+  echo "Clojure (tools.deps)" && exit 0
 else
-  (>&2 echo "Could not find a 'project.clj' file! Please ensure it exists and is checked into Git.")
+  (>&2 echo "Could not find a 'project.clj' or 'deps.edn' file! Please ensure one of them exists and is checked into Git.")
   exit 1
 fi
