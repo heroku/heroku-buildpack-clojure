@@ -31,7 +31,7 @@ detect_and_install_nodejs ${BUILD_DIR}
 install_rlwrap "${BUILD_DIR}" "${CACHE_DIR}"
 
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
-CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
+CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.3.1029}"
 echo "-----> Installing Clojure $CLOJURE_CLI_VERSION CLI tools"
 CLOJURE_INSTALL_NAME="linux-install-${CLOJURE_CLI_VERSION}.sh"
 CLOJURE_INSTALL_URL="https://download.clojure.org/install/$CLOJURE_INSTALL_NAME"
