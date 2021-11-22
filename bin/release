@@ -9,6 +9,7 @@ LIB_DIR=$BP_DIR/lib
 
 source $LIB_DIR/common.sh
 source $LIB_DIR/lein.sh
+source $LIB_DIR/clojure-cli.sh
 
 if [ ! -f $BUILD_DIR/Procfile ]; then
   cat <<EOF
@@ -17,7 +18,10 @@ config_vars:
 default_process_types:
 EOF
 
-  if [ "$(calculate_lein_build_task $BUILD_DIR)" == "uberjar" ]; then
+  if is_tools_deps $BUILD_DIR; then
+    cd $BUILD_DIR
+    echo "  web: clojure -X:web"
+  elif [ "$(calculate_lein_build_task $BUILD_DIR)" == "uberjar" ]; then
     cd $BUILD_DIR
     for jarFile in $(find target -maxdepth 1 -name "*.jar" -type f); do
       echo "  web: java -jar $jarFile"
