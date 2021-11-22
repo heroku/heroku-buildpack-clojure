@@ -55,4 +55,14 @@ describe "Heroku's Clojure Support" do
       end
     end
   end
+
+  it "uses Clojure CLI when deps.edn present but no project.clj" do
+    new_default_hatchet_runner("test/spec/fixtures/repos/cli-jdk-11").tap do |app|
+      app.deploy do
+        expect(app.output).to include("Installing JDK 11... done")
+        expect(app.output).to include("Building with Clojure CLI")
+        expect(app.output).to include("Running: clojure -P")
+      end
+    end
+  end
 end
