@@ -2,17 +2,19 @@
 ![clojure](https://cloud.githubusercontent.com/assets/51578/13712844/d37ac78c-e793-11e5-9f0a-d033eb4f6f9f.png)
 
 This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Clojure apps. It uses
-[Leiningen](http://leiningen.org).
+[Leiningen](http://leiningen.org) or the [Clojure CLI tools](https://clojure.org/guides/deps_and_cli).
 
 Note that you don't have to do anything special to use this buildpack
 with Clojure apps on Heroku; it will be used by default for all
-projects containing a project.clj file, though it may be an older
+projects containing a project.clj or deps.edn file, though it may be an older
 revision than what you're currently looking at.
 
 ## How it works
 
 The buildpack will detect your app as Clojure if it has a
-`project.clj` file in the root. If you use the
+`project.clj` or `deps.edn` file in the root. If there are both files, it will
+use Leiningen.
+If you use the
 [clojure-maven-plugin](https://github.com/talios/clojure-maven-plugin),
 [the standard Java buildpack](http://github.com/heroku/heroku-buildpack-java)
 should work instead.
@@ -69,11 +71,36 @@ remote: Verifying deploy.... done.
 
 ## Configuration
 
+### Clojure CLI
+
+The default version of Clojure CLI tools installed is 1.10.3.1029.
+You can request something else by setting the config param
+`CLOJURE_CLI_VERSION` to something else.
+
+Your `Procfile` should declare what process types make up your app.
+Generally this is done with `:exec-fn` aliases in your `deps.edn` file.
+
+For example, if your `deps.edn` has something like this:
+
+```clojure
+{:aliases
+ {:web
+  {:exec-fn my.ns/run-web-server}}}
+```
+
+...then your `Procfile` should look like this:
+
+```
+web: clojure -X:web
+```
+
+### Leiningen
+
 Leiningen 1.7.1 will be used by default, but if you have
 `:min-lein-version "2.0.0"` in project.clj (highly recommended) then
 the latest Leiningen 2.x release will be used instead.
 
-Your `Procfile` should declare what process types which make up your
+Your `Procfile` should declare what process types make up your
 app. Often in development Leiningen projects are launched using `lein
 run -m my.project.namespace`, but this is not recommended in
 production because it leaves Leiningen running in addition to your
