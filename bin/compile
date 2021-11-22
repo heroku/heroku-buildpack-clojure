@@ -43,7 +43,7 @@ chmod +x $BUILD_DIR/.heroku/clj/bin/*
 export PATH=$BUILD_DIR/.heroku/clj/bin:$PATH
 CLOJURE_CLI_BUILD_COMMAND="clojure -P"
 
-if [ -f $BUILD_DIR/deps.edn && ! -f $BUILD_DIR/project.clj ]; then
+if [[ -f $BUILD_DIR/deps.edn && ! -f $BUILD_DIR/project.clj ]]; then
   BUILD_TOOL="Clojure CLI"
 elif [ -f $BUILD_DIR/project.clj ]; then
   BUILD_TOOL="Leiningen"
