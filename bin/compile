@@ -161,7 +161,7 @@ echo "       Running: $BUILD_COMMAND"
 
 cd $BUILD_DIR
 BUILD_PATH=$PATH
-if [ $BUILD_TOOL = "Leiningen" ]; then
+if [ "$BUILD_TOOL" = "Leiningen" ]; then
   BUILD_PATH=$(dirname $LEIN_BIN_PATH):$PATH
 fi
 PATH=$BUILD_PATH JVM_OPTS="-Xmx600m" \
