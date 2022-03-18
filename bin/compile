@@ -107,9 +107,14 @@ mkdir -p $BUILD_DIR/.lein
 LEIN_PROFILES_SOURCE="$(dirname $0)/../opt/profiles.clj"
 cp -n $LEIN_PROFILES_SOURCE "$BUILD_DIR/.lein/profiles.clj"
 
+# Setup SSH agent and private key
+eval $(ssh-agent -s)
+ssh-add - <<< "${DEPLOY_KEY}"
 
-# Start ssh agent (newer cli tools use it to access private repositories)
-eval "$(ssh-agent -s)"
+echo "-----> Authorize SSH host"
+mkdir -p ~/.ssh
+chmod 0700 ~/.ssh
+ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 echo "-----> Installing Babashka"
 # install babashka
@@ -118,83 +123,13 @@ echo "-----> Installing Babashka $BABASHKA_VERSION"
 
 curl -sLO https://raw.githubusercontent.com/babashka/babashka/master/install
 chmod +x install
-./install --dir $BUILD_DIR/.heroku/bb --version $BABASHKA_VERSION
+./install --dir $BUILD_DIR/.heroku --version $BABASHKA_VERSION
 chmod +x $BUILD_DIR/.heroku/bb
-export PATH=$BUILD_DIR/.heroku/bb:$PATH
-# unpack existing cache
-CACHED_DIRS=".m2 node_modules"
-for DIR in $CACHED_DIRS; do
-  if [ ! -d $BUILD_DIR/$DIR ]; then
-    cache_copy $DIR $CACHE_DIR $BUILD_DIR
-  fi
-done
+export PATH=$BUILD_DIR/.heroku/:$PATH
 
-echo "-----> Building with Leiningen"
+echo "-----> Check babashka installation"
+bb version
 
-# extract environment
-if [ -d "${ENV_DIR}" ]; then
-  # Be default, only export private repo credentials
-  config_vars="LEIN_USERNAME LEIN_PASSWORD LEIN_PASSPHRASE"
-
-  if [ -r "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST" ]; then
-    config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST")
-
-  # Backwards compatibility for legacy configuration
-  elif [ -r "${ENV_DIR}/BUILD_CONFIG_WHITELIST" ]; then
-    config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_WHITELIST")
-  fi
-
-  for config_var in $config_vars; do
-      if [ -r "${ENV_DIR}/${config_var}" ]; then
-          export "${config_var}=$(cat "${ENV_DIR}/${config_var}")"
-      fi
-  done
-fi
-
-# Calculate build command
-if [ "$BUILD_COMMAND" = "" ]; then
-    if [ -x $BUILD_DIR/bin/build ]; then
-        echo "       Found bin/build; running it instead of default lein invocation."
-        BUILD_COMMAND=bin/build
-    else
-        BUILD_COMMAND="lein $LEIN_BUILD_TASK"
-    fi
-fi
-
-echo "       Running: $BUILD_COMMAND"
-
+echo "-----> Build uberjar using babashka"
 cd $BUILD_DIR
-PATH=$(dirname $LEIN_BIN_PATH):$PATH JVM_OPTS="-Xmx600m" \
-  LEIN_JVM_OPTS="-Xmx400m -Duser.home=$BUILD_DIR" \
-  $BUILD_COMMAND 2>&1 | sed -u 's/^/       /'
-if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  echo " !     Failed to build."
-  exit 1
-fi
-
-# populate profile.d
-PROFILE_PATH="$BUILD_DIR/.profile.d/clojure.sh"
-mkdir -p $(dirname $PROFILE_PATH)
-echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
-echo 'export PATH="$HOME/.heroku/nodejs/bin:$HOME/.heroku/clj/bin:$HOME/.jdk/bin:$HOME/.lein/bin:$PATH"' >> $PROFILE_PATH
-echo 'export RING_ENV="${RING_ENV:-production}"' >> $PROFILE_PATH
-
-# rewrite Clojure CLI path
-mv $BUILD_DIR/.heroku/clj/bin/clojure $BUILD_DIR/.heroku/clj/bin/clojure.old
-cat $BUILD_DIR/.heroku/clj/bin/clojure.old | sed -e "s/\/tmp\/$(basename $BUILD_DIR)/\/app/g" > $BUILD_DIR/.heroku/clj/bin/clojure
-chmod +x $BUILD_DIR/.heroku/clj/bin/clojure
-
-# repack cache with new assets
-mkdir -p $CACHE_DIR
-for DIR in $CACHED_DIRS; do
-  cache_copy $DIR $BUILD_DIR $CACHE_DIR
-done
-
-if [ "$LEIN_INCLUDE_IN_SLUG" = "no" ]; then
-    rm -f "$LEIN_JAR_SLUG_PATH"
-    rm -rf $CACHED_DIRS
-fi
-
-if [ "$LEIN_VERSION" = "1.7.1" ]; then
-    rm -rf $CACHED_DIRS
-fi
+bb build:uberjar
