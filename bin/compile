@@ -107,6 +107,20 @@ mkdir -p $BUILD_DIR/.lein
 LEIN_PROFILES_SOURCE="$(dirname $0)/../opt/profiles.clj"
 cp -n $LEIN_PROFILES_SOURCE "$BUILD_DIR/.lein/profiles.clj"
 
+
+# Start ssh agent (newer cli tools use it to access private repositories)
+eval "$(ssh-agent -s)"
+
+echo "-----> Installing Babashka"
+# install babashka
+BABASHKA_VERSION="${BABASHKA_VERSION:-0.7.0}"
+echo "-----> Installing Babashka $BABASHKA_VERSION"
+
+curl -sLO https://raw.githubusercontent.com/babashka/babashka/master/install
+chmod +x install
+./install --dir $BUILD_DIR/.heroku/bb --version $BABASHKA_VERSION
+chmod +x $BUILD_DIR/.heroku/bb
+export PATH=$BUILD_DIR/.heroku/bb:$PATH
 # unpack existing cache
 CACHED_DIRS=".m2 node_modules"
 for DIR in $CACHED_DIRS; do

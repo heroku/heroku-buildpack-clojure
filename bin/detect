@@ -9,6 +9,6 @@ if [ -f $1/project.clj ]; then
     echo "Clojure" && exit 0
   fi
 else
-  (>&2 echo "Could not find a 'project.clj' file! Please ensure it exists and is checked into Git.")
-  exit 1
+  (>&2 echo "Could not find a 'project.clj' file!")
+  exit 0
 fi
