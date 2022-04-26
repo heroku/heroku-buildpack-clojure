@@ -2,6 +2,7 @@
 
 ## main
 
+* Add support for deps.edn (tools.deps) projects
 * Remove heroku-16 testing
 
 ## v87
