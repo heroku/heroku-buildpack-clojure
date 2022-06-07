@@ -2,6 +2,9 @@
 
 ## main
 
+## v88
+
+* Add heroku-22 support
 * Remove heroku-16 testing
 
 ## v87
