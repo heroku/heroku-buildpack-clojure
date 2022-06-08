@@ -17,7 +17,7 @@ LIB_DIR=$BP_DIR/lib
 
 source $LIB_DIR/common.sh
 source $LIB_DIR/lein.sh
-source <(curl --retry 3 -fsSL $BUILDPACK_STDLIB_URL)
+source $LIB_DIR/buildpack-stdlib-v7.sh
 
 export_env $ENV_DIR "." "JAVA_OPTS"
 
