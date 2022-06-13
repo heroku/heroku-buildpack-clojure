@@ -9,7 +9,7 @@ describe "Compojure" do
         end
 
         app.deploy do
-          expect(app.output).to include("Installing JDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
           expect(app.output).to match(/Downloading: leiningen-2.[0-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein uberjar")
           expect(http_get(app)).to include('["Hello" :from Heroku]')
