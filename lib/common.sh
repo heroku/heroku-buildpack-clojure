@@ -20,8 +20,8 @@ install_nodejs() {
   local platform="$os-$cpu"
 
   echo "Resolving node version $version..."
-  if ! read number url < <(curl --silent --get --retry 5 --retry-max-time 15 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt"); then
-    local error=$(curl --silent --get --retry 5 --retry-max-time 15 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt")
+  if ! read number url < <(curl --silent --get --retry 5 --retry-max-time 15 --retry-connrefused --connect-timeout 5 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt"); then
+    local error=$(curl --silent --get --retry 5 --retry-max-time 15 --retry-connrefused --connect-timeout 5 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt")
     if [[ $error = "No result" ]]; then
       echo "Could not find Node version corresponding to version requirement: $version";
     else
@@ -30,7 +30,7 @@ install_nodejs() {
   fi
 
   echo "Downloading and installing node $version..."
-  local code=$(curl "$url" -L --silent --fail --retry 5 --retry-max-time 15 -o /tmp/node.tar.gz --write-out "%{http_code}")
+  local code=$(curl "$url" -L --silent --fail --retry 5 --retry-max-time 15 --retry-connrefused --connect-timeout 5 -o /tmp/node.tar.gz --write-out "%{http_code}")
   if [ "$code" != "200" ]; then
     echo "Unable to download node: $code" && false
   fi
@@ -57,7 +57,7 @@ install_jdk() {
   let start=$(nowms)
   JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}
   mkdir -p /tmp/jvm-common
-  curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+  curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
   source /tmp/jvm-common/bin/util
   source /tmp/jvm-common/bin/java
   source /tmp/jvm-common/opt/jdbc.sh

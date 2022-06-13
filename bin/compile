@@ -35,7 +35,7 @@ CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
 echo "-----> Installing Clojure $CLOJURE_CLI_VERSION CLI tools"
 CLOJURE_INSTALL_NAME="linux-install-${CLOJURE_CLI_VERSION}.sh"
 CLOJURE_INSTALL_URL="https://download.clojure.org/install/$CLOJURE_INSTALL_NAME"
-curl --retry 3 -sfL --max-time 60 -o "/tmp/$CLOJURE_INSTALL_NAME" "$CLOJURE_INSTALL_URL"
+curl --retry 3 --retry-connrefused --connect-timeout 5 -sfL --max-time 60 -o "/tmp/$CLOJURE_INSTALL_NAME" "$CLOJURE_INSTALL_URL"
 chmod +x /tmp/$CLOJURE_INSTALL_NAME
 mkdir -p $BUILD_DIR/.heroku/clj
 "/tmp/$CLOJURE_INSTALL_NAME" --prefix $BUILD_DIR/.heroku/clj 2>/dev/null | sed -u 's/^/       /'
@@ -82,7 +82,7 @@ else
     echo "-----> Installing Leiningen"
     echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
     mkdir -p $(dirname $LEIN_JAR_CACHE_PATH)
-    curl --retry 3 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
+    curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
   else
     echo "-----> Using cached Leiningen $LEIN_VERSION"
   fi
