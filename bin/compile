@@ -67,7 +67,7 @@ else
   fi
 
   # install leiningen jar
-  LEIN1_JAR_URL="https://lang-jvm.s3.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
+  LEIN1_JAR_URL="https://lang-jvm.s3.us-east-1.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
   LEIN2_JAR_URL="https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip"
   LEIN_JAR_CACHE_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
   LEIN_JAR_SLUG_PATH="$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
