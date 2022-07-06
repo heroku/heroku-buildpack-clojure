@@ -2,6 +2,10 @@
 
 ## main
 
+## v90
+
+* Fix compatibility with the `heroku/google-chrome` buildpack. ([#122](https://github.com/heroku/heroku-buildpack-clojure/pull/122)).
+
 ## v89
 
 * Adjust curl retry and connection timeout handling
