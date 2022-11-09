@@ -1,6 +1,6 @@
 ---
 - - test/spec/fixtures/repos/cljs/cljs-lein-npm-example
-  - 770f0c29fd0bafba95725ab7bea991c6f30481e6
+  - ec554622253e2eeea5652c8bb7965ab1d6454f0d
 - - test/spec/fixtures/repos/cljs/cljs-nodejs-example
   - f7e8c0d4a2eb59caa4788c8bf47b02c85110210e
 - - test/spec/fixtures/repos/cljs/clojurescript-example
