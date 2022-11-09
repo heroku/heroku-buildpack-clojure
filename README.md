@@ -1,4 +1,4 @@
-# Heroku buildpack: Clojure [![CircleCI](https://circleci.com/gh/heroku/heroku-buildpack-clojure/tree/main.svg?style=shield)](https://circleci.com/gh/heroku/heroku-buildpack-clojure/tree/main)
+# Heroku buildpack: Clojure [![CI](https://github.com/heroku/heroku-buildpack-clojure/actions/workflows/ci.yml/badge.svg)](https://github.com/heroku/heroku-buildpack-clojure/actions/workflows/ci.yml)
 ![clojure](https://cloud.githubusercontent.com/assets/51578/13712844/d37ac78c-e793-11e5-9f0a-d033eb4f6f9f.png)
 
 This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Clojure apps. It uses
@@ -189,25 +189,6 @@ then push your sample app to Heroku to test. The output should include:
     -----> Generating tar with Leiningen:
 
 If it's something other users would find useful, pull requests are welcome.
-
-## Run Tests Locally
-
-Tests can be run and debugged locally by using the [Circle CI CLI](https://circleci.com/docs/2.0/local-cli/).
-
-For example, to run [Hatchet](https://github.com/heroku/hatchet) tests on `heroku-18` run:
-
-```
-$ circleci local execute --job hatchet-heroku-18 \
-    --env HEROKU_API_USER=$(heroku whoami) \
-    --env HEROKU_API_KEY=$(heroku auth:token)
-```
-
-Available jobs are defined in [.circleci/config.yml](.circleci/config.yml).
-
-### Costs
-
-This command uses the credentials from your local `heroku` configuration. This means your account will be billed for any
-cost these tests incur. Proceed with caution.
 
 ## Troubleshooting
 

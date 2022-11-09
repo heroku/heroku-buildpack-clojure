@@ -9,8 +9,6 @@ name = "Clojure"
     "vendor/",
     ".gitignore",
     ".github/",
-    ".travis.yml",
-    "circle.yml",
     "hatchet.json",
     "Gemfile",
     "Gemfile.lock",
