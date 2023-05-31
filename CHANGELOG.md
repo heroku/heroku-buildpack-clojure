@@ -2,6 +2,7 @@
 
 ## main
 
+* Drop dependency on Node.js version resolver service, nodebin.herokai.com ([#143](https://github.com/heroku/heroku-buildpack-clojure/pull/143))
 * Remove heroku-18 support ([#140](https://github.com/heroku/heroku-buildpack-clojure/pull/140))
 
 ## v90
