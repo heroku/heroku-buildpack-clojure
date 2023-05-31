@@ -33,7 +33,7 @@ detect_and_install_nodejs() {
   local buildDir=${1}
   if [ ! -d ${buildDir}/.heroku/nodejs ] && [ "true" != "$SKIP_NODEJS_INSTALL" ]; then
     if [ "$(grep lein-npm ${buildDir}/project.clj)" != "" ] || [ -n "$NODEJS_VERSION"  ]; then
-      nodejsVersion=${NODEJS_VERSION:-4.2.1}
+      nodejsVersion=${NODEJS_VERSION:-18.16.0}
       echo "-----> Installing Node.js ${nodejsVersion}..."
       install_nodejs ${nodejsVersion} ${buildDir}/.heroku/nodejs 2>&1 | sed -u 's/^/       /'
       export PATH=${buildDir}/.heroku/nodejs/bin:$PATH
