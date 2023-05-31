@@ -15,27 +15,17 @@ cache_copy() {
 install_nodejs() {
   local version="${1:?}"
   local dir="${2:?}"
-  local os="linux"
-  local cpu="x64"
-  local platform="$os-$cpu"
+  local url="https://heroku-nodebin-staging.s3.us-east-1.amazonaws.com/node/release/linux-x64/node-v${version}-linux-x64.tar.gz"
 
-  echo "Resolving node version $version..."
-  if ! read number url < <(curl --silent --get --retry 5 --retry-max-time 15 --retry-connrefused --connect-timeout 5 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt"); then
-    local error=$(curl --silent --get --retry 5 --retry-max-time 15 --retry-connrefused --connect-timeout 5 --data-urlencode "range=$version" "https://nodebin.herokai.com/v1/node/$platform/latest.txt")
-    if [[ $error = "No result" ]]; then
-      echo "Could not find Node version corresponding to version requirement: $version";
-    else
-      echo "Error: Invalid semantic version \"$version\""
-    fi
-  fi
-
-  echo "Downloading and installing node $version..."
+  echo "Downloading Node.js $version..."
   local code=$(curl "$url" -L --silent --fail --retry 5 --retry-max-time 15 --retry-connrefused --connect-timeout 5 -o /tmp/node.tar.gz --write-out "%{http_code}")
   if [ "$code" != "200" ]; then
-    echo "Unable to download node: $code" && false
+    echo "Unable to download Node.js version ${version}: $code"
+    return false
   fi
+
   tar xzf /tmp/node.tar.gz -C /tmp
-  mv /tmp/node-v$version-$os-$cpu $dir
+  mv /tmp/node-v$version-linux-x64 $dir
   chmod +x $dir/bin/*
 }
 
