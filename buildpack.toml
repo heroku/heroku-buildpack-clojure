@@ -6,10 +6,10 @@ name = "Clojure"
     "etc/",
     "spec/",
     "test/",
-    "vendor/",
     ".gitignore",
     ".github/",
     "hatchet.json",
+    "hatchet.lock",
     "Gemfile",
     "Gemfile.lock",
 ]
