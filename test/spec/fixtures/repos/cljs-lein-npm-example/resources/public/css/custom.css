@@ -1,0 +1,33 @@
+
+#forkme img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+    z-index: 100;
+    width: 15em;
+    opacity: 0.6;
+}
+
+#jokes {
+    font-size: larger;
+    margin-top: 1em;
+}
+
+#jokes .well {
+    font-weight: bold;
+    min-height: 20em;
+    margin-bottom: 1em;
+    position: relative;
+}
+
+.joke {
+    margin: 0.5em;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+
+
+

@@ -1,0 +1,29 @@
+html {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 100%;
+}
+
+.opened {
+    color: green;
+}
+
+.closed {
+    color: gray;
+}
+
+.error {
+    color: red;
+}
+
+.received {
+    color: blue;
+}
+
+.sent {
+    color: green;
+}
+
+button:hover {
+    opacity: 0.75;
+    cursor: pointer;
+}

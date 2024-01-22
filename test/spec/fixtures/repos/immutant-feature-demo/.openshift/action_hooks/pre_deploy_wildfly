@@ -1,0 +1,6 @@
+#!/bin/bash
+source ${OPENSHIFT_REPO_DIR}/.openshift/.leinrc
+
+cd ${OPENSHIFT_REPO_DIR}
+mkdir -p deployments
+${OPENSHIFT_DATA_DIR}/lein do clean, immutant war -o deployments -n ROOT

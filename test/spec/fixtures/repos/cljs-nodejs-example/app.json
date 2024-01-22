@@ -1,0 +1,14 @@
+{
+    "name": "ClojureScript Node.js Example",
+    "description": "Sample ClojureScript app that runs on Node.js on Heroku.",
+    "website": "https://devcenter.heroku.com/articles/using-node-js-with-clojure-and-clojurescript-applications",
+    "repository": "https://github.com/kissaten/cljs-nodejs-example",
+    "buildpacks": [
+        {
+            "url": "heroku/nodejs"
+        },
+        {
+            "url": "https://github.com/heroku/heroku-buildpack-clojure"
+        }
+    ]
+}
