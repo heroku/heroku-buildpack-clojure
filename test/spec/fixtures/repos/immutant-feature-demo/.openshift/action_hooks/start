@@ -1,0 +1,5 @@
+#!/bin/bash
+source ${OPENSHIFT_REPO_DIR}/.openshift/.leinrc
+
+cd ${OPENSHIFT_REPO_DIR}
+nohup ${OPENSHIFT_DATA_DIR}/lein trampoline run >${OPENSHIFT_LOG_DIR}/server.log 2>&1 &

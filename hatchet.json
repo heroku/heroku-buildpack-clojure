@@ -1,16 +1,5 @@
 {
   "hatchet": {
     "directory": "test/spec/fixtures"
-  },
-  "immutant": [
-    "kissaten/immutant-feature-demo"
-  ],
-  "compojure": [
-    "kissaten/clojure-minimal"
-  ],
-  "cljs": [
-    "kissaten/clojurescript-example",
-    "kissaten/cljs-nodejs-example",
-    "kissaten/cljs-lein-npm-example"
-  ]
+  }
 }
