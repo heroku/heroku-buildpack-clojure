@@ -1,28 +1,29 @@
-# Clojure Buildpack Changelog
+# Changelog
 
-## main
+## [Unreleased]
 
-## v91
+
+## [v91] - 2023-09-19
 
 * Drop dependency on Node.js version resolver service, nodebin.herokai.com ([#143](https://github.com/heroku/heroku-buildpack-clojure/pull/143))
 * Remove heroku-18 support ([#140](https://github.com/heroku/heroku-buildpack-clojure/pull/140))
 
-## v90
+## [v90] - 2022-07-06
 
 * Fix compatibility with the `heroku/google-chrome` buildpack. ([#122](https://github.com/heroku/heroku-buildpack-clojure/pull/122)).
 
-## v89
+## [v89] - 2022-06-14
 
 * Adjust curl retry and connection timeout handling
 * Vendor buildpack-stdlib rather than downloading it at build time
 * Switch to the recommended regional S3 domain instead of the global one
 
-## v88
+## [v88] - 2022-06-0
 
 * Add heroku-22 support
 * Remove heroku-16 testing
 
-## v87
+## [v87] - 2021-02-23
 
 * Enable heroku-20 testing
 
@@ -134,3 +135,10 @@ Upgrade to Leiningen 2.5.2
 
 * Initial release
 * Use Leiningen 1.5.2
+
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v91...HEAD
+[v91]: https://github.com/heroku/heroku-buildpack-clojure/compare/v90...v91
+[v90]: https://github.com/heroku/heroku-buildpack-clojure/compare/v89...v90
+[v89]: https://github.com/heroku/heroku-buildpack-clojure/compare/v88...v89
+[v88]: https://github.com/heroku/heroku-buildpack-clojure/compare/v87...v88
+[v87]: https://github.com/heroku/heroku-buildpack-clojure/compare/v86...v87
