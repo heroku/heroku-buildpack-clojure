@@ -9,7 +9,7 @@ describe "ClojureScript" do
         end
 
         app.deploy do
-          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to match(/Installing (Heroku|Azul Zulu) OpenJDK #{DEFAULT_OPENJDK_VERSION}/)
           expect(app.output).to match(/Downloading: leiningen-2.[5-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein uberjar")
 
@@ -25,7 +25,7 @@ describe "ClojureScript" do
         end
 
         app.deploy do
-          expect(app.output).to include("Installing OpenJDK #{DEFAULT_OPENJDK_VERSION}")
+          expect(app.output).to match(/Installing (Heroku|Azul Zulu) OpenJDK #{DEFAULT_OPENJDK_VERSION}/)
           expect(app.output).to match(/Downloading: leiningen-2.[5-9].[0-9]-standalone.jar/)
           expect(app.output).to include("Running: lein with-profile production do deps, compile :all")
 
