@@ -18,8 +18,12 @@ LIB_DIR=$BP_DIR/lib
 source $LIB_DIR/common.sh
 source $LIB_DIR/lein.sh
 source $LIB_DIR/buildpack-stdlib-v7.sh
+source $LIB_DIR/metrics.sh
 
 export_env $ENV_DIR "." "JAVA_OPTS"
+
+metrics::init "${CACHE_DIR}" "clojure"
+metrics::setup
 
 # Install JDK from jvm-common
 install_jdk ${BUILD_DIR}
@@ -102,6 +106,12 @@ else
   sed -i s/##LEIN_VERSION##/$LEIN_VERSION/ $LEIN_BIN_PATH
 fi
 
+# Collect metrics
+metrics::set_string "lein_version" "${LEIN_VERSION:-unknown}"
+metrics::set_string "clojure_cli_version" "${CLOJURE_CLI_VERSION:-1.10.0.411}"
+[ -n "$LEIN_INCLUDE_IN_SLUG" ] && metrics::set_string "lein_include_in_slug" "$LEIN_INCLUDE_IN_SLUG"
+[ -n "$LEIN_BUILD_TASK" ] && metrics::set_string "lein_build_task" "$LEIN_BUILD_TASK"
+
 # create user-level profiles
 mkdir -p $BUILD_DIR/.lein
 LEIN_PROFILES_SOURCE="$(dirname $0)/../opt/profiles.clj"
@@ -146,6 +156,8 @@ if [ "$BUILD_COMMAND" = "" ]; then
         BUILD_COMMAND="lein $LEIN_BUILD_TASK"
     fi
 fi
+
+metrics::set_string "build_command" "$BUILD_COMMAND"
 
 echo "       Running: $BUILD_COMMAND"
 
