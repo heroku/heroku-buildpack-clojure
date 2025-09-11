@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v92] - 2025-09-11
+
 * Add metrics infrastructure and collection ([#178](https://github.com/heroku/heroku-buildpack-clojure/pull/178))
 * Remove heroku-20 support ([#168](https://github.com/heroku/heroku-buildpack-clojure/pull/168))
 
@@ -138,7 +141,8 @@ Upgrade to Leiningen 2.5.2
 * Initial release
 * Use Leiningen 1.5.2
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v91...HEAD
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v92...main
+[v92]: https://github.com/heroku/heroku-buildpack-clojure/compare/v91...v92
 [v91]: https://github.com/heroku/heroku-buildpack-clojure/compare/v90...v91
 [v90]: https://github.com/heroku/heroku-buildpack-clojure/compare/v89...v90
 [v89]: https://github.com/heroku/heroku-buildpack-clojure/compare/v88...v89
