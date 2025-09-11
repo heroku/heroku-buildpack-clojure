@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Add metrics infrastructure and collection ([#000](https://github.com/heroku/heroku-buildpack-clojure/pull/000))
 * Remove heroku-20 support ([#168](https://github.com/heroku/heroku-buildpack-clojure/pull/168))
 
 ## [v91] - 2023-09-19
