@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 # bin/test-compile <build-dir> <cache-dir> <env-dir>
 
-LEIN_BUILD_TASK="deps" LEIN_INCLUDE_IN_SLUG="yes" "$(dirname "${0:-}")/compile" "$1" "$2" "$3"
+LEIN_BUILD_TASK="deps" LEIN_INCLUDE_IN_SLUG="yes" "$(dirname "${0:-}")/compile" "${1}" "${2}" "${3}"
