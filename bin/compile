@@ -4,32 +4,36 @@
 # fail fast
 set -e
 
-BPLOG_PREFIX="buildpack.clojure"
+export BPLOG_PREFIX="buildpack.clojure"
 
 # parse args
 export BUILD_DIR=$1
 export CACHE_DIR=$2
 export ENV_DIR=$3
 
-BP_DIR=$(cd $(dirname $0)/..; pwd)
-BIN_DIR=$BP_DIR/bin
+BP_DIR=$(cd "$(dirname "$0")/.." && pwd)
+export BIN_DIR=$BP_DIR/bin
 LIB_DIR=$BP_DIR/lib
 
-source $LIB_DIR/common.sh
-source $LIB_DIR/lein.sh
-source $LIB_DIR/buildpack-stdlib-v7.sh
-source $LIB_DIR/metrics.sh
+# shellcheck source=lib/common.sh
+source "$LIB_DIR/common.sh"
+# shellcheck source=lib/lein.sh
+source "$LIB_DIR/lein.sh"
+# shellcheck source=lib/buildpack-stdlib-v7.sh
+source "$LIB_DIR/buildpack-stdlib-v7.sh"
+# shellcheck source=lib/metrics.sh
+source "$LIB_DIR/metrics.sh"
 
-export_env $ENV_DIR "." "JAVA_OPTS"
+export_env "$ENV_DIR" "." "JAVA_OPTS"
 
 metrics::init "${CACHE_DIR}" "clojure"
 metrics::setup
 
 # Install JDK from jvm-common
-install_jdk ${BUILD_DIR}
+install_jdk "${BUILD_DIR}"
 
 # Install Node.js if needed
-detect_and_install_nodejs ${BUILD_DIR}
+detect_and_install_nodejs "${BUILD_DIR}"
 
 # install rlwrap binary, always needed for clj command, and also on old lein 1.x
 install_rlwrap "${BUILD_DIR}" "${CACHE_DIR}"
@@ -40,70 +44,70 @@ echo "-----> Installing Clojure $CLOJURE_CLI_VERSION CLI tools"
 CLOJURE_INSTALL_NAME="linux-install-${CLOJURE_CLI_VERSION}.sh"
 CLOJURE_INSTALL_URL="https://download.clojure.org/install/$CLOJURE_INSTALL_NAME"
 curl --retry 3 --retry-connrefused --connect-timeout 5 -sSfL --max-time 60 -o "/tmp/$CLOJURE_INSTALL_NAME" "$CLOJURE_INSTALL_URL"
-chmod +x /tmp/$CLOJURE_INSTALL_NAME
-mkdir -p $BUILD_DIR/.heroku/clj
-"/tmp/$CLOJURE_INSTALL_NAME" --prefix $BUILD_DIR/.heroku/clj 2>/dev/null | sed -u 's/^/       /'
-chmod +x $BUILD_DIR/.heroku/clj/bin/*
+chmod +x "/tmp/$CLOJURE_INSTALL_NAME"
+mkdir -p "$BUILD_DIR/.heroku/clj"
+"/tmp/$CLOJURE_INSTALL_NAME" --prefix "$BUILD_DIR/.heroku/clj" 2>/dev/null | sed -u 's/^/       /'
+chmod +x "$BUILD_DIR/.heroku/clj/bin/"*
 export PATH=$BUILD_DIR/.heroku/clj/bin:$PATH
 
 # Check for vendored lein script
-if [ -x $BUILD_DIR/bin/lein ]; then
-  echo "-----> Using vendored Leiningen at bin/lein"
-  LEIN_BIN_PATH="$BUILD_DIR/bin/lein"
-  calculate_lein_build_task $BUILD_DIR
-  $LEIN_BIN_PATH version 2>/dev/null | sed -u 's/^/       /'
+if [ -x "$BUILD_DIR/bin/lein" ]; then
+	echo "-----> Using vendored Leiningen at bin/lein"
+	LEIN_BIN_PATH="$BUILD_DIR/bin/lein"
+	calculate_lein_build_task "$BUILD_DIR"
+	$LEIN_BIN_PATH version 2>/dev/null | sed -u 's/^/       /'
 else
-  # Determine Leiningen version
-  if is_lein_2 $BUILD_DIR; then
-    LEIN_VERSION="2.9.1"
-    LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein2"
-    calculate_lein_build_task $BUILD_DIR
-  else
-    LEIN_VERSION="1.7.1"
-    LEIN_BIN_SOURCE="$(dirname $0)/../opt/lein1"
-    LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"deps"}
-    if [ "$LEIN_DEV" = "" ]; then
-      export LEIN_NO_DEV=y
-    fi
-    RLWRAP=yes
-    warning "No :min-lein-version found in project.clj; using $LEIN_VERSION.
+	# Determine Leiningen version
+	if is_lein_2 "$BUILD_DIR"; then
+		LEIN_VERSION="2.9.1"
+		LEIN_BIN_SOURCE="$(dirname "$0")/../opt/lein2"
+		calculate_lein_build_task "$BUILD_DIR"
+	else
+		LEIN_VERSION="1.7.1"
+		LEIN_BIN_SOURCE="$(dirname "$0")/../opt/lein1"
+		LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"deps"}
+		if [ "$LEIN_DEV" = "" ]; then
+			export LEIN_NO_DEV=y
+		fi
+		export RLWRAP=yes
+		warning "No :min-lein-version found in project.clj; using $LEIN_VERSION.
   You probably don't want this!"
-  fi
+	fi
 
-  # install leiningen jar
-  LEIN1_JAR_URL="https://lang-jvm.s3.us-east-1.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
-  LEIN2_JAR_URL="https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip"
-  LEIN_JAR_CACHE_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
-  LEIN_JAR_SLUG_PATH="$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
+	# install leiningen jar
+	LEIN1_JAR_URL="https://lang-jvm.s3.us-east-1.amazonaws.com/leiningen-$LEIN_VERSION-standalone.jar"
+	LEIN2_JAR_URL="https://github.com/technomancy/leiningen/releases/download/$LEIN_VERSION/leiningen-$LEIN_VERSION-standalone.zip"
+	LEIN_JAR_CACHE_PATH="$CACHE_DIR/leiningen-$LEIN_VERSION-standalone.jar"
+	LEIN_JAR_SLUG_PATH="$BUILD_DIR/.lein/leiningen-$LEIN_VERSION-standalone.jar"
 
-  if [ "$LEIN_VERSION" = "1.7.1" ]; then
-    LEIN_JAR_URL=$LEIN1_JAR_URL
-  else
-    LEIN_JAR_URL=$LEIN2_JAR_URL
-  fi
+	if [ "$LEIN_VERSION" = "1.7.1" ]; then
+		LEIN_JAR_URL=$LEIN1_JAR_URL
+	else
+		LEIN_JAR_URL=$LEIN2_JAR_URL
+	fi
 
-  if [ ! -r "$LEIN_JAR_CACHE_PATH" ]; then
-    echo "-----> Installing Leiningen"
-    echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
-    mkdir -p $(dirname $LEIN_JAR_CACHE_PATH)
-    curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" $LEIN_JAR_URL
-  else
-    echo "-----> Using cached Leiningen $LEIN_VERSION"
-  fi
+	if [ ! -r "$LEIN_JAR_CACHE_PATH" ]; then
+		echo "-----> Installing Leiningen"
+		echo "       Downloading: leiningen-$LEIN_VERSION-standalone.jar"
+		mkdir -p "$(dirname "$LEIN_JAR_CACHE_PATH")"
+		curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 120 -L -o "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_URL"
+	else
+		echo "-----> Using cached Leiningen $LEIN_VERSION"
+	fi
 
-  if [ "$LEIN_VERSION" = "1.7.1" ]; then
-    echo "       To use Leiningen 2.x, add this to project.clj: :min-lein-version \"2.0.0\""
-  fi
+	if [ "$LEIN_VERSION" = "1.7.1" ]; then
+		echo "       To use Leiningen 2.x, add this to project.clj: :min-lein-version \"2.0.0\""
+	fi
 
-  mkdir -p "$BUILD_DIR/.lein"
-  cp "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_SLUG_PATH"
+	mkdir -p "$BUILD_DIR/.lein"
+	cp "$LEIN_JAR_CACHE_PATH" "$LEIN_JAR_SLUG_PATH"
 
-  # install lein script
-  LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
-  echo "       Writing: lein script"
-  mkdir -p $(dirname $LEIN_BIN_PATH)
-  cp $LEIN_BIN_SOURCE $LEIN_BIN_PATH
-  sed -i s/##LEIN_VERSION##/$LEIN_VERSION/ $LEIN_BIN_PATH
+	# install lein script
+	LEIN_BIN_PATH=$BUILD_DIR"/.lein/bin/lein"
+	echo "       Writing: lein script"
+	mkdir -p "$(dirname "$LEIN_BIN_PATH")"
+	cp "$LEIN_BIN_SOURCE" "$LEIN_BIN_PATH"
+	sed -i s/##LEIN_VERSION##/$LEIN_VERSION/ "$LEIN_BIN_PATH"
 fi
 
 # Collect metrics
@@ -113,86 +117,88 @@ metrics::set_string "clojure_cli_version" "${CLOJURE_CLI_VERSION:-1.10.0.411}"
 [ -n "$LEIN_BUILD_TASK" ] && metrics::set_string "lein_build_task" "$LEIN_BUILD_TASK"
 
 # create user-level profiles
-mkdir -p $BUILD_DIR/.lein
-LEIN_PROFILES_SOURCE="$(dirname $0)/../opt/profiles.clj"
-cp -n $LEIN_PROFILES_SOURCE "$BUILD_DIR/.lein/profiles.clj"
+mkdir -p "$BUILD_DIR/.lein"
+LEIN_PROFILES_SOURCE="$(dirname "$0")/../opt/profiles.clj"
+cp -n "$LEIN_PROFILES_SOURCE" "$BUILD_DIR/.lein/profiles.clj"
 
 # unpack existing cache
-CACHED_DIRS=".m2 node_modules"
-for DIR in $CACHED_DIRS; do
-  if [ ! -d $BUILD_DIR/$DIR ]; then
-    cache_copy $DIR $CACHE_DIR $BUILD_DIR
-  fi
+CACHED_DIRS=(".m2" "node_modules")
+for DIR in "${CACHED_DIRS[@]}"; do
+	if [ ! -d "$BUILD_DIR/$DIR" ]; then
+		cache_copy "$DIR" "$CACHE_DIR" "$BUILD_DIR"
+	fi
 done
 
 echo "-----> Building with Leiningen"
 
 # extract environment
 if [ -d "${ENV_DIR}" ]; then
-  # Be default, only export private repo credentials
-  config_vars="LEIN_USERNAME LEIN_PASSWORD LEIN_PASSPHRASE"
+	# Be default, only export private repo credentials
+	config_vars="LEIN_USERNAME LEIN_PASSWORD LEIN_PASSPHRASE"
 
-  if [ -r "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST" ]; then
-    config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST")
+	if [ -r "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST" ]; then
+		config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST")
 
-  # Backwards compatibility for legacy configuration
-  elif [ -r "${ENV_DIR}/BUILD_CONFIG_WHITELIST" ]; then
-    config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_WHITELIST")
-  fi
+	# Backwards compatibility for legacy configuration
+	elif [ -r "${ENV_DIR}/BUILD_CONFIG_WHITELIST" ]; then
+		config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_WHITELIST")
+	fi
 
-  for config_var in $config_vars; do
-      if [ -r "${ENV_DIR}/${config_var}" ]; then
-          export "${config_var}=$(cat "${ENV_DIR}/${config_var}")"
-      fi
-  done
+	for config_var in $config_vars; do
+		if [ -r "${ENV_DIR}/${config_var}" ]; then
+			export "${config_var}=$(cat "${ENV_DIR}/${config_var}")"
+		fi
+	done
 fi
 
 # Calculate build command
 if [ "$BUILD_COMMAND" = "" ]; then
-    if [ -x $BUILD_DIR/bin/build ]; then
-        echo "       Found bin/build; running it instead of default lein invocation."
-        BUILD_COMMAND=bin/build
-    else
-        BUILD_COMMAND="lein $LEIN_BUILD_TASK"
-    fi
+	if [ -x "$BUILD_DIR/bin/build" ]; then
+		echo "       Found bin/build; running it instead of default lein invocation."
+		BUILD_COMMAND=bin/build
+	else
+		BUILD_COMMAND="lein $LEIN_BUILD_TASK"
+	fi
 fi
 
 metrics::set_string "build_command" "$BUILD_COMMAND"
 
 echo "       Running: $BUILD_COMMAND"
 
-cd $BUILD_DIR
-PATH=$(dirname $LEIN_BIN_PATH):$PATH JVM_OPTS="-Xmx600m" \
-  LEIN_JVM_OPTS="-Xmx400m -Duser.home=$BUILD_DIR" \
-  $BUILD_COMMAND 2>&1 | sed -u 's/^/       /'
+cd "$BUILD_DIR"
+PATH=$(dirname "$LEIN_BIN_PATH"):$PATH JVM_OPTS="-Xmx600m" \
+LEIN_JVM_OPTS="-Xmx400m -Duser.home=$BUILD_DIR" \
+	$BUILD_COMMAND 2>&1 | sed -u 's/^/       /'
 if [ "${PIPESTATUS[*]}" != "0 0" ]; then
-  echo " !     Failed to build."
-  exit 1
+	echo " !     Failed to build."
+	exit 1
 fi
 
 # populate profile.d
 PROFILE_PATH="$BUILD_DIR/.profile.d/clojure.sh"
-mkdir -p $(dirname $PROFILE_PATH)
-echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\"" >> $PROFILE_PATH
-echo 'export PATH="$HOME/.heroku/nodejs/bin:$HOME/.heroku/clj/bin:$HOME/.jdk/bin:$HOME/.lein/bin:$PATH"' >> $PROFILE_PATH
-echo 'export RING_ENV="${RING_ENV:-production}"' >> $PROFILE_PATH
+mkdir -p "$(dirname "$PROFILE_PATH")"
+{
+	echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\""
+	echo "export PATH=\"\$HOME/.heroku/nodejs/bin:\$HOME/.heroku/clj/bin:\$HOME/.jdk/bin:\$HOME/.lein/bin:\$PATH\""
+	echo "export RING_ENV=\"\${RING_ENV:-production}\""
+} >>"$PROFILE_PATH"
 
 # rewrite Clojure CLI path
-mv $BUILD_DIR/.heroku/clj/bin/clojure $BUILD_DIR/.heroku/clj/bin/clojure.old
-cat $BUILD_DIR/.heroku/clj/bin/clojure.old | sed -e "s/\/tmp\/$(basename $BUILD_DIR)/\/app/g" > $BUILD_DIR/.heroku/clj/bin/clojure
-chmod +x $BUILD_DIR/.heroku/clj/bin/clojure
+mv "$BUILD_DIR/.heroku/clj/bin/clojure" "$BUILD_DIR/.heroku/clj/bin/clojure.old"
+sed -e "s/\/tmp\/$(basename "$BUILD_DIR")/\/app/g" "$BUILD_DIR/.heroku/clj/bin/clojure.old" >"$BUILD_DIR/.heroku/clj/bin/clojure"
+chmod +x "$BUILD_DIR/.heroku/clj/bin/clojure"
 
 # repack cache with new assets
-mkdir -p $CACHE_DIR
-for DIR in $CACHED_DIRS; do
-  cache_copy $DIR $BUILD_DIR $CACHE_DIR
+mkdir -p "$CACHE_DIR"
+for DIR in "${CACHED_DIRS[@]}"; do
+	cache_copy "$DIR" "$BUILD_DIR" "$CACHE_DIR"
 done
 
 if [ "$LEIN_INCLUDE_IN_SLUG" = "no" ]; then
-    rm -f "$LEIN_JAR_SLUG_PATH"
-    rm -rf $CACHED_DIRS
+	rm -f "$LEIN_JAR_SLUG_PATH"
+	rm -rf "${CACHED_DIRS[@]}"
 fi
 
 if [ "$LEIN_VERSION" = "1.7.1" ]; then
-    rm -rf $CACHED_DIRS
+	rm -rf "${CACHED_DIRS[@]}"
 fi
