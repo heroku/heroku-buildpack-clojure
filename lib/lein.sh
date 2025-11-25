@@ -33,8 +33,10 @@ install_rlwrap() {
 	mkdir -p "$APT_STATE_DIR/lists/partial"
 
 	echo "-----> Installing rlwrap... "
-	apt-get "$APT_OPTIONS" update | indent
-	apt-get "$APT_OPTIONS" -y -d install --reinstall rlwrap | indent
+	# shellcheck disable=SC2086
+	apt-get $APT_OPTIONS update | indent
+	# shellcheck disable=SC2086
+	apt-get $APT_OPTIONS -y -d install --reinstall rlwrap | indent
 
 	mkdir -p "$buildDir/.profile.d"
 	cat <<EOF >"$buildDir/.profile.d/rlwrap.sh"
