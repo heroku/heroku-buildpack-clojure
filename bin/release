@@ -1,31 +1,31 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
-export BUILD_DIR=$1
+export BUILD_DIR="${1}"
 
-BP_DIR=$(cd "$(dirname "$0")/.." && pwd)
-export BIN_DIR=$BP_DIR/bin
-LIB_DIR=$BP_DIR/lib
+BP_DIR=$(cd "$(dirname "${0}")/.." && pwd)
+export BIN_DIR="${BP_DIR}/bin"
+LIB_DIR="${BP_DIR}/lib"
 
 # shellcheck source=lib/common.sh
-source "$LIB_DIR/common.sh"
+source "${LIB_DIR}/common.sh"
 # shellcheck source=lib/lein.sh
-source "$LIB_DIR/lein.sh"
+source "${LIB_DIR}/lein.sh"
 
-if [ ! -f "$BUILD_DIR/Procfile" ]; then
+if [[ ! -f "${BUILD_DIR}/Procfile" ]]; then
 	cat <<EOF
 ---
 config_vars:
 default_process_types:
 EOF
 
-	if [ "$(calculate_lein_build_task "$BUILD_DIR")" == "uberjar" ]; then
-		cd "$BUILD_DIR" || exit
+	if [[ "$(calculate_lein_build_task "${BUILD_DIR}")" == "uberjar" ]]; then
+		cd "${BUILD_DIR}" || exit
 		while IFS= read -r -d '' jarFile; do
-			echo "  web: java -jar $jarFile"
+			echo "  web: java -jar ${jarFile}"
 			break
 		done < <(find target -maxdepth 1 -name "*.jar" -type f -print0)
-	elif is_lein_2 "$BUILD_DIR"; then
+	elif is_lein_2 "${BUILD_DIR}"; then
 		echo "  web: lein with-profile production trampoline run"
 	else
 		echo "  web: lein trampoline run"
