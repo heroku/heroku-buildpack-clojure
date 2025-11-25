@@ -19,7 +19,7 @@ LIB_DIR=$BP_DIR/lib
 source "$LIB_DIR/common.sh"
 # shellcheck source=lib/lein.sh
 source "$LIB_DIR/lein.sh"
-# shellcheck source=lib/buildpack-stdlib-v7.sh
+# shellcheck disable=SC1091
 source "$LIB_DIR/buildpack-stdlib-v7.sh"
 # shellcheck source=lib/metrics.sh
 source "$LIB_DIR/metrics.sh"
