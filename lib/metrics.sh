@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+export BUILDPACK_DIR
 
 # Variables shared by this whole module
 METRICS_DATA_FILE=""

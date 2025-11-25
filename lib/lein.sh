@@ -1,43 +1,45 @@
 #!/usr/bin/env bash
 
 calculate_lein_build_task() {
-  local buildDir=${1}
-  if [ "$(grep :uberjar-name $buildDir/project.clj)" != "" ]; then
-    export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
-    export LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
-  elif [ "$(grep lein-npm $buildDir/project.clj)" != "" ]; then
-    export LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production do deps, compile :all"}
-  else
-    export LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production compile :all"}
-  fi
+	local buildDir=${1}
+	if [ "$(grep :uberjar-name "$buildDir/project.clj")" != "" ]; then
+		export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
+		export LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
+	elif [ "$(grep lein-npm "$buildDir/project.clj")" != "" ]; then
+		export LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production do deps, compile :all"}
+	else
+		export LEIN_BUILD_TASK=${LEIN_BUILD_TASK:-"with-profile production compile :all"}
+	fi
 }
 
 is_lein_2() {
-  local buildDir=${1}
-  if [ "$(grep ":min-lein-version[[:space:]]\+\"2" $BUILD_DIR/project.clj)" != "" ]; then
-    return 0
-  else
-    return 1
-  fi
+	local buildDir=${1}
+	if [ "$(grep ":min-lein-version[[:space:]]\+\"2" "$BUILD_DIR/project.clj")" != "" ]; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 install_rlwrap() {
-  local buildDir="${1:?}"
-  local cacheDir="${2:?}"
+	local buildDir="${1:?}"
+	local cacheDir="${2:?}"
 
-  APT_CACHE_DIR="$cacheDir/clojure-bp-apt/cache"
-  APT_STATE_DIR="$cacheDir/clojure-bp-apt/state"
-  APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
+	APT_CACHE_DIR="$cacheDir/clojure-bp-apt/cache"
+	APT_STATE_DIR="$cacheDir/clojure-bp-apt/state"
+	APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
 
-  mkdir -p "$APT_CACHE_DIR/archives/partial"
-  mkdir -p "$APT_STATE_DIR/lists/partial"
+	mkdir -p "$APT_CACHE_DIR/archives/partial"
+	mkdir -p "$APT_STATE_DIR/lists/partial"
 
-  echo "-----> Installing rlwrap... "
-  apt-get $APT_OPTIONS update | indent
-  apt-get $APT_OPTIONS -y -d install --reinstall rlwrap | indent
+	echo "-----> Installing rlwrap... "
+	# shellcheck disable=SC2086
+	apt-get $APT_OPTIONS update | indent
+	# shellcheck disable=SC2086
+	apt-get $APT_OPTIONS -y -d install --reinstall rlwrap | indent
 
-  mkdir -p $buildDir/.profile.d
-  cat <<EOF >$buildDir/.profile.d/rlwrap.sh
+	mkdir -p "$buildDir/.profile.d"
+	cat <<EOF >"$buildDir/.profile.d/rlwrap.sh"
   export PATH="\$HOME/.heroku/apt/usr/bin:\$PATH"
   export LD_LIBRARY_PATH="\$HOME/.heroku/apt/usr/lib/x86_64-linux-gnu:\$HOME/.heroku/apt/usr/lib/i386-linux-gnu:\$HOME/.heroku/apt/usr/lib:\$LD_LIBRARY_PATH"
   export LIBRARY_PATH="\$HOME/.heroku/apt/usr/lib/x86_64-linux-gnu:\$HOME/.heroku/apt/usr/lib/i386-linux-gnu:\$HOME/.heroku/apt/usr/lib:\$LIBRARY_PATH"
@@ -49,8 +51,8 @@ install_rlwrap() {
   export SCREENDIR="\$HOME/.heroku/apt/var/run/screen"
 EOF
 
-  for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
-    dpkg -x $DEB $buildDir/.heroku/apt/
-  done
-  chmod +x $buildDir/.heroku/apt/usr/bin/*
+	for DEB in "$APT_CACHE_DIR/archives/"*.deb; do
+		dpkg -x "$DEB" "$buildDir/.heroku/apt/"
+	done
+	chmod +x "$buildDir/.heroku/apt/usr/bin/"*
 }
