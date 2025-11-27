@@ -103,7 +103,8 @@ def clean_output(output)
     ##################################################
     # Curl progress output - non-deterministic due to network speed and ANSI control sequences
     # Replace entire progress section with placeholder (number of updates varies based on download speed)
-    /remote:\s+% Total.*?(?=remote:\s+(?:Retrieving|Compiling))/m => "remote:        $CURL_PROGRESS_OUTPUT\n",
+    # Works for both regular deploy output (with "remote:" prefix) and CI output (without prefix)
+    /((?:remote:)?\s+)% Total.*?(?=(?:remote:)?\s+(?:Retrieving|Compiling))/m => '\1$CURL_PROGRESS_OUTPUT' + "\n",
     ##################################################
     # Clojure / Leiningen
     ##################################################
