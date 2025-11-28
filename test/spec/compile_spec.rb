@@ -424,4 +424,57 @@ describe 'Clojure' do
       end
     end
   end
+
+  it 'uses custom bin/build script when present' do
+    new_default_hatchet_runner('lein-2.x-with-uberjar').tap do |app|
+      app.before_deploy do
+        Dir.mkdir('bin') unless Dir.exist?('bin')
+        File.write('bin/build', <<~SCRIPT)
+          #!/usr/bin/env bash
+          echo "Running custom build script"
+          lein deps
+        SCRIPT
+        File.chmod(0755, 'bin/build')
+      end
+
+      app.deploy do
+        expect(clean_output(app.output)).to include('Found bin/build; running it instead of default lein invocation.')
+        expect(clean_output(app.output)).to include('Running: bin/build')
+        expect(clean_output(app.output)).to include('Running custom build script')
+      end
+    end
+  end
+
+  it 'detects and uses vendored leiningen from bin/lein' do
+    buildpack_root = File.expand_path('../..', __dir__)
+    new_default_hatchet_runner('lein-2.x-with-uberjar').tap do |app|
+      app.before_deploy do
+        Dir.mkdir('bin') unless Dir.exist?('bin')
+        # Create a working lein script based on opt/lein2
+        lein_template_path = File.join(buildpack_root, 'opt/lein2')
+        lein_content = File.read(lein_template_path)
+        # Replace the version placeholder with actual version
+        lein_content.gsub!('##LEIN_VERSION##', '2.9.1')
+        File.write('bin/lein', lein_content)
+        File.chmod(0755, 'bin/lein')
+      end
+
+      app.deploy do
+        expect(clean_output(app.output)).to include('Using vendored Leiningen at bin/lein')
+      end
+    end
+  end
+
+  it 'fails the build when lein compilation fails' do
+    new_default_hatchet_runner('lein-2.x-with-uberjar', allow_failure: true).tap do |app|
+      app.before_deploy do
+        File.write('src/com/heroku/ci/core.clj', '(this will not compile')
+      end
+
+      app.deploy do
+        expect(app).not_to be_deployed
+        expect(app.output).to include('Failed to build.')
+      end
+    end
+  end
 end
