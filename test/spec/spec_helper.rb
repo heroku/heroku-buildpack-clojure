@@ -112,6 +112,12 @@ def clean_output(output)
     /Retrieving [\w\/\.\-]+\.(pom|jar) from \w+/ => 'Retrieving $DEPENDENCY from $REPO',
     # Jetty logging timestamp
     /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+:INFO::main: Logging initialized @\d+ms/ => '$TIMESTAMP:INFO::main: Logging initialized @$TIMEms',
+
+    ##################################################
+    # npm
+    ##################################################
+    # npm audit timing
+    /up to date, audited \d+ packages? in \d+m?s/ => 'up to date, audited $NUM packages in $TIME',
   }
 
   output = generic.reduce(output) { |output, (pattern, replacement)| output.gsub(pattern, replacement) }
