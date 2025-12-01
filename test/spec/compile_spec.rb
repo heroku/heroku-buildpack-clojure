@@ -31,7 +31,7 @@ describe 'Clojure' do
           remote:        Building dependency tree...
           remote:        The following NEW packages will be installed:
           remote:          rlwrap
-          remote:        0 upgraded, 1 newly installed, 0 to remove and 18 not upgraded.
+          remote:        0 upgraded, 1 newly installed, 0 to remove and 19 not upgraded.
           remote:        Need to get 107 kB of archives.
           remote:        After this operation, 328 kB of additional disk space will be used.
           remote:        Get:$NUM $PACKAGE [$SIZE]
@@ -51,7 +51,7 @@ describe 'Clojure' do
           remote: -----> Building with Leiningen
           remote:        Running: lein uberjar
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
-          remote:        $CURL_PROGRESS_OUTPUT
+          remote:          $CURL_PROGRESS_OUTPUT
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
@@ -183,7 +183,7 @@ describe 'Clojure' do
           remote:        Building dependency tree...
           remote:        The following NEW packages will be installed:
           remote:          rlwrap
-          remote:        0 upgraded, 1 newly installed, 0 to remove and 18 not upgraded.
+          remote:        0 upgraded, 1 newly installed, 0 to remove and 19 not upgraded.
           remote:        Need to get 0 B/107 kB of archives.
           remote:        After this operation, 328 kB of additional disk space will be used.
           remote:        Download complete and in download only mode
@@ -200,7 +200,7 @@ describe 'Clojure' do
           remote: -----> Building with Leiningen
           remote:        Running: lein uberjar
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
-          remote:        $CURL_PROGRESS_OUTPUT
+          remote:          $CURL_PROGRESS_OUTPUT
           remote:        Compiling com.heroku.ci.core
           remote:        $TIMESTAMP:INFO::main: Logging initialized @$TIMEms to org.eclipse.jetty.util.log.StdErrLog
           remote:        Compiling com.heroku.ci.core
@@ -245,7 +245,7 @@ describe 'Clojure' do
           remote:        Building dependency tree...
           remote:        The following NEW packages will be installed:
           remote:          rlwrap
-          remote:        0 upgraded, 1 newly installed, 0 to remove and 18 not upgraded.
+          remote:        0 upgraded, 1 newly installed, 0 to remove and 19 not upgraded.
           remote:        Need to get 107 kB of archives.
           remote:        After this operation, 328 kB of additional disk space will be used.
           remote:        Get:$NUM $PACKAGE [$SIZE]
@@ -265,7 +265,7 @@ describe 'Clojure' do
           remote: -----> Building with Leiningen
           remote:        Running: lein with-profile production compile :all
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
-          remote:        $CURL_PROGRESS_OUTPUT
+          remote:          $CURL_PROGRESS_OUTPUT
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
@@ -394,7 +394,7 @@ describe 'Clojure' do
           remote:        Building dependency tree...
           remote:        The following NEW packages will be installed:
           remote:          rlwrap
-          remote:        0 upgraded, 1 newly installed, 0 to remove and 18 not upgraded.
+          remote:        0 upgraded, 1 newly installed, 0 to remove and 19 not upgraded.
           remote:        Need to get 0 B/107 kB of archives.
           remote:        After this operation, 328 kB of additional disk space will be used.
           remote:        Download complete and in download only mode
@@ -411,7 +411,7 @@ describe 'Clojure' do
           remote: -----> Building with Leiningen
           remote:        Running: lein with-profile production compile :all
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
-          remote:        $CURL_PROGRESS_OUTPUT
+          remote:          $CURL_PROGRESS_OUTPUT
           remote:        Compiling com.heroku.ci.core
           remote:        $TIMESTAMP:INFO::main: Logging initialized @$TIMEms to org.eclipse.jetty.util.log.StdErrLog
           remote: -----> Discovering process types
