@@ -9,10 +9,7 @@ describe 'Leiningen 1.x' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing rlwrap... 
-          remote:        Get:$NUM $PACKAGE [$SIZE]
-          remote:        Get:$NUM $PACKAGE [$SIZE]
-          remote:        Get:$NUM $PACKAGE [$SIZE]
+          remote: -----> Installing rlwrap...
           remote:        Get:$NUM $PACKAGE [$SIZE]
           remote:        Get:$NUM $PACKAGE [$SIZE]
           remote:        Get:$NUM $PACKAGE [$SIZE]
@@ -27,13 +24,14 @@ describe 'Leiningen 1.x' do
           remote: rm: cannot remove '/var/cache/apt/archives/partial/*.deb': Permission denied
           remote:        Fetched $SIZE in $TIME ($SPEED)
           remote:        Reading package lists...
+          remote: W: http://apt.postgresql.org/pub/repos/apt/dists/jammy-pgdg/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
           remote:        Reading package lists...
           remote:        Building dependency tree...
           remote:        The following NEW packages will be installed:
           remote:          rlwrap
-          remote:        0 upgraded, 1 newly installed, 0 to remove and 19 not upgraded.
-          remote:        Need to get 107 kB of archives.
-          remote:        After this operation, 328 kB of additional disk space will be used.
+          remote:        $NUM upgraded, $NUM newly installed, $NUM to remove and $NUM not upgraded.
+          remote:        Need to get $SIZE of archives.
+          remote:        After this operation, $SIZE of additional disk space will be used.
           remote:        Get:$NUM $PACKAGE [$SIZE]
           remote:        Fetched $SIZE in $TIME ($SPEED)
           remote:        Download complete and in download only mode
@@ -52,7 +50,6 @@ describe 'Leiningen 1.x' do
           remote:        Downloading: leiningen-1.7.1-standalone.jar
           remote:        To use Leiningen 2.x, add this to project.clj: :min-lein-version "2.0.0"
           remote:        Writing: lein script
-          remote: cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead
           remote: -----> Building with Leiningen
           remote:        Running: lein deps
           remote:        Downloading: org/clojure/clojure/1.5.1/clojure-1.5.1.pom from repository central-https at https://repo1.maven.org/maven2

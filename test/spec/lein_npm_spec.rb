@@ -27,10 +27,7 @@ RSpec.describe 'Clojure buildpack' do
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Node.js 18.16.0...
           remote:        Downloading Node.js 18.16.0...
-          remote: -----> Installing rlwrap... 
-          remote:        Get:$NUM $PACKAGE [$SIZE]
-          remote:        Get:$NUM $PACKAGE [$SIZE]
-          remote:        Get:$NUM $PACKAGE [$SIZE]
+          remote: -----> Installing rlwrap...
           remote:        Get:$NUM $PACKAGE [$SIZE]
           remote:        Get:$NUM $PACKAGE [$SIZE]
           remote:        Get:$NUM $PACKAGE [$SIZE]
@@ -45,13 +42,14 @@ RSpec.describe 'Clojure buildpack' do
           remote: rm: cannot remove '/var/cache/apt/archives/partial/*.deb': Permission denied
           remote:        Fetched $SIZE in $TIME ($SPEED)
           remote:        Reading package lists...
+          remote: W: http://apt.postgresql.org/pub/repos/apt/dists/jammy-pgdg/InRelease: Key is stored in legacy trusted.gpg keyring (/etc/apt/trusted.gpg), see the DEPRECATION section in apt-key(8) for details.
           remote:        Reading package lists...
           remote:        Building dependency tree...
           remote:        The following NEW packages will be installed:
           remote:          rlwrap
-          remote:        0 upgraded, 1 newly installed, 0 to remove and 19 not upgraded.
-          remote:        Need to get 107 kB of archives.
-          remote:        After this operation, 328 kB of additional disk space will be used.
+          remote:        $NUM upgraded, $NUM newly installed, $NUM to remove and $NUM not upgraded.
+          remote:        Need to get $SIZE of archives.
+          remote:        After this operation, $SIZE of additional disk space will be used.
           remote:        Get:$NUM $PACKAGE [$SIZE]
           remote:        Fetched $SIZE in $TIME ($SPEED)
           remote:        Download complete and in download only mode
@@ -65,7 +63,6 @@ RSpec.describe 'Clojure buildpack' do
           remote: -----> Installing Leiningen
           remote:        Downloading: leiningen-2.9.1-standalone.jar
           remote:        Writing: lein script
-          remote: cp: warning: behavior of -n is non-portable and may change in future; use --update=none instead
           remote: -----> Building with Leiningen
           remote:        Running: lein with-profile production do deps, compile :all
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
