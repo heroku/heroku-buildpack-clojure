@@ -31,7 +31,7 @@ RSpec.describe 'Clojure buildpack' do
                  Building dependency tree...
                  The following NEW packages will be installed:
                    rlwrap
-                 0 upgraded, 1 newly installed, 0 to remove and 7 not upgraded.
+                 0 upgraded, 1 newly installed, 0 to remove and 8 not upgraded.
                  Need to get 107 kB of archives.
                  After this operation, 328 kB of additional disk space will be used.
                  Get:$NUM $PACKAGE [$SIZE]
@@ -190,7 +190,7 @@ RSpec.describe 'Clojure buildpack' do
                  Building dependency tree...
                  The following NEW packages will be installed:
                    rlwrap
-                 0 upgraded, 1 newly installed, 0 to remove and 7 not upgraded.
+                 0 upgraded, 1 newly installed, 0 to remove and 8 not upgraded.
                  Need to get 0 B/107 kB of archives.
                  After this operation, 328 kB of additional disk space will be used.
                  Download complete and in download only mode
