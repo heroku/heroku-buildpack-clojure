@@ -97,6 +97,10 @@ def clean_output(output)
     /Hit:\d+ https?:\/\/.+ InRelease/ => 'Hit:$NUM $REPO InRelease',
     # Apt-get package download lines (normalize non-deterministic download order)
     /Get:\d+ .+ \[[\d,]+(?:\.\d+)? [kKMG]i?B\]/ => 'Get:$NUM $PACKAGE [$SIZE]',
+    # Apt package counts (vary by environment updates)
+    /\d+ upgraded, \d+ newly installed, \d+ to remove and \d+ not upgraded\./ => '$NUM upgraded, $NUM newly installed, $NUM to remove and $NUM not upgraded.',
+    /Need to get [\d,]+(?:\.\d+)? [kKMG]i?B of archives\./ => 'Need to get $SIZE of archives.',
+    /After this operation, [\d,]+(?:\.\d+)? [kKMG]i?B of additional disk space will be used\./ => 'After this operation, $SIZE of additional disk space will be used.',
 
     ##################################################
     # Curl
