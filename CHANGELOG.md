@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Replace `apt-get` `rlwrap` installation with shim. ([#187](https://github.com/heroku/heroku-buildpack-clojure/pull/187))
 
 ## [v92] - 2025-09-11
 
