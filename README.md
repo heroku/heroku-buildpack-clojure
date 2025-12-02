@@ -1,5 +1,5 @@
 # Heroku buildpack: Clojure [![CI](https://github.com/heroku/heroku-buildpack-clojure/actions/workflows/ci.yml/badge.svg)](https://github.com/heroku/heroku-buildpack-clojure/actions/workflows/ci.yml)
-![clojure](https://cloud.githubusercontent.com/assets/51578/13712844/d37ac78c-e793-11e5-9f0a-d033eb4f6f9f.png)
+![clojure](https://raw.githubusercontent.com/heroku/buildpacks/refs/heads/main/assets/images/buildpack-banner-clojure.png)
 
 This is the official [Heroku buildpack](http://devcenter.heroku.com/articles/buildpack) for Clojure apps. It uses
 [Leiningen](http://leiningen.org).
