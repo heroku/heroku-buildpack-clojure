@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # This script provides a fallback when rlwrap is not installed, allowing Leiningen 1.x and clj REPLs to function
 # without requiring the buildpack to install rlwrap as a dependency. Using a REPL on Heroku is rare and typically
 # only needed for one-off debugging. Installing rlwrap for all users incurs a cost in build time and slug size
@@ -23,8 +25,26 @@ else
 			4. git push heroku main
 	EOF
 
-	# Skip all rlwrap options, leaving only the wrapped command.
-	while [[ "${1}" == "-*" ]]; do
+	# Strip rlwrap options, leaving only the wrapped command.
+	while [[ "${1:-}" == -* ]]; do
+		# Options that require an argument need an additional shift.
+		case "${1:-}" in
+		-a | --always-readline | -b | --break-chars | -C | --command-name | \
+		-D | --history-no-dupes | -f | --file | -g | --forget-matching | \
+		-H | --history-filename | -l | --logfile | -O | --only-cook | \
+		-P | --pre-given | -q | --quote-characters | -s | --histsize | \
+		-S | --substitute-prompt | -t | --set-term-name | \
+		-w | --wait-before-prompt | -z | --filter)
+			shift
+			;;
+		-m | --multi-line | -p | --prompt-colour)
+			# Optional argument: only shift if not another option.
+			if [[ "${1:-}" != -* ]]; then
+				shift
+			fi
+			;;
+		esac
+
 		shift
 	done
 
