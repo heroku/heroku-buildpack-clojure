@@ -130,7 +130,7 @@ metrics::set_string "clojure_cli_version" "${CLOJURE_CLI_VERSION:-1.10.0.411}"
 # create user-level profiles
 mkdir -p "${BUILD_DIR}/.lein"
 LEIN_PROFILES_SOURCE="$(dirname "${0}")/../opt/profiles.clj"
-cp -n "${LEIN_PROFILES_SOURCE}" "${BUILD_DIR}/.lein/profiles.clj"
+cp --update=none "${LEIN_PROFILES_SOURCE}" "${BUILD_DIR}/.lein/profiles.clj"
 
 # unpack existing cache
 CACHED_DIRS=(".m2" "node_modules")
@@ -178,6 +178,7 @@ echo "       Running: ${BUILD_COMMAND}"
 
 cd "${BUILD_DIR}"
 PATH="$(dirname "${LEIN_BIN_PATH}"):${PATH}" JVM_OPTS="-Xmx600m" \
+HTTP_CLIENT="curl --location --connect-timeout 3 --max-time 60 --retry 5 --retry-connrefused --no-progress-meter --fail -o" \
 LEIN_JVM_OPTS="-Xmx400m -Duser.home=${BUILD_DIR}" \
 	${BUILD_COMMAND} 2>&1 | sed -u 's/^/       /'
 if [[ "${PIPESTATUS[*]}" != "0 0" ]]; then
