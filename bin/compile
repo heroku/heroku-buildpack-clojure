@@ -35,8 +35,19 @@ install_jdk "${BUILD_DIR}"
 # Install Node.js if needed
 detect_and_install_nodejs "${BUILD_DIR}"
 
-# install rlwrap binary, always needed for clj command, and also on old lein 1.x
-install_rlwrap "${BUILD_DIR}" "${CACHE_DIR}"
+# Install rlwrap shim for Leiningen 1.x and clj REPLs.
+# rlwrap is technically a dependency for both, but it only enhances REPL functionality
+# with line editing and command history. This shim allows clj and lein 1.x to run without
+# errors, but does not provide actual readline capabilities. Most users don't use REPLs
+# in a Heroku context. Users can install their own rlwrap via the APT buildpack and this
+# shim will not interfere.
+mkdir -p "${BUILD_DIR}/.heroku/bin"
+cp "${BP_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
+
+# To ensure the cache created by older Clojure buildpack versions doesn't stay around indefinitely, we explicitly
+# delete these old directories. This will speed up subsequent app builds since it will take less time to restore
+# the cache before each build.
+rm -rf "${CACHE_DIR}/clojure-bp-apt"
 
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
 CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
@@ -179,7 +190,7 @@ PROFILE_PATH="${BUILD_DIR}/.profile.d/clojure.sh"
 mkdir -p "$(dirname "${PROFILE_PATH}")"
 {
 	echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\""
-	echo "export PATH=\"\$HOME/.heroku/nodejs/bin:\$HOME/.heroku/clj/bin:\$HOME/.jdk/bin:\$HOME/.lein/bin:\$PATH\""
+	echo "export PATH=\"\$HOME/.heroku/bin:\$HOME/.heroku/nodejs/bin:\$HOME/.heroku/clj/bin:\$HOME/.jdk/bin:\$HOME/.lein/bin:\$PATH\""
 	echo "export RING_ENV=\"\${RING_ENV:-production}\""
 } >>"${PROFILE_PATH}"
 

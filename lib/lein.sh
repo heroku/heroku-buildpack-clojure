@@ -20,39 +20,3 @@ function is_lein_2() {
 		return 1
 	fi
 }
-
-function install_rlwrap() {
-	local buildDir="${1:?}"
-	local cacheDir="${2:?}"
-
-	APT_CACHE_DIR="${cacheDir}/clojure-bp-apt/cache"
-	APT_STATE_DIR="${cacheDir}/clojure-bp-apt/state"
-	APT_OPTIONS="-o debug::nolocking=true -o dir::cache=${APT_CACHE_DIR} -o dir::state=${APT_STATE_DIR}"
-
-	mkdir -p "${APT_CACHE_DIR}/archives/partial"
-	mkdir -p "${APT_STATE_DIR}/lists/partial"
-
-	echo "-----> Installing rlwrap... "
-	# shellcheck disable=SC2086
-	apt-get ${APT_OPTIONS} update | indent
-	# shellcheck disable=SC2086
-	apt-get ${APT_OPTIONS} -y -d install --reinstall rlwrap | indent
-
-	mkdir -p "${buildDir}/.profile.d"
-	cat <<EOF >"${buildDir}/.profile.d/rlwrap.sh"
-  export PATH="\$HOME/.heroku/apt/usr/bin:\$PATH"
-  export LD_LIBRARY_PATH="\$HOME/.heroku/apt/usr/lib/x86_64-linux-gnu:\$HOME/.heroku/apt/usr/lib/i386-linux-gnu:\$HOME/.heroku/apt/usr/lib:\$LD_LIBRARY_PATH"
-  export LIBRARY_PATH="\$HOME/.heroku/apt/usr/lib/x86_64-linux-gnu:\$HOME/.heroku/apt/usr/lib/i386-linux-gnu:\$HOME/.heroku/apt/usr/lib:\$LIBRARY_PATH"
-  export INCLUDE_PATH="\$HOME/.heroku/apt/usr/include:\$INCLUDE_PATH"
-  export CPATH="\$INCLUDE_PATH"
-  export CPPPATH="\$INCLUDE_PATH"
-  export PKG_CONFIG_PATH="\$HOME/.heroku/apt/usr/lib/x86_64-linux-gnu/pkgconfig:\$HOME/.heroku/apt/usr/lib/i386-linux-gnu/pkgconfig:\$HOME/.heroku/apt/usr/lib/pkgconfig:\$PKG_CONFIG_PATH"
-  export PYTHONPATH="\$HOME/.heroku/apt/usr/lib/python2.7/dist-packages"
-  export SCREENDIR="\$HOME/.heroku/apt/var/run/screen"
-EOF
-
-	for DEB in "${APT_CACHE_DIR}/archives/"*.deb; do
-		dpkg -x "${DEB}" "${buildDir}/.heroku/apt/"
-	done
-	chmod +x "${buildDir}/.heroku/apt/usr/bin/"*
-}
