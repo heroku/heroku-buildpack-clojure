@@ -130,7 +130,10 @@ metrics::set_string "clojure_cli_version" "${CLOJURE_CLI_VERSION:-1.10.0.411}"
 # create user-level profiles
 mkdir -p "${BUILD_DIR}/.lein"
 LEIN_PROFILES_SOURCE="$(dirname "${0}")/../opt/profiles.clj"
-cp --update=none "${LEIN_PROFILES_SOURCE}" "${BUILD_DIR}/.lein/profiles.clj"
+LEIN_PROFILE_DESTINATION="${BUILD_DIR}/.lein/profiles.clj"
+if [[ ! -e "${LEIN_PROFILE_DESTINATION}" ]]; then
+	cp "${LEIN_PROFILES_SOURCE}" "${LEIN_PROFILE_DESTINATION}"
+fi
 
 # unpack existing cache
 CACHED_DIRS=(".m2" "node_modules")
