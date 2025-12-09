@@ -43,7 +43,11 @@ detect_and_install_nodejs "${BUILD_DIR}"
 # shim will not interfere.
 mkdir -p "${BUILD_DIR}/.heroku/bin"
 cp "${BP_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
-chmod +x "${BUILD_DIR}/.heroku/bin/rlwrap"
+
+# To ensure the cache created by older Clojure buildpack versions doesn't stay around indefinitely, we explicitly
+# delete these old directories. This will speed up subsequent app builds since it will take less time to restore
+# the cache before each build.
+rm -rf "${CACHE_DIR}/clojure-bp-apt"
 
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
 CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
