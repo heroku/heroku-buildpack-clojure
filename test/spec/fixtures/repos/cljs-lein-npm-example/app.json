@@ -1,6 +1,0 @@
-{
-    "name": "Clojure lein-npm Example",
-    "description": "Sample ClojureScript app that uses lein-npm on Heroku.",
-    "website": "https://devcenter.heroku.com/articles/using-node-js-with-clojure-and-clojurescript-applications",
-    "repository": "https://github.com/kissaten/cljs-lein-npm-example",
-}
