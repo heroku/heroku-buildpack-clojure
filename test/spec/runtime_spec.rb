@@ -30,7 +30,9 @@ RSpec.describe 'Clojure buildpack runtime' do
 
         # Verify lein is available
         lein_output = app.run('lein version')
-        expect(lein_output).to match(/Downloading Leiningen to \/app\/\.lein\/self-installs\/leiningen-\d+\.\d+\.\d+-standalone\.jar now\.\.\./)
+        expect(lein_output).to match(
+          %r{Downloading Leiningen to /app/\.lein/self-installs/leiningen-\d+\.\d+\.\d+-standalone\.jar now\.\.\.}
+        )
         expect(lein_output).to match(/Leiningen \d+\.\d+\.\d+ on Java \d+\.\d+\.\d+ OpenJDK 64-Bit Server VM/)
       end
     end
