@@ -1,7 +1,0 @@
-{
-  "name": "Immutant Feature Demo",
-  "description": "A template for getting started with the popular Immutant framework.",
-  "website": "http://immutant.org",
-  "success_url": "/index.html",
-  "addons": ["heroku-postgresql:hobby-dev", "papertrail"]
-}
