@@ -43,7 +43,7 @@ def http_get(app, options = {})
   retry_limit = options[:retry_limit] || 50
   path = options[:path] ? "/#{options[:path]}" : ''
   Excon.get("#{app.platform_api.app.info(app.name).fetch('web_url')}#{path}", idempotent: true, expects: 200,
-            retry_limit: retry_limit).body
+                                                                              retry_limit: retry_limit).body
 end
 
 def find_output_start_index(lines)
@@ -62,6 +62,7 @@ def find_output_end_index(lines)
   [success_end_index, failure_end_index].compact.first
 end
 
+# rubocop:disable Metrics/MethodLength, Layout/LineLength
 def clean_output(output)
   # Remove output from the build system before and after the actual build
   lines = output.lines
@@ -95,7 +96,7 @@ def clean_output(output)
     # Clojure / Leiningen
     ##################################################
     # Maven/Leiningen dependency retrieval (normalize non-deterministic download order)
-    /Retrieving [\w\/\.\-]+\.(pom|jar) from \w+/ => 'Retrieving $DEPENDENCY from $REPO',
+    %r{Retrieving [\w/.-]+\.(pom|jar) from \w+} => 'Retrieving $DEPENDENCY from $REPO',
     # Jetty logging timestamp
     /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+:INFO::main: Logging initialized @\d+ms/ => '$TIMESTAMP:INFO::main: Logging initialized @$TIMEms',
 
@@ -115,3 +116,4 @@ def clean_output(output)
 
   output
 end
+# rubocop:enable Metrics/MethodLength, Layout/LineLength

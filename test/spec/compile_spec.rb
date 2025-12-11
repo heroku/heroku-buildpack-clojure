@@ -332,13 +332,13 @@ describe 'Clojure' do
   it 'uses custom bin/build script when present' do
     new_default_hatchet_runner('lein-2.x-with-uberjar').tap do |app|
       app.before_deploy do
-        Dir.mkdir('bin') unless Dir.exist?('bin')
+        FileUtils.mkdir_p('bin')
         File.write('bin/build', <<~SCRIPT)
           #!/usr/bin/env bash
           echo "Running custom build script"
           lein deps
         SCRIPT
-        File.chmod(0755, 'bin/build')
+        File.chmod(0o755, 'bin/build')
       end
 
       app.deploy do
@@ -353,14 +353,14 @@ describe 'Clojure' do
     buildpack_root = File.expand_path('../..', __dir__)
     new_default_hatchet_runner('lein-2.x-with-uberjar').tap do |app|
       app.before_deploy do
-        Dir.mkdir('bin') unless Dir.exist?('bin')
+        FileUtils.mkdir_p('bin')
         # Create a working lein script based on opt/lein2
         lein_template_path = File.join(buildpack_root, 'opt/lein2')
         lein_content = File.read(lein_template_path)
         # Replace the version placeholder with actual version
         lein_content.gsub!('##LEIN_VERSION##', '2.9.1')
         File.write('bin/lein', lein_content)
-        File.chmod(0755, 'bin/lein')
+        File.chmod(0o755, 'bin/lein')
       end
 
       app.deploy do
