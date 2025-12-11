@@ -2,7 +2,7 @@
 .PHONY: lint lint-scripts lint-ruby check-format format run publish
 
 STACK ?= heroku-24
-FIXTURE ?= test/spec/fixtures/repos/clojure-minimal
+FIXTURE ?= test/spec/fixtures/repos/lein-2.x-with-uberjar
 
 # Converts a stack name of `heroku-NN` to its build Docker image tag of `heroku/heroku:NN-build`.
 STACK_IMAGE_TAG := heroku/$(subst -,:,$(STACK))-build
