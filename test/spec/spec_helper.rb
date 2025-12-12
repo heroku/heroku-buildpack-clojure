@@ -85,7 +85,7 @@ def clean_output(output)
     # Build id
     /build_[0-9a-f]{8}/ => '$BUILD_ID',
     # Buildpack URL in detection failure message
-    %r{https://github\.com/heroku/heroku-buildpack-clojure#[\w\-/]+} => '$BUILDPACK_URL',
+    %r{https://github\.com/heroku/heroku-buildpack-clojure#[\w\-/.]+} => '$BUILDPACK_URL',
 
     ##################################################
     # Java

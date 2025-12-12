@@ -7,7 +7,7 @@ RSpec.describe 'Clojure buildpack' do
     new_default_hatchet_runner('lein-2.x-with-lein-npm').tap do |app|
       app.deploy do
         # Verify Node.js installation
-        expect(clean_output(app.output)).to include('-----> Installing Node.js 18.16.0...')
+        expect(clean_output(app.output)).to include('-----> Installing Node.js 18.16.0')
         expect(clean_output(app.output)).to include('Downloading Node.js 18.16.0...')
 
         # Verify correct build task for lein-npm
@@ -25,7 +25,7 @@ RSpec.describe 'Clojure buildpack' do
         expect(clean_output(app.output)).to match(<<~OUTPUT)
           remote: -----> Clojure (Leiningen 2) app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Node.js 18.16.0...
+          remote: -----> Installing Node.js 18.16.0
           remote:        Downloading Node.js 18.16.0...
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar

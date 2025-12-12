@@ -9,7 +9,9 @@ RSpec.describe 'Clojure buildpack detection' do
         expect(app).not_to be_deployed
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> App not compatible with buildpack: $BUILDPACK_URL
-          remote:        Could not find a 'project.clj' file! Please ensure it exists and is checked into Git.
+          remote:        
+          remote:  !     Could not find a 'project.clj' file! Please ensure it exists and is checked into Git.
+
 
           remote:        More info: https://devcenter.heroku.com/articles/buildpacks#detection-failure
 
