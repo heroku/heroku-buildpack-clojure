@@ -2,9 +2,7 @@
 # bin/compile <build-dir> <cache-dir>
 
 # fail fast
-set -e
-
-export BPLOG_PREFIX="buildpack.clojure"
+set -euo pipefail
 
 # parse args
 export BUILD_DIR="${1}"
@@ -19,8 +17,6 @@ LIB_DIR="${BP_DIR}/lib"
 source "${LIB_DIR}/common.sh"
 # shellcheck source=lib/lein.sh
 source "${LIB_DIR}/lein.sh"
-# shellcheck disable=SC1091
-source "${LIB_DIR}/buildpack-stdlib-v7.sh"
 # shellcheck source=lib/metrics.sh
 source "${LIB_DIR}/metrics.sh"
 
@@ -77,7 +73,7 @@ else
 		LEIN_VERSION="1.7.1"
 		LEIN_BIN_SOURCE="$(dirname "${0}")/../opt/lein1"
 		LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-deps}"
-		if [[ -z "${LEIN_DEV}" ]]; then
+		if [[ -z "${LEIN_DEV:-}" ]]; then
 			export LEIN_NO_DEV=y
 		fi
 		export RLWRAP=yes
@@ -124,8 +120,8 @@ fi
 # Collect metrics
 metrics::set_string "lein_version" "${LEIN_VERSION:-unknown}"
 metrics::set_string "clojure_cli_version" "${CLOJURE_CLI_VERSION:-1.10.0.411}"
-[[ -n "${LEIN_INCLUDE_IN_SLUG}" ]] && metrics::set_string "lein_include_in_slug" "${LEIN_INCLUDE_IN_SLUG}"
-[[ -n "${LEIN_BUILD_TASK}" ]] && metrics::set_string "lein_build_task" "${LEIN_BUILD_TASK}"
+[[ -n "${LEIN_INCLUDE_IN_SLUG:-}" ]] && metrics::set_string "lein_include_in_slug" "${LEIN_INCLUDE_IN_SLUG}"
+[[ -n "${LEIN_BUILD_TASK:-}" ]] && metrics::set_string "lein_build_task" "${LEIN_BUILD_TASK}"
 
 # create user-level profiles
 mkdir -p "${BUILD_DIR}/.lein"
@@ -166,7 +162,7 @@ if [[ -d "${ENV_DIR}" ]]; then
 fi
 
 # Calculate build command
-if [[ -z "${BUILD_COMMAND}" ]]; then
+if [[ -z "${BUILD_COMMAND:-}" ]]; then
 	if [[ -x "${BUILD_DIR}/bin/build" ]]; then
 		echo "       Found bin/build; running it instead of default lein invocation."
 		BUILD_COMMAND=bin/build
@@ -180,11 +176,10 @@ metrics::set_string "build_command" "${BUILD_COMMAND}"
 echo "       Running: ${BUILD_COMMAND}"
 
 cd "${BUILD_DIR}"
-PATH="$(dirname "${LEIN_BIN_PATH}"):${PATH}" JVM_OPTS="-Xmx600m" \
+if ! PATH="$(dirname "${LEIN_BIN_PATH}"):${PATH}" JVM_OPTS="-Xmx600m" \
 HTTP_CLIENT="curl --location --connect-timeout 3 --max-time 60 --retry 5 --retry-connrefused --no-progress-meter --fail -o" \
 LEIN_JVM_OPTS="-Xmx400m -Duser.home=${BUILD_DIR}" \
-	${BUILD_COMMAND} 2>&1 | sed -u 's/^/       /'
-if [[ "${PIPESTATUS[*]}" != "0 0" ]]; then
+	${BUILD_COMMAND} 2>&1 | sed -u 's/^/       /'; then
 	echo " !     Failed to build."
 	exit 1
 fi
@@ -209,11 +204,13 @@ for DIR in "${CACHED_DIRS[@]}"; do
 	cache_copy "${DIR}" "${BUILD_DIR}" "${CACHE_DIR}"
 done
 
-if [[ "${LEIN_INCLUDE_IN_SLUG}" = "no" ]]; then
-	rm -f "${LEIN_JAR_SLUG_PATH}"
+if [[ "${LEIN_INCLUDE_IN_SLUG:-}" = "no" ]]; then
+	if [[ -n "${LEIN_JAR_SLUG_PATH:-}" ]]; then
+		rm -f "${LEIN_JAR_SLUG_PATH}"
+	fi
 	rm -rf "${CACHED_DIRS[@]}"
 fi
 
-if [[ "${LEIN_VERSION}" = "1.7.1" ]]; then
+if [[ "${LEIN_VERSION:-}" = "1.7.1" ]]; then
 	rm -rf "${CACHED_DIRS[@]}"
 fi

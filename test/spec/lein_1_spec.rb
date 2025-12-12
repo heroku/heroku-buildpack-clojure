@@ -18,7 +18,7 @@ describe 'Leiningen 1.x' do
           remote:        Use clj -h for help.
 
           remote:  !     WARNING: No :min-lein-version found in project.clj; using 1.7.1.
-          remote:          You probably don't want this!
+          remote:   You probably don't want this!
 
           remote: -----> Installing Leiningen
           remote:        Downloading: leiningen-1.7.1-standalone.jar
