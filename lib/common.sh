@@ -1,5 +1,43 @@
 #!/usr/bin/env bash
 
+# Displays a warning message to the user
+function warning() {
+	echo
+	echo " !     WARNING: $*"
+	echo
+}
+
+# Returns current time in milliseconds since epoch
+function nowms() {
+	date +%s%3N
+}
+
+# Exports environment variables from ENV_DIR, with optional whitelist and blacklist
+# Usage: export_env ENV_DIR WHITELIST BLACKLIST
+function export_env() {
+	local env_dir="${1}"
+	local whitelist="${2:-}"
+	local blacklist_pattern="${3:-}"
+
+	# Build blacklist regex - always exclude these plus any custom patterns
+	local blacklist="^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH"
+	if [[ -n "${blacklist_pattern}" ]]; then
+		blacklist="${blacklist}|${blacklist_pattern}"
+	fi
+	blacklist="${blacklist})$"
+
+	if [[ -d "${env_dir}" ]]; then
+		for env_file in "${env_dir}"/*; do
+			[[ -f "${env_file}" ]] || continue
+			local env_name
+			env_name=$(basename "${env_file}")
+			if echo "${env_name}" | grep -E "${whitelist}" | grep -qvE "${blacklist}"; then
+				export "${env_name}=$(cat "${env_file}")"
+			fi
+		done
+	fi
+}
+
 function cache_copy() {
 	local rel_dir="${1}"
 	local from_dir="${2}"
@@ -32,8 +70,8 @@ function install_nodejs() {
 
 function detect_and_install_nodejs() {
 	local buildDir="${1}"
-	if [[ ! -d "${buildDir}/.heroku/nodejs" ]] && [[ "true" != "${SKIP_NODEJS_INSTALL}" ]]; then
-		if grep -q lein-npm "${buildDir}/project.clj" || [[ -n "${NODEJS_VERSION}" ]]; then
+	if [[ ! -d "${buildDir}/.heroku/nodejs" ]] && [[ "true" != "${SKIP_NODEJS_INSTALL:-}" ]]; then
+		if grep -q lein-npm "${buildDir}/project.clj" || [[ -n "${NODEJS_VERSION:-}" ]]; then
 			local nodejsVersion="${NODEJS_VERSION:-18.16.0}"
 			echo "-----> Installing Node.js ${nodejsVersion}..."
 			install_nodejs "${nodejsVersion}" "${buildDir}/.heroku/nodejs" 2>&1 | sed -u 's/^/       /'
@@ -45,19 +83,17 @@ function detect_and_install_nodejs() {
 function install_jdk() {
 	local install_dir="${1}"
 
-	((start = $(nowms)))
 	JVM_COMMON_BUILDPACK="${JVM_COMMON_BUILDPACK:-https://buildpack-registry.s3.us-east-1.amazonaws.com/buildpacks/heroku/jvm.tgz}"
 	mkdir -p /tmp/jvm-common
 	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --location "${JVM_COMMON_BUILDPACK}" | tar xzm -C /tmp/jvm-common --strip-components=1
-	# shellcheck source=/dev/null
-	source /tmp/jvm-common/bin/util
+
+	# Temporarily disable set -u for jvm-common scripts that aren't compatible with strict mode
+	set +u
 	# shellcheck source=/dev/null
 	source /tmp/jvm-common/bin/java
 	# shellcheck source=/dev/null
 	source /tmp/jvm-common/opt/jdbc.sh
-	mtime "jvm-common.install.time" "${start}"
 
-	((start = $(nowms)))
 	install_java_with_overlay "${install_dir}"
-	mtime "jvm.install.time" "${start}"
+	set -u
 }

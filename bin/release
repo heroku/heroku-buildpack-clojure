@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
+set -euo pipefail
+
 export BUILD_DIR="${1}"
 
 BP_DIR=$(cd "$(dirname "${0}")/.." && pwd)
