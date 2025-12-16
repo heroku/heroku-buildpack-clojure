@@ -13,8 +13,8 @@ BP_DIR=$(cd "$(dirname "${0}")/.." && pwd)
 export BIN_DIR="${BP_DIR}/bin"
 LIB_DIR="${BP_DIR}/lib"
 
-# shellcheck source=lib/common.sh
-source "${LIB_DIR}/common.sh"
+# shellcheck source=lib/util.sh
+source "${LIB_DIR}/util.sh"
 # shellcheck source=lib/lein.sh
 source "${LIB_DIR}/lein.sh"
 # shellcheck source=lib/metrics.sh
@@ -24,7 +24,7 @@ source "${LIB_DIR}/output.sh"
 # shellcheck source=lib/openjdk.sh
 source "${LIB_DIR}/openjdk.sh"
 
-export_env "${ENV_DIR}" "." "JAVA_OPTS"
+util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS"
 
 metrics::init "${CACHE_DIR}" "clojure"
 metrics::setup
@@ -164,31 +164,11 @@ fi
 CACHED_DIRS=(".m2")
 for DIR in "${CACHED_DIRS[@]}"; do
 	if [[ ! -d "${BUILD_DIR}/${DIR}" ]]; then
-		cache_copy "${DIR}" "${CACHE_DIR}" "${BUILD_DIR}"
+		util::cache_copy "${DIR}" "${CACHE_DIR}" "${BUILD_DIR}"
 	fi
 done
 
 output::step "Building with Leiningen"
-
-# extract environment
-if [[ -d "${ENV_DIR}" ]]; then
-	# Be default, only export private repo credentials
-	config_vars="LEIN_USERNAME LEIN_PASSWORD LEIN_PASSPHRASE"
-
-	if [[ -r "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST" ]]; then
-		config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_ALLOWLIST")
-
-	# Backwards compatibility for legacy configuration
-	elif [[ -r "${ENV_DIR}/BUILD_CONFIG_WHITELIST" ]]; then
-		config_vars=$(cat "${ENV_DIR}/BUILD_CONFIG_WHITELIST")
-	fi
-
-	for config_var in ${config_vars}; do
-		if [[ -r "${ENV_DIR}/${config_var}" ]]; then
-			export "${config_var}=$(cat "${ENV_DIR}/${config_var}")"
-		fi
-	done
-fi
 
 # Calculate build command
 if [[ -z "${BUILD_COMMAND:-}" ]]; then
@@ -232,7 +212,7 @@ chmod +x "${BUILD_DIR}/.heroku/clj/bin/clojure"
 # repack cache with new assets
 mkdir -p "${CACHE_DIR}"
 for DIR in "${CACHED_DIRS[@]}"; do
-	cache_copy "${DIR}" "${BUILD_DIR}" "${CACHE_DIR}"
+	util::cache_copy "${DIR}" "${BUILD_DIR}" "${CACHE_DIR}"
 done
 
 if [[ "${LEIN_INCLUDE_IN_SLUG:-}" = "no" ]]; then

@@ -9,8 +9,6 @@ BP_DIR=$(cd "$(dirname "${0}")/.." && pwd)
 export BIN_DIR="${BP_DIR}/bin"
 LIB_DIR="${BP_DIR}/lib"
 
-# shellcheck source=lib/common.sh
-source "${LIB_DIR}/common.sh"
 # shellcheck source=lib/lein.sh
 source "${LIB_DIR}/lein.sh"
 
