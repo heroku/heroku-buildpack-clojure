@@ -30,9 +30,6 @@ metrics::setup
 # Install JDK from jvm-common
 install_jdk "${BUILD_DIR}"
 
-# Install Node.js if needed
-detect_and_install_nodejs "${BUILD_DIR}"
-
 # Install rlwrap shim for Leiningen 1.x and clj REPLs.
 # rlwrap is technically a dependency for both, but it only enhances REPL functionality
 # with line editing and command history. This shim allows clj and lein 1.x to run without
@@ -45,7 +42,12 @@ cp "${BP_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
 # To ensure the cache created by older Clojure buildpack versions doesn't stay around indefinitely, we explicitly
 # delete these old directories. This will speed up subsequent app builds since it will take less time to restore
 # the cache before each build.
-rm -rf "${CACHE_DIR}/clojure-bp-apt"
+#
+# Note: This buildpack used to install and run npm. The node_modules dir is specific to the old Clojure install
+#       and does not overlap with the official Node.js buildpack.
+rm -rf \
+	"${CACHE_DIR}/clojure-bp-apt" \
+	"${CACHE_DIR}/node_modules"
 
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
 CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
@@ -136,12 +138,33 @@ if [[ ! -e "${LEIN_PROFILE_DESTINATION}" ]]; then
 fi
 
 # unpack existing cache
-CACHED_DIRS=(".m2" "node_modules")
+CACHED_DIRS=(".m2")
 for DIR in "${CACHED_DIRS[@]}"; do
 	if [[ ! -d "${BUILD_DIR}/${DIR}" ]]; then
 		cache_copy "${DIR}" "${CACHE_DIR}" "${BUILD_DIR}"
 	fi
 done
+
+if grep -q lein-npm "${BUILD_DIR}/project.clj"; then
+	if ! command -v npm &>/dev/null; then
+		metrics::set_raw "lein_npm_without_nodejs" "true"
+		output::error <<-EOF
+			Error: Your project.clj references lein-npm but npm is not available.
+
+			The Clojure buildpack no longer automatically installs Node.js.
+
+			If your project uses the lein-npm plugin, you must explicitly add the Node.js buildpack to provide Node.js and npm.
+
+			To add the Node.js buildpack to your app, run:
+			  heroku buildpacks:add --index 1 heroku/nodejs
+
+			For more information, see:
+			https://devcenter.heroku.com/articles/nodejs-support
+			https://devcenter.heroku.com/articles/managing-buildpacks#use-multiple-buildpacks
+		EOF
+		exit 1
+	fi
+fi
 
 output::step "Building with Leiningen"
 
@@ -195,7 +218,7 @@ PROFILE_PATH="${BUILD_DIR}/.profile.d/clojure.sh"
 mkdir -p "$(dirname "${PROFILE_PATH}")"
 {
 	echo "export LEIN_NO_DEV=\"\${LEIN_NO_DEV:-yes}\""
-	echo "export PATH=\"\$HOME/.heroku/bin:\$HOME/.heroku/nodejs/bin:\$HOME/.heroku/clj/bin:\$HOME/.jdk/bin:\$HOME/.lein/bin:\$PATH\""
+	echo "export PATH=\"\$HOME/.heroku/bin:\$HOME/.heroku/clj/bin:\$HOME/.jdk/bin:\$HOME/.lein/bin:\$PATH\""
 	echo "export RING_ENV=\"\${RING_ENV:-production}\""
 } >>"${PROFILE_PATH}"
 
