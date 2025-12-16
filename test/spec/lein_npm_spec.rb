@@ -3,30 +3,12 @@
 require_relative 'spec_helper'
 
 RSpec.describe 'Clojure buildpack' do
-  it 'installs Node.js when lein-npm is detected' do
-    new_default_hatchet_runner('lein-2.x-with-lein-npm').tap do |app|
-      app.deploy do
-        # Verify Node.js installation
-        expect(clean_output(app.output)).to include('-----> Installing Node.js 18.16.0')
-        expect(clean_output(app.output)).to include('Downloading Node.js 18.16.0...')
-
-        # Verify correct build task for lein-npm
-        expect(clean_output(app.output)).to include('Running: lein with-profile production do deps, compile :all')
-
-        # Verify successful deployment
-        expect(app).to be_deployed
-      end
-    end
-  end
-
-  it 'installs Node.js when lein-npm is detected (full output match)' do
-    new_default_hatchet_runner('lein-2.x-with-lein-npm').tap do |app|
+  it 'fails when lein-npm is detected without npm' do
+    new_default_hatchet_runner('lein-2.x-with-lein-npm', allow_failure: true).tap do |app|
       app.deploy do
         expect(clean_output(app.output)).to match(<<~OUTPUT)
           remote: -----> Clojure (Leiningen 2) app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Node.js 18.16.0
-          remote:        Downloading Node.js 18.16.0...
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
           remote:        Installing libs into $BUILD_DIR/.heroku/clj/lib/clojure
@@ -37,166 +19,22 @@ RSpec.describe 'Clojure buildpack' do
           remote: -----> Installing Leiningen
           remote:        Downloading: leiningen-2.9.1-standalone.jar
           remote:        Writing: lein script
-          remote: -----> Building with Leiningen
-          remote:        Running: lein with-profile production do deps, compile :all
-          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Warning: implicit hook found: lein-npm.plugin/hooks 
-          remote:        Hooks are deprecated and will be removed in a future version.
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        Retrieving $DEPENDENCY from $REPO
-          remote:        
-          remote:        up to date, audited $NUM packages in $TIME
-          remote:        
-          remote:        found 0 vulnerabilities
-          remote:        Compiling com.heroku.ci.core
-          remote:        $TIMESTAMP:INFO::main: Logging initialized @$TIMEms to org.eclipse.jetty.util.log.StdErrLog
-          remote: -----> Discovering process types
-          remote:        Procfile declares types     -> (none)
-          remote:        Default types for buildpack -> web
-
-          remote: -----> Compressing...
-          remote:        Done: 171.2M
+          remote:
+          remote:  !     Error: Your project.clj references lein-npm but npm is not available.
+          remote:  !
+          remote:  !     The Clojure buildpack no longer automatically installs Node.js.
+          remote:  !
+          remote:  !     If your project uses the lein-npm plugin, you must explicitly add the Node.js buildpack to provide Node.js and npm.
+          remote:  !
+          remote:  !     To add the Node.js buildpack to your app, run:
+          remote:  !       heroku buildpacks:add --index 1 heroku/nodejs
+          remote:  !
+          remote:  !     For more information, see:
+          remote:  !     https://devcenter.heroku.com/articles/nodejs-support
+          remote:  !     https://devcenter.heroku.com/articles/managing-buildpacks#use-multiple-buildpacks
         OUTPUT
-      end
-    end
-  end
 
-  it 'respects NODEJS_VERSION environment variable' do
-    new_default_hatchet_runner('lein-2.x-with-lein-npm').tap do |app|
-      app.before_deploy do
-        app.set_config('NODEJS_VERSION' => '20.10.0')
-      end
-
-      app.deploy do
-        # Verify custom Node.js version is installed
-        expect(clean_output(app.output)).to include('-----> Installing Node.js 20.10.0')
-        expect(clean_output(app.output)).to include('Downloading Node.js 20.10.0')
-
-        # Verify successful deployment
-        expect(app).to be_deployed
-      end
-    end
-  end
-
-  it 'skips Node.js installation when SKIP_NODEJS_INSTALL is set' do
-    new_default_hatchet_runner('lein-2.x-with-lein-npm', allow_failure: true).tap do |app|
-      app.before_deploy do
-        app.set_config('SKIP_NODEJS_INSTALL' => 'true')
-      end
-
-      app.deploy do
-        # Verify Node.js installation is skipped
-        expect(clean_output(app.output)).not_to include('-----> Installing Node.js')
-        expect(clean_output(app.output)).not_to include('Downloading Node.js')
+        expect(app).not_to be_deployed
       end
     end
   end
