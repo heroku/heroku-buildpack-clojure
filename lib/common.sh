@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# Displays a warning message to the user
-function warning() {
-	echo
-	echo " !     WARNING: $*"
-	echo
-}
-
 # Returns current time in milliseconds since epoch
 function nowms() {
 	date +%s%3N
@@ -73,8 +66,8 @@ function detect_and_install_nodejs() {
 	if [[ ! -d "${buildDir}/.heroku/nodejs" ]] && [[ "true" != "${SKIP_NODEJS_INSTALL:-}" ]]; then
 		if grep -q lein-npm "${buildDir}/project.clj" || [[ -n "${NODEJS_VERSION:-}" ]]; then
 			local nodejsVersion="${NODEJS_VERSION:-18.16.0}"
-			echo "-----> Installing Node.js ${nodejsVersion}..."
-			install_nodejs "${nodejsVersion}" "${buildDir}/.heroku/nodejs" 2>&1 | sed -u 's/^/       /'
+			output::step "Installing Node.js ${nodejsVersion}"
+			install_nodejs "${nodejsVersion}" "${buildDir}/.heroku/nodejs" 2>&1 | output::indent
 			export PATH="${buildDir}/.heroku/nodejs/bin:${PATH}"
 		fi
 	fi

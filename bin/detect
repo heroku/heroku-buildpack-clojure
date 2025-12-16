@@ -3,6 +3,12 @@
 
 set -euo pipefail
 
+BP_DIR=$(cd "$(dirname "${0}")/.." && pwd)
+LIB_DIR="${BP_DIR}/lib"
+
+# shellcheck source=lib/output.sh
+source "${LIB_DIR}/output.sh"
+
 if [[ -f "${1}/project.clj" ]]; then
 	if grep -q ":min-lein-version[[:space:]]\+\"2" "${1}/project.clj"; then
 		echo "Clojure (Leiningen 2)" && exit 0
@@ -10,6 +16,8 @@ if [[ -f "${1}/project.clj" ]]; then
 		echo "Clojure" && exit 0
 	fi
 else
-	(>&2 echo "Could not find a 'project.clj' file! Please ensure it exists and is checked into Git.")
+	output::error <<-EOF
+		Could not find a 'project.clj' file! Please ensure it exists and is checked into Git.
+	EOF
 	exit 1
 fi
