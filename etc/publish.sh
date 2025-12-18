@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # NOTE: This script requires bash >= 4.4 and GNU coreutils!
-# If you run this on macOS, you might need to install the appropiate packages.
+# If you run this on macOS, you might need to install the appropriate packages.
 
 set -euo pipefail
 shopt -s inherit_errexit

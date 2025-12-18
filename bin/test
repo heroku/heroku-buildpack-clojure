@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
-# bin/test <build-dir> <env-dir> <artifact-dir>
+
+set -euo pipefail
+
+# BUILD_DIR="${1}"
+# ENV_DIR="${2}"
+# ARTIFACT_DIR="${3}"
 
 cd "${1}" && lein test

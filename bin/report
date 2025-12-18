@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # Produces a build report containing metadata about the build, that's consumed by the build system.
 # This script is run for both successful and failing builds, so it should not assume the build ran
 # to completion (e.g. OpenJDK may not even have been installed).
@@ -20,7 +22,7 @@
 CACHE_DIR="${2}"
 # ENV_DIR="${3}"
 
-BUILDPACK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
+BUILDPACK_DIR="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)"
 
 # The build system doesn't source the `export` script before running this script, so we have to do
 # so manually (if it exists) so that buildpack java can be found (if the build succeeded).

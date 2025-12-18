@@ -1,28 +1,23 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
 
-# fail fast
 set -euo pipefail
 
-# parse args
-export BUILD_DIR="${1}"
-export CACHE_DIR="${2}"
-export ENV_DIR="${3}"
+BUILDPACK_DIR="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)"
 
-BP_DIR=$(cd "$(dirname "${0}")/.." && pwd)
-export BIN_DIR="${BP_DIR}/bin"
-LIB_DIR="${BP_DIR}/lib"
+BUILD_DIR="${1}"
+CACHE_DIR="${2}"
+ENV_DIR="${3}"
 
 # shellcheck source=lib/util.sh
-source "${LIB_DIR}/util.sh"
+source "${BUILDPACK_DIR}/lib/util.sh"
 # shellcheck source=lib/lein.sh
-source "${LIB_DIR}/lein.sh"
+source "${BUILDPACK_DIR}/lib/lein.sh"
 # shellcheck source=lib/metrics.sh
-source "${LIB_DIR}/metrics.sh"
+source "${BUILDPACK_DIR}/lib/metrics.sh"
 # shellcheck source=lib/output.sh
-source "${LIB_DIR}/output.sh"
+source "${BUILDPACK_DIR}/lib/output.sh"
 # shellcheck source=lib/openjdk.sh
-source "${LIB_DIR}/openjdk.sh"
+source "${BUILDPACK_DIR}/lib/openjdk.sh"
 
 util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS"
 
@@ -51,7 +46,7 @@ if grep -q lein-npm "${BUILD_DIR}/project.clj"; then
 	fi
 fi
 
-openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BP_DIR}"
+openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
 
 # Install rlwrap shim for Leiningen 1.x and clj REPLs.
 # rlwrap is technically a dependency for both, but it only enhances REPL functionality
@@ -60,7 +55,7 @@ openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BP_DIR}"
 # in a Heroku context. Users can install their own rlwrap via the APT buildpack and this
 # shim will not interfere.
 mkdir -p "${BUILD_DIR}/.heroku/bin"
-cp "${BP_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
+cp "${BUILDPACK_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
 
 # To ensure the cache created by older Clojure buildpack versions doesn't stay around indefinitely, we explicitly
 # delete these old directories. This will speed up subsequent app builds since it will take less time to restore
@@ -154,19 +149,14 @@ metrics::set_string "clojure_cli_version" "${CLOJURE_CLI_VERSION:-1.10.0.411}"
 
 # create user-level profiles
 mkdir -p "${BUILD_DIR}/.lein"
-LEIN_PROFILES_SOURCE="$(dirname "${0}")/../opt/profiles.clj"
-LEIN_PROFILE_DESTINATION="${BUILD_DIR}/.lein/profiles.clj"
-if [[ ! -e "${LEIN_PROFILE_DESTINATION}" ]]; then
-	cp "${LEIN_PROFILES_SOURCE}" "${LEIN_PROFILE_DESTINATION}"
+if [[ ! -e "${BUILD_DIR}/.lein/profiles.clj" ]]; then
+	echo '{}' >"${BUILD_DIR}/.lein/profiles.clj"
 fi
 
 # unpack existing cache
-CACHED_DIRS=(".m2")
-for DIR in "${CACHED_DIRS[@]}"; do
-	if [[ ! -d "${BUILD_DIR}/${DIR}" ]]; then
-		util::cache_copy "${DIR}" "${CACHE_DIR}" "${BUILD_DIR}"
-	fi
-done
+if [[ ! -d "${BUILD_DIR}/.m2" ]]; then
+	util::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
+fi
 
 output::step "Building with Leiningen"
 
@@ -211,17 +201,15 @@ chmod +x "${BUILD_DIR}/.heroku/clj/bin/clojure"
 
 # repack cache with new assets
 mkdir -p "${CACHE_DIR}"
-for DIR in "${CACHED_DIRS[@]}"; do
-	util::cache_copy "${DIR}" "${BUILD_DIR}" "${CACHE_DIR}"
-done
+util::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
 
 if [[ "${LEIN_INCLUDE_IN_SLUG:-}" = "no" ]]; then
 	if [[ -n "${LEIN_JAR_SLUG_PATH:-}" ]]; then
 		rm -f "${LEIN_JAR_SLUG_PATH}"
 	fi
-	rm -rf "${CACHED_DIRS[@]}"
+	rm -rf "${BUILD_DIR}/.m2"
 fi
 
 if [[ "${LEIN_VERSION:-}" = "1.7.1" ]]; then
-	rm -rf "${CACHED_DIRS[@]}"
+	rm -rf "${BUILD_DIR}/.m2"
 fi
