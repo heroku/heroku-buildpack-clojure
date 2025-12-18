@@ -8,7 +8,16 @@ RSpec.describe 'Clojure buildpack' do
       app.deploy do
         expect(clean_output(app.output)).to match(<<~OUTPUT)
           remote: -----> Clojure app detected
-          
+          remote: -----> Installing Azul Zulu OpenJDK \\$VERSION
+          remote: -----> Installing Clojure 1\\.10\\.0\\.411 CLI tools
+          remote:        Downloading and expanding tar
+          remote:        Installing libs into /app/\\.heroku/clj/lib/clojure
+          remote:        Installing clojure and clj into /app/\\.heroku/clj/bin
+          remote:        Installing man pages into /app/\\.heroku/clj/share/man/man1
+          remote:        Removing download
+          remote:        Use clj -h for help\\.
+          remote: -----> Reading Leiningen project properties
+
           remote:  !     Error: Your project.clj references lein-npm but npm is not available.
           remote:  !
           remote:  !     The Clojure buildpack no longer automatically installs Node.js.
