@@ -7,7 +7,7 @@ RSpec.describe 'Clojure buildpack' do
     new_default_hatchet_runner('lein-2.x-with-lein-npm', allow_failure: true).tap do |app|
       app.deploy do
         expect(clean_output(app.output)).to match(<<~OUTPUT)
-          remote: -----> Clojure (Leiningen 2) app detected
+          remote: -----> Clojure app detected
           
           remote:  !     Error: Your project.clj references lein-npm but npm is not available.
           remote:  !
@@ -22,7 +22,7 @@ RSpec.describe 'Clojure buildpack' do
           remote:  !     https://devcenter.heroku.com/articles/nodejs-support
           remote:  !     https://devcenter.heroku.com/articles/managing-buildpacks#use-multiple-buildpacks
 
-          remote:  !     Push rejected, failed to compile Clojure (Leiningen 2) app.
+          remote:  !     Push rejected, failed to compile Clojure app.
 
           remote:  !     Push failed
         OUTPUT
