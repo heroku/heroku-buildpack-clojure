@@ -7,7 +7,7 @@ describe 'Clojure' do
     new_default_hatchet_runner('lein-2.x-with-uberjar').tap do |app|
       app.deploy do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
-          remote: -----> Clojure (Leiningen 2) app detected
+          remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
@@ -139,7 +139,7 @@ describe 'Clojure' do
 
         # Second build should use cached artifacts and doesn't recompile previously compiled application files
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
-          remote: -----> Clojure (Leiningen 2) app detected
+          remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
@@ -173,7 +173,7 @@ describe 'Clojure' do
     new_default_hatchet_runner('lein-2.x-no-uberjar').tap do |app|
       app.deploy do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
-          remote: -----> Clojure (Leiningen 2) app detected
+          remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
@@ -302,7 +302,7 @@ describe 'Clojure' do
 
         # Second build should use cached artifacts and doesn't recompile previously compiled application files
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
-          remote: -----> Clojure (Leiningen 2) app detected
+          remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar

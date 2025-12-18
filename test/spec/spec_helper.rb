@@ -79,6 +79,7 @@ def clean_output(output)
     /\e\[[0-9;]+m/ => '',
     # Trailing spaces from empty "remote: " lines added by Heroku
     /^remote: $/ => '',
+    /^remote:\s+$/ => 'remote:',
     /remote:        Released v\d+/ => 'remote:        Released $VERSION',
     # Build directory
     %r{/tmp/build_[0-9a-f]{8}} => '$BUILD_DIR',

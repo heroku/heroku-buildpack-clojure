@@ -4,18 +4,37 @@ set -euo pipefail
 
 BUILDPACK_DIR="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)"
 
+BUILD_DIR="${1}"
+
 # shellcheck source=lib/output.sh
 source "${BUILDPACK_DIR}/lib/output.sh"
 
-if [[ -f "${1}/project.clj" ]]; then
-	if grep -q ":min-lein-version[[:space:]]\+\"2" "${1}/project.clj"; then
-		echo "Clojure (Leiningen 2)" && exit 0
-	else
-		echo "Clojure" && exit 0
-	fi
-else
-	output::error <<-EOF
-		Could not find a 'project.clj' file! Please ensure it exists and is checked into Git.
-	EOF
-	exit 1
+if [[ -f "${BUILD_DIR}/project.clj" ]]; then
+	echo "Clojure"
+	exit 0
 fi
+
+output::error <<-EOF
+	Error: Your app is configured to use the Clojure buildpack,
+	but we couldn't find any supported Leiningen project files.
+
+	The Clojure buildpack requires a 'project.clj' file
+	in the root directory of your source code.
+
+	Currently the root directory of your app contains:
+
+	$(ls -1A --indicator-style=slash "${BUILD_DIR}" 2>/dev/null || echo "Unable to list directory contents")
+
+	If your app already has a project.clj file, check that it:
+
+	1. Is in the correct directory (see requirements above).
+	2. Has the correct spelling (the filename is case-sensitive).
+	3. Isn't listed in '.gitignore' or '.slugignore'.
+	4. Has been added to the Git repository using 'git add --all'
+	   and then committed using 'git commit'.
+
+	For help with using Leiningen on Heroku, see:
+	https://devcenter.heroku.com/articles/clojure-support
+EOF
+
+exit 1

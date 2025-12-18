@@ -8,7 +8,7 @@ RSpec.describe 'Clojure buildpack' do
       app.run_ci do |test_run|
         # First CI run should build from scratch
         expect(clean_output(test_run.output)).to eq(<<~OUTPUT)
-          -----> Clojure (Leiningen 2) app detected
+          -----> Clojure app detected
           -----> Installing Azul Zulu OpenJDK $VERSION
           -----> Installing Clojure 1.10.0.411 CLI tools
                  Downloading and expanding tar
@@ -127,7 +127,7 @@ RSpec.describe 'Clojure buildpack' do
                  Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
           -----> No test-setup command provided. Skipping.
-          -----> Running Clojure (Leiningen 2) buildpack tests...
+          -----> Running Clojure buildpack tests...
           Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -XX:MaxRAM=2684354560 -XX:MaxRAMPercentage=80.0
           OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release.
           Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -XX:MaxRAM=2684354560 -XX:MaxRAMPercentage=80.0
@@ -140,14 +140,14 @@ RSpec.describe 'Clojure buildpack' do
 
           Ran 2 tests containing 2 assertions.
           0 failures, 0 errors.
-          -----> Clojure (Leiningen 2) buildpack tests completed successfully
+          -----> Clojure buildpack tests completed successfully
         OUTPUT
 
         test_run.run_again
 
         # Second CI run should use cached artifacts
         expect(clean_output(test_run.output)).to eq(<<~OUTPUT)
-          -----> Clojure (Leiningen 2) app detected
+          -----> Clojure app detected
           -----> Installing Azul Zulu OpenJDK $VERSION
           -----> Installing Clojure 1.10.0.411 CLI tools
                  Downloading and expanding tar
@@ -162,7 +162,7 @@ RSpec.describe 'Clojure buildpack' do
                  Running: lein deps
                  Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
           -----> No test-setup command provided. Skipping.
-          -----> Running Clojure (Leiningen 2) buildpack tests...
+          -----> Running Clojure buildpack tests...
           Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -XX:MaxRAM=2684354560 -XX:MaxRAMPercentage=80.0
           OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release.
           Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -XX:MaxRAM=2684354560 -XX:MaxRAMPercentage=80.0
@@ -175,7 +175,7 @@ RSpec.describe 'Clojure buildpack' do
           
           Ran 2 tests containing 2 assertions.
           0 failures, 0 errors.
-          -----> Clojure (Leiningen 2) buildpack tests completed successfully
+          -----> Clojure buildpack tests completed successfully
         OUTPUT
       end
     end
