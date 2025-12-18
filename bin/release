@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
-# bin/release <build-dir>
 
 set -euo pipefail
 
-export BUILD_DIR="${1}"
+BUILDPACK_DIR="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)"
 
-BP_DIR=$(cd "$(dirname "${0}")/.." && pwd)
-export BIN_DIR="${BP_DIR}/bin"
-LIB_DIR="${BP_DIR}/lib"
+BUILD_DIR="${1}"
 
 # shellcheck source=lib/lein.sh
-source "${LIB_DIR}/lein.sh"
+source "${BUILDPACK_DIR}/lib/lein.sh"
 
 if [[ ! -f "${BUILD_DIR}/Procfile" ]]; then
 	cat <<EOF
