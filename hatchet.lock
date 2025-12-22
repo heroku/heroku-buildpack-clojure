@@ -1,1 +1,3 @@
---- []
+---
+- - test/spec/fixtures/repos/github/clojure-getting-started
+  - main

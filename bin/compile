@@ -74,8 +74,14 @@ clojure -e "(println)" &>/dev/null
 output::step "Reading Leiningen project properties"
 
 lein_project_plugins=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "plugins")
-lein_project_uberjar_name=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "uberjar-name")
 lein_project_min_lein_version=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "min-lein-version")
+
+lein_project_uberjar_name=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "uberjar-name")
+# The :uberjar profile is automatically activated by Leiningen when running "lein uberjar".
+# Check for :uberjar-name inside this profile if it's not defined at the top level.
+if [[ -z "${lein_project_uberjar_name}" ]]; then
+	lein_project_uberjar_name=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "profiles" "uberjar" "uberjar-name")
+fi
 
 if grep -q lein-npm <<<"${lein_project_plugins}"; then
 	if ! command -v npm &>/dev/null; then

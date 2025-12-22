@@ -14,15 +14,16 @@
 
 (when (< (count *command-line-args*) 2)
   (binding [*out* *err*]
-    (println "Usage: get_project_property.clj <project.clj> <property-name>"))
+    (println "Usage: get_project_property.clj <project.clj> <property-name> [<nested-key>...]"))
   (System/exit 1))
 
-(defn get-project-property [file-path property-name]
+(defn get-project-property [file-path & property-path]
   (let [project-data (read-string (slurp file-path))
-        properties (apply hash-map (drop 3 project-data))]
-    (get properties (keyword property-name))))
+        properties (apply hash-map (drop 3 project-data))
+        key-path (map keyword property-path)]
+    (get-in properties key-path)))
 
 (let [file-path (first *command-line-args*)
-      property-name (second *command-line-args*)
-      property-value (get-project-property file-path property-name)]
+      property-path (rest *command-line-args*)
+      property-value (apply get-project-property file-path property-path)]
   (println (or property-value "")))
