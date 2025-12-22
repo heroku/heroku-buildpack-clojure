@@ -1,5 +1,6 @@
 {
   "hatchet": {
     "directory": "test/spec/fixtures"
-  }
+  },
+  "github": ["heroku/clojure-getting-started"]
 }
