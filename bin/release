@@ -6,8 +6,14 @@ BUILDPACK_DIR="$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)"
 
 BUILD_DIR="${1}"
 
-# shellcheck source=lib/lein.sh
-source "${BUILDPACK_DIR}/lib/lein.sh"
+# Unfortunately the build system doesn't source the `export` script before
+# running `bin/release`, so we have to do so manually to ensure Clojure CLI
+# and OpenJDK are available for the property extraction script.
+# shellcheck source=/dev/null
+source "${BUILDPACK_DIR}/export"
+
+lein_project_uberjar_name=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "uberjar-name")
+lein_project_min_lein_version=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "min-lein-version")
 
 if [[ ! -f "${BUILD_DIR}/Procfile" ]]; then
 	cat <<EOF
@@ -16,13 +22,13 @@ config_vars:
 default_process_types:
 EOF
 
-	if [[ "$(calculate_lein_build_task "${BUILD_DIR}")" == "uberjar" ]]; then
+	if [[ -n "${lein_project_uberjar_name}" ]]; then
 		cd "${BUILD_DIR}" || exit
 		while IFS= read -r -d '' jarFile; do
 			echo "  web: java -jar ${jarFile}"
 			break
 		done < <(find target -maxdepth 1 -name "*.jar" -type f -print0)
-	elif is_lein_2 "${BUILD_DIR}"; then
+	elif [[ "${lein_project_min_lein_version}" == 2* ]]; then
 		echo "  web: lein with-profile production trampoline run"
 	else
 		echo "  web: lein trampoline run"

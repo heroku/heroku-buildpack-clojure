@@ -11,11 +11,12 @@ describe 'Clojure' do
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
-          remote:        Installing libs into $BUILD_DIR/.heroku/clj/lib/clojure
-          remote:        Installing clojure and clj into $BUILD_DIR/.heroku/clj/bin
-          remote:        Installing man pages into $BUILD_DIR/.heroku/clj/share/man/man1
+          remote:        Installing libs into /app/.heroku/clj/lib/clojure
+          remote:        Installing clojure and clj into /app/.heroku/clj/bin
+          remote:        Installing man pages into /app/.heroku/clj/share/man/man1
           remote:        Removing download
           remote:        Use clj -h for help.
+          remote: -----> Reading Leiningen project properties
           remote: -----> Installing Leiningen
           remote:        Downloading: leiningen-2.9.1-standalone.jar
           remote:        Writing: lein script
@@ -143,11 +144,12 @@ describe 'Clojure' do
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
-          remote:        Installing libs into $BUILD_DIR/.heroku/clj/lib/clojure
-          remote:        Installing clojure and clj into $BUILD_DIR/.heroku/clj/bin
-          remote:        Installing man pages into $BUILD_DIR/.heroku/clj/share/man/man1
+          remote:        Installing libs into /app/.heroku/clj/lib/clojure
+          remote:        Installing clojure and clj into /app/.heroku/clj/bin
+          remote:        Installing man pages into /app/.heroku/clj/share/man/man1
           remote:        Removing download
           remote:        Use clj -h for help.
+          remote: -----> Reading Leiningen project properties
           remote: -----> Using cached Leiningen 2.9.1
           remote:        Writing: lein script
           remote: -----> Building with Leiningen
@@ -177,11 +179,12 @@ describe 'Clojure' do
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
-          remote:        Installing libs into $BUILD_DIR/.heroku/clj/lib/clojure
-          remote:        Installing clojure and clj into $BUILD_DIR/.heroku/clj/bin
-          remote:        Installing man pages into $BUILD_DIR/.heroku/clj/share/man/man1
+          remote:        Installing libs into /app/.heroku/clj/lib/clojure
+          remote:        Installing clojure and clj into /app/.heroku/clj/bin
+          remote:        Installing man pages into /app/.heroku/clj/share/man/man1
           remote:        Removing download
           remote:        Use clj -h for help.
+          remote: -----> Reading Leiningen project properties
           remote: -----> Installing Leiningen
           remote:        Downloading: leiningen-2.9.1-standalone.jar
           remote:        Writing: lein script
@@ -306,11 +309,12 @@ describe 'Clojure' do
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
           remote: -----> Installing Clojure 1.10.0.411 CLI tools
           remote:        Downloading and expanding tar
-          remote:        Installing libs into $BUILD_DIR/.heroku/clj/lib/clojure
-          remote:        Installing clojure and clj into $BUILD_DIR/.heroku/clj/bin
-          remote:        Installing man pages into $BUILD_DIR/.heroku/clj/share/man/man1
+          remote:        Installing libs into /app/.heroku/clj/lib/clojure
+          remote:        Installing clojure and clj into /app/.heroku/clj/bin
+          remote:        Installing man pages into /app/.heroku/clj/share/man/man1
           remote:        Removing download
           remote:        Use clj -h for help.
+          remote: -----> Reading Leiningen project properties
           remote: -----> Using cached Leiningen 2.9.1
           remote:        Writing: lein script
           remote: -----> Building with Leiningen

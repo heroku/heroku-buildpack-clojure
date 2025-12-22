@@ -17,13 +17,13 @@ RSpec.describe 'Clojure buildpack' do
                  Installing man pages into /app/.heroku/clj/share/man/man1
                  Removing download
                  Use clj -h for help.
+          -----> Reading Leiningen project properties
           -----> Installing Leiningen
                  Downloading: leiningen-2.9.1-standalone.jar
                  Writing: lein script
           -----> Building with Leiningen
                  Running: lein deps
                  Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
-                 Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
@@ -156,6 +156,7 @@ RSpec.describe 'Clojure buildpack' do
                  Installing man pages into /app/.heroku/clj/share/man/man1
                  Removing download
                  Use clj -h for help.
+          -----> Reading Leiningen project properties
           -----> Using cached Leiningen 2.9.1
                  Writing: lein script
           -----> Building with Leiningen

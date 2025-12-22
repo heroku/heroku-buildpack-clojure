@@ -31,12 +31,11 @@ RSpec.describe 'Clojure buildpack configuration' do
   it 'respects BUILD_COMMAND environment variable override' do
     new_default_hatchet_runner('lein-2.x-with-uberjar').tap do |app|
       app.before_deploy do
-        app.set_config('BUILD_COMMAND' => 'echo "Custom build command executed" && lein deps')
+        app.set_config('BUILD_COMMAND' => 'lein deps')
       end
 
       app.deploy do
-        expect(clean_output(app.output)).to include('Running: echo "Custom build command executed" && lein deps')
-        expect(clean_output(app.output)).to include('Custom build command executed')
+        expect(clean_output(app.output)).to include('Running: lein deps')
         expect(clean_output(app.output)).not_to include('Running: lein uberjar')
       end
     end

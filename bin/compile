@@ -10,8 +10,6 @@ ENV_DIR="${3}"
 
 # shellcheck source=lib/util.sh
 source "${BUILDPACK_DIR}/lib/util.sh"
-# shellcheck source=lib/lein.sh
-source "${BUILDPACK_DIR}/lib/lein.sh"
 # shellcheck source=lib/metrics.sh
 source "${BUILDPACK_DIR}/lib/metrics.sh"
 # shellcheck source=lib/output.sh
@@ -24,7 +22,62 @@ util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS"
 metrics::init "${CACHE_DIR}" "clojure"
 metrics::setup
 
-if grep -q lein-npm "${BUILD_DIR}/project.clj"; then
+# To ensure the cache created by older Clojure buildpack versions doesn't stay around indefinitely, we explicitly
+# delete these old directories. This will speed up subsequent app builds since it will take less time to restore
+# the cache before each build.
+#
+# Note: This buildpack used to install and run npm. The node_modules dir is specific to the old Clojure install
+#       and does not overlap with the official Node.js buildpack.
+rm -rf \
+	"${CACHE_DIR}/clojure-bp-apt" \
+	"${CACHE_DIR}/node_modules"
+
+openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
+
+util::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
+
+# Install rlwrap shim for Leiningen 1.x and clj REPLs.
+# rlwrap is technically a dependency for both, but it only enhances REPL functionality
+# with line editing and command history. This shim allows clj and lein 1.x to run without
+# errors, but does not provide actual readline capabilities. Most users don't use REPLs
+# in a Heroku context. Users can install their own rlwrap via the APT buildpack and this
+# shim will not interfere.
+mkdir -p "${BUILD_DIR}/.heroku/bin"
+cp "${BUILDPACK_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
+
+# Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
+CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
+
+output::step "Installing Clojure ${CLOJURE_CLI_VERSION} CLI tools"
+
+CLOJURE_INSTALL_SCRIPT="$(mktemp)"
+curl --retry 3 --retry-connrefused --connect-timeout 5 -sSfL --max-time 60 -o "${CLOJURE_INSTALL_SCRIPT}" "https://download.clojure.org/install/linux-install-${CLOJURE_CLI_VERSION}.sh"
+chmod +x "${CLOJURE_INSTALL_SCRIPT}"
+
+# Clojure CLI is non-portable as it embeds absolute paths during installation.
+# Create a symlink before installation to ensure those paths work at both compile and runtime.
+CLOJURE_CLI_DIR=".heroku/clj"
+mkdir -p "${BUILD_DIR}/${CLOJURE_CLI_DIR}"
+if [[ "$(realpath "${BUILD_DIR}")" != "$(realpath /app)" ]]; then
+	mkdir -p "/app/$(dirname "${CLOJURE_CLI_DIR}")"
+	ln -nsf "${BUILD_DIR}/${CLOJURE_CLI_DIR}" "/app/${CLOJURE_CLI_DIR}"
+fi
+
+"${CLOJURE_INSTALL_SCRIPT}" --prefix "/app/${CLOJURE_CLI_DIR}" 2>/dev/null | output::indent
+chmod +x "/app/${CLOJURE_CLI_DIR}/bin/"*
+export PATH="/app/${CLOJURE_CLI_DIR}/bin:${PATH}"
+
+# Pre-warm Clojure CLI cache to avoid download messages for its own dependencies when its used for the first time by
+# the buildpack or the user at runtime.
+clojure -e "(println)" &>/dev/null
+
+output::step "Reading Leiningen project properties"
+
+lein_project_plugins=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "plugins")
+lein_project_uberjar_name=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "uberjar-name")
+lein_project_min_lein_version=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "min-lein-version")
+
+if grep -q lein-npm <<<"${lein_project_plugins}"; then
 	if ! command -v npm &>/dev/null; then
 		output::error <<-EOF
 			Error: Your project.clj references lein-npm but npm is not available.
@@ -46,52 +99,31 @@ if grep -q lein-npm "${BUILD_DIR}/project.clj"; then
 	fi
 fi
 
-openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
-
-# Install rlwrap shim for Leiningen 1.x and clj REPLs.
-# rlwrap is technically a dependency for both, but it only enhances REPL functionality
-# with line editing and command history. This shim allows clj and lein 1.x to run without
-# errors, but does not provide actual readline capabilities. Most users don't use REPLs
-# in a Heroku context. Users can install their own rlwrap via the APT buildpack and this
-# shim will not interfere.
-mkdir -p "${BUILD_DIR}/.heroku/bin"
-cp "${BUILDPACK_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
-
-# To ensure the cache created by older Clojure buildpack versions doesn't stay around indefinitely, we explicitly
-# delete these old directories. This will speed up subsequent app builds since it will take less time to restore
-# the cache before each build.
-#
-# Note: This buildpack used to install and run npm. The node_modules dir is specific to the old Clojure install
-#       and does not overlap with the official Node.js buildpack.
-rm -rf \
-	"${CACHE_DIR}/clojure-bp-apt" \
-	"${CACHE_DIR}/node_modules"
-
-# Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
-CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.10.0.411}"
-output::step "Installing Clojure ${CLOJURE_CLI_VERSION} CLI tools"
-CLOJURE_INSTALL_NAME="linux-install-${CLOJURE_CLI_VERSION}.sh"
-CLOJURE_INSTALL_URL="https://download.clojure.org/install/${CLOJURE_INSTALL_NAME}"
-curl --retry 3 --retry-connrefused --connect-timeout 5 -sSfL --max-time 60 -o "/tmp/${CLOJURE_INSTALL_NAME}" "${CLOJURE_INSTALL_URL}"
-chmod +x "/tmp/${CLOJURE_INSTALL_NAME}"
-mkdir -p "${BUILD_DIR}/.heroku/clj"
-"/tmp/${CLOJURE_INSTALL_NAME}" --prefix "${BUILD_DIR}/.heroku/clj" 2>/dev/null | output::indent
-chmod +x "${BUILD_DIR}/.heroku/clj/bin/"*
-export PATH="${BUILD_DIR}/.heroku/clj/bin:${PATH}"
-
 # Check for vendored lein script
 if [[ -x "${BUILD_DIR}/bin/lein" ]]; then
 	output::step "Using vendored Leiningen at bin/lein"
 	LEIN_BIN_PATH="${BUILD_DIR}/bin/lein"
-	calculate_lein_build_task "${BUILD_DIR}"
+	if [[ -n "${lein_project_uberjar_name}" ]]; then
+		export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
+		export LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
+	else
+		export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-with-profile production compile :all}"
+	fi
 	"${LEIN_BIN_PATH}" version 2>/dev/null | output::indent
 else
 	# Determine Leiningen version
-	if is_lein_2 "${BUILD_DIR}"; then
+	case "${lein_project_min_lein_version}" in
+	2*)
 		LEIN_VERSION="2.9.1"
 		LEIN_BIN_SOURCE="$(dirname "${0}")/../opt/lein2"
-		calculate_lein_build_task "${BUILD_DIR}"
-	else
+		if [[ -n "${lein_project_uberjar_name}" ]]; then
+			export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
+			export LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
+		else
+			export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-with-profile production compile :all}"
+		fi
+		;;
+	*)
 		LEIN_VERSION="1.7.1"
 		LEIN_BIN_SOURCE="$(dirname "${0}")/../opt/lein1"
 		LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-deps}"
@@ -103,7 +135,8 @@ else
 			WARNING: No :min-lein-version found in project.clj; using ${LEIN_VERSION}.
 			You probably don't want this!
 		EOF
-	fi
+		;;
+	esac
 
 	# install leiningen jar
 	LEIN1_JAR_URL="https://lang-jvm.s3.us-east-1.amazonaws.com/leiningen-${LEIN_VERSION}-standalone.jar"
@@ -153,11 +186,6 @@ if [[ ! -e "${BUILD_DIR}/.lein/profiles.clj" ]]; then
 	echo '{}' >"${BUILD_DIR}/.lein/profiles.clj"
 fi
 
-# unpack existing cache
-if [[ ! -d "${BUILD_DIR}/.m2" ]]; then
-	util::cache_copy ".m2" "${CACHE_DIR}" "${BUILD_DIR}"
-fi
-
 output::step "Building with Leiningen"
 
 # Calculate build command
@@ -194,10 +222,12 @@ mkdir -p "$(dirname "${PROFILE_PATH}")"
 	echo "export RING_ENV=\"\${RING_ENV:-production}\""
 } >>"${PROFILE_PATH}"
 
-# rewrite Clojure CLI path
-mv "${BUILD_DIR}/.heroku/clj/bin/clojure" "${BUILD_DIR}/.heroku/clj/bin/clojure.old"
-sed -e "s/\/tmp\/$(basename "${BUILD_DIR}")/\/app/g" "${BUILD_DIR}/.heroku/clj/bin/clojure.old" >"${BUILD_DIR}/.heroku/clj/bin/clojure"
-chmod +x "${BUILD_DIR}/.heroku/clj/bin/clojure"
+# Write export script for use by subsequent buildpacks. The export script sets up the environment so that other
+# buildpacks in the chain can access Clojure CLI and Leiningen during their build phase. This script
+# is sourced by the buildpack framework between buildpack executions.
+cat <<-EOF >>"${BUILDPACK_DIR}/export"
+	export PATH="/app/.heroku/bin:/app/${CLOJURE_CLI_DIR}/bin:/app/.lein/bin:\${PATH}"
+EOF
 
 # repack cache with new assets
 mkdir -p "${CACHE_DIR}"
