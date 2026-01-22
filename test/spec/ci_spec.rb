@@ -18,9 +18,7 @@ RSpec.describe 'Clojure buildpack' do
                  Removing download
                  Use clj -h for help.
           -----> Reading Leiningen project properties
-          -----> Installing Leiningen
-                 Downloading: leiningen-2.9.1-standalone.jar
-                 Writing: lein script
+          -----> Installing Leiningen 2.9.1
           -----> Building with Leiningen
                  Running: lein deps
                  Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
@@ -157,8 +155,7 @@ RSpec.describe 'Clojure buildpack' do
                  Removing download
                  Use clj -h for help.
           -----> Reading Leiningen project properties
-          -----> Using cached Leiningen 2.9.1
-                 Writing: lein script
+          -----> Installing Leiningen 2.9.1
           -----> Building with Leiningen
                  Running: lein deps
                  Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...

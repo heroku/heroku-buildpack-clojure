@@ -3,9 +3,10 @@
 require_relative 'spec_helper'
 
 describe 'Leiningen 1.x' do
-  it 'works with lein 1.x' do
-    new_default_hatchet_runner('lein-1.x').tap do |app|
+  it 'fails with error message when lein 1.x is detected' do
+    new_default_hatchet_runner('lein-1.x', allow_failure: true).tap do |app|
       app.deploy do
+        expect(app).not_to be_deployed
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
@@ -18,26 +19,23 @@ describe 'Leiningen 1.x' do
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
 
-          remote:  !     WARNING: No :min-lein-version found in project.clj; using 1.7.1.
-          remote:  !     You probably don't want this!
+          remote:  !     Error: Leiningen 1.x is no longer supported by this buildpack.
+          remote:  !
+          remote:  !     Please upgrade to Leiningen 2.x by setting :min-lein-version in your project.clj:
+          remote:  !
+          remote:  !       (defproject your-project "version"
+          remote:  !         :min-lein-version "2.0.0"
+          remote:  !         ...)
+          remote:  !
+          remote:  !     If you need to use a custom Leiningen version, you can vendor the lein script
+          remote:  !     in your repository at bin/build.
+          remote:  !
+          remote:  !     For more information, see:
+          remote:  !     https://web.archive.org/web/20160225024908/https://github.com/technomancy/leiningen/wiki/Upgrading
 
-          remote: -----> Installing Leiningen
-          remote:        Downloading: leiningen-1.7.1-standalone.jar
-          remote:        To use Leiningen 2.x, add this to project.clj: :min-lein-version "2.0.0"
-          remote:        Writing: lein script
-          remote: -----> Building with Leiningen
-          remote:        Running: lein deps
-          remote:        Downloading: org/clojure/clojure/1.5.1/clojure-1.5.1.pom from repository central-https at https://repo1.maven.org/maven2
-          remote:        Downloading: org/sonatype/oss/oss-parent/5/oss-parent-5.pom from repository central-https at https://repo1.maven.org/maven2
-          remote:        Downloading: org/clojure/clojure/1.5.1/clojure-1.5.1.jar from repository central-https at https://repo1.maven.org/maven2
-          remote:        Transferring 3501K from central-https
-          remote:        Copying 1 file to $BUILD_DIR/lib
-          remote: -----> Discovering process types
-          remote:        Procfile declares types     -> (none)
-          remote:        Default types for buildpack -> web
+          remote:  !     Push rejected, failed to compile Clojure app.
 
-          remote: -----> Compressing...
-          remote:        Done: 82.1M
+          remote:  !     Push failed
         OUTPUT
       end
     end

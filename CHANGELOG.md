@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* Install Leiningen from upstream repository instead of using a vendored script. ([#201](https://github.com/heroku/heroku-buildpack-clojure/pull/201))
+* Remove Leiningen `1.x` support. ([#201](https://github.com/heroku/heroku-buildpack-clojure/pull/201))
 * Remove automatic Node.js installation. Users must explicitly add the Node.js buildpack if their project requires Node.js or npm. ([#192](https://github.com/heroku/heroku-buildpack-clojure/pull/192))
 * Suppress curl output during leiningen installation to reduce build log noise and improve testability. ([#188](https://github.com/heroku/heroku-buildpack-clojure/pull/188))
 * Replace `apt-get` `rlwrap` installation with shim. ([#187](https://github.com/heroku/heroku-buildpack-clojure/pull/187))

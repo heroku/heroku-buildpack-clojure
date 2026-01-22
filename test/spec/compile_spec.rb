@@ -17,9 +17,7 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Installing Leiningen
-          remote:        Downloading: leiningen-2.9.1-standalone.jar
-          remote:        Writing: lein script
+          remote: -----> Installing Leiningen 2.9.1
           remote: -----> Building with Leiningen
           remote:        Running: lein uberjar
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
@@ -150,8 +148,7 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Using cached Leiningen 2.9.1
-          remote:        Writing: lein script
+          remote: -----> Installing Leiningen 2.9.1
           remote: -----> Building with Leiningen
           remote:        Running: lein uberjar
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
@@ -185,9 +182,7 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Installing Leiningen
-          remote:        Downloading: leiningen-2.9.1-standalone.jar
-          remote:        Writing: lein script
+          remote: -----> Installing Leiningen 2.9.1
           remote: -----> Building with Leiningen
           remote:        Running: lein with-profile production compile :all
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
@@ -297,7 +292,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 125.5M
+          remote:        Done: 113M
         OUTPUT
 
         app.commit!
@@ -315,8 +310,7 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Using cached Leiningen 2.9.1
-          remote:        Writing: lein script
+          remote: -----> Installing Leiningen 2.9.1
           remote: -----> Building with Leiningen
           remote:        Running: lein with-profile production compile :all
           remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
@@ -327,7 +321,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 125.5M
+          remote:        Done: 113M
         OUTPUT
       end
     end
@@ -354,15 +348,11 @@ describe 'Clojure' do
   end
 
   it 'detects and uses vendored leiningen from bin/lein' do
-    buildpack_root = File.expand_path('../..', __dir__)
     new_default_hatchet_runner('lein-2.x-with-uberjar').tap do |app|
       app.before_deploy do
+        require 'open-uri'
         FileUtils.mkdir_p('bin')
-        # Create a working lein script based on opt/lein2
-        lein_template_path = File.join(buildpack_root, 'opt/lein2')
-        lein_content = File.read(lein_template_path)
-        # Replace the version placeholder with actual version
-        lein_content.gsub!('##LEIN_VERSION##', '2.9.1')
+        lein_content = URI.open('https://codeberg.org/leiningen/leiningen/raw/tag/2.9.1/bin/lein').read
         File.write('bin/lein', lein_content)
         File.chmod(0o755, 'bin/lein')
       end
