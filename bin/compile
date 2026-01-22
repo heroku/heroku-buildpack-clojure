@@ -28,9 +28,11 @@ metrics::setup
 #
 # Note: This buildpack used to install and run npm. The node_modules dir is specific to the old Clojure install
 #       and does not overlap with the official Node.js buildpack.
+# Note: This buildpack used to download Leiningen jars to the cache. These are no longer needed.
 rm -rf \
 	"${CACHE_DIR}/clojure-bp-apt" \
-	"${CACHE_DIR}/node_modules"
+	"${CACHE_DIR}/node_modules" \
+	"${CACHE_DIR}"/leiningen-*-standalone.jar
 
 openjdk::install_openjdk_via_jvm_common_buildpack "${BUILD_DIR}" "${BUILDPACK_DIR}"
 
@@ -117,11 +119,30 @@ if [[ -x "${BUILD_DIR}/bin/lein" ]]; then
 	fi
 	"${LEIN_BIN_PATH}" version 2>/dev/null | output::indent
 else
-	# Determine Leiningen version
+	# Fail if Leiningen version is less than 2.0
 	case "${lein_project_min_lein_version}" in
+	"" | 1*)
+		output::error <<-EOF
+			Error: Leiningen 1.x is no longer supported by this buildpack.
+
+			Please upgrade to Leiningen 2.x by setting :min-lein-version in your project.clj:
+
+			  (defproject your-project "version"
+			    :min-lein-version "2.0.0"
+			    ...)
+
+			If you need to use a custom Leiningen version, you can vendor the lein script
+			in your repository at bin/build.
+
+			For more information, see:
+			https://web.archive.org/web/20160225024908/https://github.com/technomancy/leiningen/wiki/Upgrading
+		EOF
+
+		metrics::set_string "failure_reason" "lein-version-not-supported"
+		exit 1
+		;;
 	2*)
 		LEIN_VERSION="2.9.1"
-		LEIN_BIN_SOURCE="$(dirname "${0}")/../opt/lein2"
 		if [[ -n "${lein_project_uberjar_name}" ]]; then
 			export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
 			export LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
@@ -129,55 +150,16 @@ else
 			export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-with-profile production compile :all}"
 		fi
 		;;
-	*)
-		LEIN_VERSION="1.7.1"
-		LEIN_BIN_SOURCE="$(dirname "${0}")/../opt/lein1"
-		LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-deps}"
-		if [[ -z "${LEIN_DEV:-}" ]]; then
-			export LEIN_NO_DEV=y
-		fi
-		export RLWRAP=yes
-		output::warning <<-EOF
-			WARNING: No :min-lein-version found in project.clj; using ${LEIN_VERSION}.
-			You probably don't want this!
-		EOF
-		;;
 	esac
 
-	# install leiningen jar
-	LEIN1_JAR_URL="https://lang-jvm.s3.us-east-1.amazonaws.com/leiningen-${LEIN_VERSION}-standalone.jar"
-	LEIN2_JAR_URL="https://github.com/technomancy/leiningen/releases/download/${LEIN_VERSION}/leiningen-${LEIN_VERSION}-standalone.zip"
-	LEIN_JAR_CACHE_PATH="${CACHE_DIR}/leiningen-${LEIN_VERSION}-standalone.jar"
-	LEIN_JAR_SLUG_PATH="${BUILD_DIR}/.lein/leiningen-${LEIN_VERSION}-standalone.jar"
+	output::step "Installing Leiningen ${LEIN_VERSION}"
 
-	if [[ "${LEIN_VERSION}" = "1.7.1" ]]; then
-		LEIN_JAR_URL="${LEIN1_JAR_URL}"
-	else
-		LEIN_JAR_URL="${LEIN2_JAR_URL}"
-	fi
-
-	if [[ ! -r "${LEIN_JAR_CACHE_PATH}" ]]; then
-		output::step "Installing Leiningen"
-		echo "       Downloading: leiningen-${LEIN_VERSION}-standalone.jar"
-		mkdir -p "$(dirname "${LEIN_JAR_CACHE_PATH}")"
-		curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 120 -L -o "${LEIN_JAR_CACHE_PATH}" "${LEIN_JAR_URL}"
-	else
-		output::step "Using cached Leiningen ${LEIN_VERSION}"
-	fi
-
-	if [[ "${LEIN_VERSION}" = "1.7.1" ]]; then
-		echo "       To use Leiningen 2.x, add this to project.clj: :min-lein-version \"2.0.0\""
-	fi
-
-	mkdir -p "${BUILD_DIR}/.lein"
-	cp "${LEIN_JAR_CACHE_PATH}" "${LEIN_JAR_SLUG_PATH}"
-
-	# install lein script
 	LEIN_BIN_PATH="${BUILD_DIR}/.lein/bin/lein"
-	echo "       Writing: lein script"
+	LEIN_SCRIPT_URL="https://codeberg.org/leiningen/leiningen/raw/tag/${LEIN_VERSION}/bin/lein"
+
 	mkdir -p "$(dirname "${LEIN_BIN_PATH}")"
-	cp "${LEIN_BIN_SOURCE}" "${LEIN_BIN_PATH}"
-	sed -i s/##LEIN_VERSION##/"${LEIN_VERSION}"/ "${LEIN_BIN_PATH}"
+	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 60 -L -o "${LEIN_BIN_PATH}" "${LEIN_SCRIPT_URL}"
+	chmod +x "${LEIN_BIN_PATH}"
 fi
 
 # Collect metrics
@@ -240,12 +222,5 @@ mkdir -p "${CACHE_DIR}"
 util::cache_copy ".m2" "${BUILD_DIR}" "${CACHE_DIR}"
 
 if [[ "${LEIN_INCLUDE_IN_SLUG:-}" = "no" ]]; then
-	if [[ -n "${LEIN_JAR_SLUG_PATH:-}" ]]; then
-		rm -f "${LEIN_JAR_SLUG_PATH}"
-	fi
-	rm -rf "${BUILD_DIR}/.m2"
-fi
-
-if [[ "${LEIN_VERSION:-}" = "1.7.1" ]]; then
 	rm -rf "${BUILD_DIR}/.m2"
 fi

@@ -13,7 +13,6 @@ BUILD_DIR="${1}"
 source "${BUILDPACK_DIR}/export"
 
 lein_project_uberjar_name=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "uberjar-name")
-lein_project_min_lein_version=$("${BUILDPACK_DIR}/opt/get_project_property.clj" "${BUILD_DIR}/project.clj" "min-lein-version")
 
 if [[ ! -f "${BUILD_DIR}/Procfile" ]]; then
 	cat <<EOF
@@ -28,9 +27,7 @@ EOF
 			echo "  web: java -jar ${jarFile}"
 			break
 		done < <(find target -maxdepth 1 -name "*.jar" -type f -print0)
-	elif [[ "${lein_project_min_lein_version}" == 2* ]]; then
-		echo "  web: lein with-profile production trampoline run"
 	else
-		echo "  web: lein trampoline run"
+		echo "  web: lein with-profile production trampoline run"
 	fi
 fi
