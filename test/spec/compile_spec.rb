@@ -17,10 +17,11 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Installing Leiningen 2.9.1
+          remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
           remote:        Running: lein uberjar
-          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
+          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.12.0-standalone.jar now...
+          remote:        /app/.lein/self-installs/leiningen-2.12.0-standalone.jar.pending: OK
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
@@ -122,7 +123,6 @@ describe 'Clojure' do
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Compiling com.heroku.ci.core
           remote:        $TIMESTAMP:INFO::main: Logging initialized @$TIMEms to org.eclipse.jetty.util.log.StdErrLog
-          remote:        Compiling com.heroku.ci.core
           remote:        Created $BUILD_DIR/target/heroku-minimal-clojure-0.1.0.jar
           remote:        Created $BUILD_DIR/target/app-standalone.jar
           remote: -----> Discovering process types
@@ -148,13 +148,13 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Installing Leiningen 2.9.1
+          remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
           remote:        Running: lein uberjar
-          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
+          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.12.0-standalone.jar now...
+          remote:        /app/.lein/self-installs/leiningen-2.12.0-standalone.jar.pending: OK
           remote:        Compiling com.heroku.ci.core
           remote:        $TIMESTAMP:INFO::main: Logging initialized @$TIMEms to org.eclipse.jetty.util.log.StdErrLog
-          remote:        Compiling com.heroku.ci.core
           remote:        Created $BUILD_DIR/target/heroku-minimal-clojure-0.1.0.jar
           remote:        Created $BUILD_DIR/target/app-standalone.jar
           remote: -----> Discovering process types
@@ -182,10 +182,11 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Installing Leiningen 2.9.1
+          remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
           remote:        Running: lein with-profile production compile :all
-          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
+          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.12.0-standalone.jar now...
+          remote:        /app/.lein/self-installs/leiningen-2.12.0-standalone.jar.pending: OK
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
           remote:        Retrieving $DEPENDENCY from $REPO
@@ -310,10 +311,11 @@ describe 'Clojure' do
           remote:        Removing download
           remote:        Use clj -h for help.
           remote: -----> Reading Leiningen project properties
-          remote: -----> Installing Leiningen 2.9.1
+          remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
           remote:        Running: lein with-profile production compile :all
-          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
+          remote:        Downloading Leiningen to /app/.lein/self-installs/leiningen-2.12.0-standalone.jar now...
+          remote:        /app/.lein/self-installs/leiningen-2.12.0-standalone.jar.pending: OK
           remote:        Compiling com.heroku.ci.core
           remote:        $TIMESTAMP:INFO::main: Logging initialized @$TIMEms to org.eclipse.jetty.util.log.StdErrLog
           remote: -----> Discovering process types
