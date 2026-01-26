@@ -40,7 +40,7 @@ Specify an OpenJDK version by creating a `system.properties` file in the root of
 
 ### Leiningen Version
 
-The buildpack uses Leiningen `2.9.1` by default for projects that specify `:min-lein-version "2.0.0"` or higher in their `project.clj`.
+The buildpack uses Leiningen `2.12.0` by default for projects that specify `:min-lein-version "2.0.0"` or higher in their `project.clj`.
 
 To use a specific Leiningen version, you can include a `bin/lein` script in your repository. The buildpack will detect and use this script instead of the default Leiningen installation.
 

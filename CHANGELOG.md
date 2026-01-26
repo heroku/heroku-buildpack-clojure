@@ -9,6 +9,7 @@
 * Replace `apt-get` `rlwrap` installation with shim. ([#187](https://github.com/heroku/heroku-buildpack-clojure/pull/187))
 * Buildpack output slightly changed. If you match against the buildpack output, verify your matching still works and adjust if necessary. ([#191](https://github.com/heroku/heroku-buildpack-clojure/pull/191))
 * Upgrade Clojure CLI to `1.12.4.1582` ([#203](https://github.com/heroku/heroku-buildpack-clojure/pull/203))
+* Upgrade default Leiningen to `2.12.0` ([#204](https://github.com/heroku/heroku-buildpack-clojure/pull/204))
 
 ## [v92] - 2025-09-11
 
