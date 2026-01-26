@@ -9,7 +9,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.10.0.411 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
           remote:        Downloading and expanding tar
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
@@ -130,7 +130,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 115.4M
+          remote:        Done: 111.3M
         OUTPUT
 
         app.commit!
@@ -140,7 +140,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.10.0.411 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
           remote:        Downloading and expanding tar
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
@@ -162,7 +162,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 115.4M
+          remote:        Done: 111.3M
         OUTPUT
       end
     end
@@ -174,7 +174,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.10.0.411 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
           remote:        Downloading and expanding tar
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
@@ -292,7 +292,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 113M
+          remote:        Done: 108.8M
         OUTPUT
 
         app.commit!
@@ -302,7 +302,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.10.0.411 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
           remote:        Downloading and expanding tar
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
@@ -321,7 +321,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 113M
+          remote:        Done: 108.8M
         OUTPUT
       end
     end

@@ -9,7 +9,7 @@ RSpec.describe 'Clojure buildpack runtime' do
         expect(app).to be_deployed
 
         # Verify clj is available and works
-        clj_output = app.run('clj -e \'(println "Clojure works")\'')
+        clj_output = app.run('clj -M -e \'(println "Clojure works")\'')
         expect(clj_output).to eq(<<~OUTPUT)
           Warning: Using minimal rlwrap replacement. Command history and line editing are not available.
           To enable full readline support, add the APT buildpack and create an Aptfile:
@@ -19,12 +19,8 @@ RSpec.describe 'Clojure buildpack runtime' do
           3. git add Aptfile && git commit -m "Add rlwrap support"
           4. git push heroku main
 
-          Downloading: org/clojure/clojure/1.10.0/clojure-1.10.0.pom from https://repo1.maven.org/maven2/
-          Downloading: org/clojure/spec.alpha/0.2.176/spec.alpha-0.2.176.pom from https://repo1.maven.org/maven2/
-          Downloading: org/clojure/core.specs.alpha/0.2.44/core.specs.alpha-0.2.44.pom from https://repo1.maven.org/maven2/
-          Downloading: org/clojure/clojure/1.10.0/clojure-1.10.0.jar from https://repo1.maven.org/maven2/
-          Downloading: org/clojure/spec.alpha/0.2.176/spec.alpha-0.2.176.jar from https://repo1.maven.org/maven2/
-          Downloading: org/clojure/core.specs.alpha/0.2.44/core.specs.alpha-0.2.44.jar from https://repo1.maven.org/maven2/
+          Downloading: org/clojure/clojure/1.12.4/clojure-1.12.4.pom from central
+          Downloading: org/clojure/clojure/1.12.4/clojure-1.12.4.jar from central
           Clojure works
         OUTPUT
 

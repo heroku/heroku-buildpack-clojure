@@ -10,7 +10,7 @@ RSpec.describe 'Clojure buildpack' do
         expect(clean_output(test_run.output)).to eq(<<~OUTPUT)
           -----> Clojure app detected
           -----> Installing Azul Zulu OpenJDK $VERSION
-          -----> Installing Clojure 1.10.0.411 CLI tools
+          -----> Installing Clojure 1.12.4.1582 CLI tools
                  Downloading and expanding tar
                  Installing libs into /app/.heroku/clj/lib/clojure
                  Installing clojure and clj into /app/.heroku/clj/bin
@@ -22,10 +22,6 @@ RSpec.describe 'Clojure buildpack' do
           -----> Building with Leiningen
                  Running: lein deps
                  Downloading Leiningen to /app/.lein/self-installs/leiningen-2.9.1-standalone.jar now...
-                 Retrieving $DEPENDENCY from $REPO
-                 Retrieving $DEPENDENCY from $REPO
-                 Retrieving $DEPENDENCY from $REPO
-                 Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
@@ -147,7 +143,7 @@ RSpec.describe 'Clojure buildpack' do
         expect(clean_output(test_run.output)).to eq(<<~OUTPUT)
           -----> Clojure app detected
           -----> Installing Azul Zulu OpenJDK $VERSION
-          -----> Installing Clojure 1.10.0.411 CLI tools
+          -----> Installing Clojure 1.12.4.1582 CLI tools
                  Downloading and expanding tar
                  Installing libs into /app/.heroku/clj/lib/clojure
                  Installing clojure and clj into /app/.heroku/clj/bin

@@ -1,4 +1,4 @@
-#!/usr/bin/env clojure
+#!/usr/bin/env -S clojure -M
 
 ;; This script extracts properties from project.clj files.
 ;;

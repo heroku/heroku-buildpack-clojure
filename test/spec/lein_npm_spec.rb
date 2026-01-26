@@ -9,7 +9,7 @@ RSpec.describe 'Clojure buildpack' do
         expect(clean_output(app.output)).to match(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK \\$VERSION
-          remote: -----> Installing Clojure 1\\.10\\.0\\.411 CLI tools
+          remote: -----> Installing Clojure 1\\.12\\.4\\.1582 CLI tools
           remote:        Downloading and expanding tar
           remote:        Installing libs into /app/\\.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/\\.heroku/clj/bin
