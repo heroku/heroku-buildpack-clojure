@@ -142,7 +142,7 @@ else
 		exit 1
 		;;
 	2*)
-		LEIN_VERSION="2.9.1"
+		LEIN_VERSION="2.12.0"
 		if [[ -n "${lein_project_uberjar_name}" ]]; then
 			export LEIN_BUILD_TASK="${LEIN_BUILD_TASK:-uberjar}"
 			export LEIN_INCLUDE_IN_SLUG="${LEIN_INCLUDE_IN_SLUG:-no}"
