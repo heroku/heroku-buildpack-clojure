@@ -158,7 +158,27 @@ else
 	LEIN_SCRIPT_URL="https://codeberg.org/leiningen/leiningen/raw/tag/${LEIN_VERSION}/bin/lein"
 
 	mkdir -p "$(dirname "${LEIN_BIN_PATH}")"
-	curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 60 -L -o "${LEIN_BIN_PATH}" "${LEIN_SCRIPT_URL}"
+
+	if ! curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 60 -L -o "${LEIN_BIN_PATH}" "${LEIN_SCRIPT_URL}"; then
+		output::error <<-EOF
+			Error: Unable to install Leiningen.
+
+			Failed to download Leiningen from Codeberg:
+			${LEIN_SCRIPT_URL}
+
+			In some cases, this happens due to a temporary issue with
+			the network connection or Codeberg.
+
+			Try building again to see if the error resolves itself.
+
+			If that doesn't help, check the status of Codeberg here:
+			https://status.codeberg.eu/
+		EOF
+
+		metrics::set_string "failure_reason" "lein_download_failed"
+		exit 1
+	fi
+
 	chmod +x "${LEIN_BIN_PATH}"
 fi
 
