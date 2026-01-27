@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v93] - 2026-01-27
+
 * Install Leiningen from upstream repository instead of using a vendored script. ([#201](https://github.com/heroku/heroku-buildpack-clojure/pull/201))
 * Remove Leiningen `1.x` support. ([#201](https://github.com/heroku/heroku-buildpack-clojure/pull/201))
 * Remove automatic Node.js installation. Users must explicitly add the Node.js buildpack if their project requires Node.js or npm. ([#192](https://github.com/heroku/heroku-buildpack-clojure/pull/192))
@@ -144,7 +147,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v92...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v93...main
+[v93]: https://github.com/heroku/heroku-buildpack-clojure/compare/v92...v93
 [v92]: https://github.com/heroku/heroku-buildpack-clojure/compare/v91...v92
 [v91]: https://github.com/heroku/heroku-buildpack-clojure/compare/v90...v91
 [v90]: https://github.com/heroku/heroku-buildpack-clojure/compare/v89...v90
