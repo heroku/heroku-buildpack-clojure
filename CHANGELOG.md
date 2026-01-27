@@ -8,7 +8,7 @@
 * Suppress curl output during leiningen installation to reduce build log noise and improve testability. ([#188](https://github.com/heroku/heroku-buildpack-clojure/pull/188))
 * Replace `apt-get` `rlwrap` installation with shim. ([#187](https://github.com/heroku/heroku-buildpack-clojure/pull/187))
 * Buildpack output slightly changed. If you match against the buildpack output, verify your matching still works and adjust if necessary. ([#191](https://github.com/heroku/heroku-buildpack-clojure/pull/191))
-* Upgrade Clojure CLI to `1.12.4.1582` ([#203](https://github.com/heroku/heroku-buildpack-clojure/pull/203))
+* Upgrade Clojure CLI to `1.12.4.1597` ([#206](https://github.com/heroku/heroku-buildpack-clojure/pull/206))
 * Upgrade default Leiningen to `2.12.0` ([#204](https://github.com/heroku/heroku-buildpack-clojure/pull/204))
 
 ## [v92] - 2025-09-11

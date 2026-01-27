@@ -52,7 +52,7 @@ Configure the buildpack by setting environment variables:
 |---------------------|-------------|---------|
 | `LEIN_BUILD_TASK` | Leiningen task to execute | `uberjar` (if `:uberjar-name` is set) or `with-profile production compile :all` |
 | `LEIN_INCLUDE_IN_SLUG` | Include Leiningen in the slug for runtime use | `no` |
-| `CLOJURE_CLI_VERSION` | Clojure CLI tools version | `1.12.4.1582` |
+| `CLOJURE_CLI_VERSION` | Clojure CLI tools version | `1.12.4.1597` |
 
 You can also override the default build behavior by including a `bin/build` script in your repository. The buildpack will execute this script instead of the default build command.
 

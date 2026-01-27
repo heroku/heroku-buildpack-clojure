@@ -48,7 +48,7 @@ mkdir -p "${BUILD_DIR}/.heroku/bin"
 cp "${BUILDPACK_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
 
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
-CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.12.4.1582}"
+CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.12.4.1597}"
 
 output::step "Installing Clojure ${CLOJURE_CLI_VERSION} CLI tools"
 
