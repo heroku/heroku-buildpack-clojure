@@ -10,8 +10,9 @@ RSpec.describe 'Clojure buildpack' do
         expect(clean_output(test_run.output)).to eq(<<~OUTPUT)
           -----> Clojure app detected
           -----> Installing Azul Zulu OpenJDK $VERSION
-          -----> Installing Clojure 1.12.4.1582 CLI tools
+          -----> Installing Clojure 1.12.4.1597 CLI tools
                  Downloading and expanding tar
+                 clojure-tools-1.12.4.1597.tar.gz: OK
                  Installing libs into /app/.heroku/clj/lib/clojure
                  Installing clojure and clj into /app/.heroku/clj/bin
                  Installing man pages into /app/.heroku/clj/share/man/man1
@@ -143,8 +144,9 @@ RSpec.describe 'Clojure buildpack' do
         expect(clean_output(test_run.output)).to eq(<<~OUTPUT)
           -----> Clojure app detected
           -----> Installing Azul Zulu OpenJDK $VERSION
-          -----> Installing Clojure 1.12.4.1582 CLI tools
+          -----> Installing Clojure 1.12.4.1597 CLI tools
                  Downloading and expanding tar
+                 clojure-tools-1.12.4.1597.tar.gz: OK
                  Installing libs into /app/.heroku/clj/lib/clojure
                  Installing clojure and clj into /app/.heroku/clj/bin
                  Installing man pages into /app/.heroku/clj/share/man/man1

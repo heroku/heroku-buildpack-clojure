@@ -9,8 +9,9 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
           remote:        Downloading and expanding tar
+          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
           remote:        Installing man pages into /app/.heroku/clj/share/man/man1
@@ -140,8 +141,9 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
           remote:        Downloading and expanding tar
+          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
           remote:        Installing man pages into /app/.heroku/clj/share/man/man1
@@ -174,8 +176,9 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
           remote:        Downloading and expanding tar
+          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
           remote:        Installing man pages into /app/.heroku/clj/share/man/man1
@@ -303,8 +306,9 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1582 CLI tools
+          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
           remote:        Downloading and expanding tar
+          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
           remote:        Installing man pages into /app/.heroku/clj/share/man/man1
