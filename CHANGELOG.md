@@ -2,8 +2,10 @@
 
 ## [Unreleased]
 
-* Improve error message for malformed `project.clj` files. ([#208](https://github.com/heroku/heroku-buildpack-clojure/pull/208))
 
+## [v94] - 2026-01-28
+
+* Improve error message for malformed `project.clj` files. ([#208](https://github.com/heroku/heroku-buildpack-clojure/pull/208))
 
 ## [v93] - 2026-01-27
 
@@ -149,7 +151,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v93...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v94...main
+[v94]: https://github.com/heroku/heroku-buildpack-clojure/compare/v93...v94
 [v93]: https://github.com/heroku/heroku-buildpack-clojure/compare/v92...v93
 [v92]: https://github.com/heroku/heroku-buildpack-clojure/compare/v91...v92
 [v91]: https://github.com/heroku/heroku-buildpack-clojure/compare/v90...v91
