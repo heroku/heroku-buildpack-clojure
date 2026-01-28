@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* Improve error message for malformed `project.clj` files. ([#208](https://github.com/heroku/heroku-buildpack-clojure/pull/208))
+
 
 ## [v93] - 2026-01-27
 

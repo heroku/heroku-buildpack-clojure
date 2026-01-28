@@ -381,4 +381,46 @@ describe 'Clojure' do
       end
     end
   end
+
+  it 'fails the build with a helpful error when project.clj is malformed' do
+    new_default_hatchet_runner('lein-2.x-malformed-project-file', allow_failure: true).tap do |app|
+      app.deploy do
+        expect(app).not_to be_deployed
+        expect(clean_output(app.output)).to eq(<<~OUTPUT)
+          remote: -----> Clojure app detected
+          remote: -----> Installing Azul Zulu OpenJDK $VERSION
+          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
+          remote:        Downloading and expanding tar
+          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
+          remote:        Installing libs into /app/.heroku/clj/lib/clojure
+          remote:        Installing clojure and clj into /app/.heroku/clj/bin
+          remote:        Installing man pages into /app/.heroku/clj/share/man/man1
+          remote:        Removing download
+          remote:        Use clj -h for help.
+          remote: -----> Reading Leiningen project properties
+
+          remote:  !     Error: Unable to parse project.clj
+          remote:  !
+          remote:  !     Your project.clj file couldn't be parsed because it contains
+          remote:  !     invalid Clojure syntax. This is usually caused by unbalanced
+          remote:  !     parentheses or other syntax errors.
+          remote:  !
+          remote:  !     project.clj contents:
+          remote:  !     (defproject heroku-minimal-clojure "0.1.0"
+          remote:  !       :description "A malformed Leiningen application"
+          remote:  !       :main com.heroku.ci.core
+          remote:  !       :aot [com.heroku.ci.core]
+          remote:  !       :min-lein-version "2.0.0"
+          remote:  !
+          remote:  !     Check your project.clj file for syntax errors. You can verify
+          remote:  !     the syntax locally by running 'lein version' in your project
+          remote:  !     directory.
+
+          remote:  !     Push rejected, failed to compile Clojure app.
+
+          remote:  !     Push failed
+        OUTPUT
+      end
+    end
+  end
 end

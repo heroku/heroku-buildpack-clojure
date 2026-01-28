@@ -18,10 +18,19 @@
   (System/exit 1))
 
 (defn get-project-property [file-path & property-path]
-  (let [project-data (read-string (slurp file-path))
-        properties (apply hash-map (drop 3 project-data))
-        key-path (map keyword property-path)]
-    (get-in properties key-path)))
+  (try
+    (let [project-data (read-string (slurp file-path))
+          properties (apply hash-map (drop 3 project-data))
+          key-path (map keyword property-path)]
+      (get-in properties key-path))
+    (catch Exception e
+      (binding [*out* *err*]
+        ;; Clojure's read-string throws RuntimeException for all parse errors, so we rely on string
+        ;; matching. "EOF while reading" indicates incomplete input (e.g., unbalanced parens).
+        (if (= "EOF while reading" (.getMessage e))
+          (println "Error: Incomplete or malformed project.clj file")
+          (println (str "Error while reading project.clj: " (.getMessage e)))))
+      (System/exit 2))))
 
 (let [file-path (first *command-line-args*)
       property-path (rest *command-line-args*)
