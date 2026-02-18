@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Increase curl retries for Leiningen installation to work around Codeberg reliability issues. ([#211](https://github.com/heroku/heroku-buildpack-clojure/pull/211))
 
 ## [v94] - 2026-01-28
 
