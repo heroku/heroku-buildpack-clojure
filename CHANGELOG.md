@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v95] - 2026-02-18
+
 * Increase curl retries for Leiningen installation to work around Codeberg reliability issues. ([#211](https://github.com/heroku/heroku-buildpack-clojure/pull/211))
 
 ## [v94] - 2026-01-28
@@ -152,7 +155,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v94...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v95...main
+[v95]: https://github.com/heroku/heroku-buildpack-clojure/compare/v94...v95
 [v94]: https://github.com/heroku/heroku-buildpack-clojure/compare/v93...v94
 [v93]: https://github.com/heroku/heroku-buildpack-clojure/compare/v92...v93
 [v92]: https://github.com/heroku/heroku-buildpack-clojure/compare/v91...v92
