@@ -161,7 +161,7 @@ else
 
 	mkdir -p "$(dirname "${LEIN_BIN_PATH}")"
 
-	if ! curl --fail --retry 3 --retry-connrefused --connect-timeout 5 --silent --show-error --max-time 60 -L -o "${LEIN_BIN_PATH}" "${LEIN_SCRIPT_URL}"; then
+	if ! curl --location --connect-timeout 3 --max-time 60 --retry 6 --retry-connrefused --no-progress-meter --fail -o "${LEIN_BIN_PATH}" "${LEIN_SCRIPT_URL}"; then
 		output::error <<-EOF
 			Error: Unable to install Leiningen.
 
