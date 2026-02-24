@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v96] - 2026-02-24
+
 - Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#213](https://github.com/heroku/heroku-buildpack-clojure/pull/213))
 
 ## [v95] - 2026-02-18
@@ -156,7 +159,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v95...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v96...main
+[v96]: https://github.com/heroku/heroku-buildpack-clojure/compare/v95...v96
 [v95]: https://github.com/heroku/heroku-buildpack-clojure/compare/v94...v95
 [v94]: https://github.com/heroku/heroku-buildpack-clojure/compare/v93...v94
 [v93]: https://github.com/heroku/heroku-buildpack-clojure/compare/v92...v93
