@@ -32,7 +32,7 @@ RSpec.describe 'Clojure buildpack detection' do
           remote:  !     https://devcenter.heroku.com/articles/clojure-support
 
 
-          remote:        More info: https://devcenter.heroku.com/articles/buildpacks#detection-failure
+          remote:        More info: https://devcenter.heroku.com/articles/buildpacks#buildpack-auto-detection
 
           remote:  !     Push failed
         OUTPUT
