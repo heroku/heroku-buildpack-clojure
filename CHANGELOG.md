@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v97] - 2026-03-31
+
 * Download Leiningen from GitHub instead of Codeberg. ([#220](https://github.com/heroku/heroku-buildpack-clojure/pull/220))
 
 ## [v96] - 2026-02-24
@@ -160,7 +163,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v96...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v97...main
+[v97]: https://github.com/heroku/heroku-buildpack-clojure/compare/v96...v97
 [v96]: https://github.com/heroku/heroku-buildpack-clojure/compare/v95...v96
 [v95]: https://github.com/heroku/heroku-buildpack-clojure/compare/v94...v95
 [v94]: https://github.com/heroku/heroku-buildpack-clojure/compare/v93...v94
