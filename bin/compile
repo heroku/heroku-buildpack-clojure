@@ -157,7 +157,7 @@ else
 	output::step "Installing Leiningen ${LEIN_VERSION}"
 
 	LEIN_BIN_PATH="${BUILD_DIR}/.lein/bin/lein"
-	LEIN_SCRIPT_URL="https://codeberg.org/leiningen/leiningen/raw/tag/${LEIN_VERSION}/bin/lein"
+	LEIN_SCRIPT_URL="https://raw.githubusercontent.com/technomancy/leiningen/refs/tags/${LEIN_VERSION}/bin/lein"
 
 	mkdir -p "$(dirname "${LEIN_BIN_PATH}")"
 
@@ -165,16 +165,16 @@ else
 		output::error <<-EOF
 			Error: Unable to install Leiningen.
 
-			Failed to download Leiningen from Codeberg:
+			Failed to download Leiningen from GitHub:
 			${LEIN_SCRIPT_URL}
 
 			In some cases, this happens due to a temporary issue with
-			the network connection or Codeberg.
+			the network connection or GitHub.
 
 			Try building again to see if the error resolves itself.
 
-			If that doesn't help, check the status of Codeberg here:
-			https://status.codeberg.eu/
+			If that doesn't help, check the status of GitHub here:
+			https://www.githubstatus.com/
 		EOF
 
 		metrics::set_string "failure_reason" "lein_download_failed"
