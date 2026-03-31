@@ -358,7 +358,7 @@ describe 'Clojure' do
       app.before_deploy do
         require 'open-uri'
         FileUtils.mkdir_p('bin')
-        lein_content = URI.open('https://codeberg.org/leiningen/leiningen/raw/tag/2.9.1/bin/lein').read
+        lein_content = URI.open('https://raw.githubusercontent.com/technomancy/leiningen/refs/tags/2.9.1/bin/lein').read
         File.write('bin/lein', lein_content)
         File.chmod(0o755, 'bin/lein')
       end

@@ -2,10 +2,11 @@
 
 ## [Unreleased]
 
+* Download Leiningen from GitHub instead of Codeberg. ([#220](https://github.com/heroku/heroku-buildpack-clojure/pull/220))
 
 ## [v96] - 2026-02-24
 
-- Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#213](https://github.com/heroku/heroku-buildpack-clojure/pull/213))
+* Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint. ([#213](https://github.com/heroku/heroku-buildpack-clojure/pull/213))
 
 ## [v95] - 2026-02-18
 
