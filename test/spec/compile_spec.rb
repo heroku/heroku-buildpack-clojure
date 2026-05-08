@@ -131,7 +131,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 111.3M
+          remote:        Done: 111.4M
         OUTPUT
 
         app.commit!
@@ -164,7 +164,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 111.3M
+          remote:        Done: 111.4M
         OUTPUT
       end
     end
@@ -296,7 +296,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 108.8M
+          remote:        Done: 109M
         OUTPUT
 
         app.commit!
@@ -327,7 +327,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 108.8M
+          remote:        Done: 109M
         OUTPUT
       end
     end
