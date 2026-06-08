@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Show Clojure CLI installer stderr in build output instead of discarding it. ([#228](https://github.com/heroku/heroku-buildpack-clojure/pull/228))
 
 ## [v97] - 2026-03-31
 

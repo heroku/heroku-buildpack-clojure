@@ -67,7 +67,7 @@ if [[ "$(realpath "${BUILD_DIR}")" != "$(realpath /app)" ]]; then
 	ln -nsf "${BUILD_DIR}/${CLOJURE_CLI_DIR}" "/app/${CLOJURE_CLI_DIR}"
 fi
 
-"${CLOJURE_INSTALL_SCRIPT}" --prefix "/app/${CLOJURE_CLI_DIR}" 2>/dev/null | output::indent
+"${CLOJURE_INSTALL_SCRIPT}" --prefix "/app/${CLOJURE_CLI_DIR}" |& output::indent
 chmod +x "/app/${CLOJURE_CLI_DIR}/bin/"*
 export PATH="/app/${CLOJURE_CLI_DIR}/bin:${PATH}"
 
