@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v98] - 2026-06-09
+
 * Show Clojure CLI installer stderr in build output instead of discarding it. ([#228](https://github.com/heroku/heroku-buildpack-clojure/pull/228))
 
 ## [v97] - 2026-03-31
@@ -164,7 +167,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v97...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v98...main
+[v98]: https://github.com/heroku/heroku-buildpack-clojure/compare/v97...v98
 [v97]: https://github.com/heroku/heroku-buildpack-clojure/compare/v96...v97
 [v96]: https://github.com/heroku/heroku-buildpack-clojure/compare/v95...v96
 [v95]: https://github.com/heroku/heroku-buildpack-clojure/compare/v94...v95
