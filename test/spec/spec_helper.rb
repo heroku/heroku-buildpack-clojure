@@ -62,7 +62,7 @@ def find_output_end_index(lines)
   [success_end_index, failure_end_index].compact.first
 end
 
-# rubocop:disable Metrics/MethodLength, Layout/LineLength
+# rubocop:disable-next Metrics/MethodLength, Layout/LineLength
 def clean_output(output)
   # Remove output from the build system before and after the actual build
   lines = output.lines
@@ -120,4 +120,3 @@ def clean_output(output)
 
   output
 end
-# rubocop:enable Metrics/MethodLength, Layout/LineLength
