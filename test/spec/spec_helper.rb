@@ -76,7 +76,10 @@ def clean_output(output)
     # https://github.com/heroku/hatchet/issues/162
     / {8}(?=\R)/ => '',
     # ANSI colour codes used in buildpack output (e.g. error messages).
-    /\e\[[0-9;]+m/ => '',
+    # Some environments (notably GitHub Actions runners) deliver these with the
+    # escape byte rendered as the two-character literal "^[" instead of 0x1B,
+    # so strip both variants.
+    /(?:\e|\^\[)\[[0-9;]+m/ => '',
     # Trailing spaces from empty "remote: " lines added by Heroku
     /^remote: $/ => '',
     /^remote:\s+$/ => 'remote:',
@@ -91,7 +94,7 @@ def clean_output(output)
     ##################################################
     # Java
     ##################################################
-    /(OpenJDK|Java) \d+\.\d+\.\d+(_\d+)?/ => '\1 $VERSION',
+    /(OpenJDK|Java) \d+\.\d+\.\d+(?:[._]\d+)?/ => '\1 $VERSION',
 
     ##################################################
     # Clojure / Leiningen
