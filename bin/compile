@@ -52,12 +52,6 @@ cp "${BUILDPACK_DIR}/opt/rlwrap" "${BUILD_DIR}/.heroku/bin/rlwrap"
 # Run clojure install script (clojure / clj may be needed from leiningen for newer cli tools)
 CLOJURE_CLI_VERSION="${CLOJURE_CLI_VERSION:-1.12.4.1597}"
 
-output::step "Installing Clojure ${CLOJURE_CLI_VERSION} CLI tools"
-
-CLOJURE_INSTALL_SCRIPT="$(mktemp)"
-curl --retry 3 --retry-connrefused --connect-timeout 5 -sSfL --max-time 60 -o "${CLOJURE_INSTALL_SCRIPT}" "https://download.clojure.org/install/linux-install-${CLOJURE_CLI_VERSION}.sh"
-chmod +x "${CLOJURE_INSTALL_SCRIPT}"
-
 # Clojure CLI is non-portable as it embeds absolute paths during installation.
 # Create a symlink before installation to ensure those paths work at both compile and runtime.
 CLOJURE_CLI_DIR=".heroku/clj"
@@ -67,7 +61,67 @@ if [[ "$(realpath "${BUILD_DIR}")" != "$(realpath /app)" ]]; then
 	ln -nsf "${BUILD_DIR}/${CLOJURE_CLI_DIR}" "/app/${CLOJURE_CLI_DIR}"
 fi
 
-"${CLOJURE_INSTALL_SCRIPT}" --prefix "/app/${CLOJURE_CLI_DIR}" |& output::indent
+CLOJURE_CLI_CACHE_DIR="${CACHE_DIR}/clojure-cli"
+CLOJURE_CLI_VERSION_CACHE_DIR="${CLOJURE_CLI_CACHE_DIR}/${CLOJURE_CLI_VERSION}"
+
+if [[ -d "${CLOJURE_CLI_VERSION_CACHE_DIR}" ]]; then
+	output::step "Using cached Clojure ${CLOJURE_CLI_VERSION} CLI tools"
+	cp -pr "${CLOJURE_CLI_VERSION_CACHE_DIR}"/. "${BUILD_DIR}/${CLOJURE_CLI_DIR}"
+else
+	output::step "Installing Clojure ${CLOJURE_CLI_VERSION} CLI tools"
+
+	CLOJURE_INSTALL_SCRIPT="$(mktemp)"
+	CLOJURE_INSTALL_SCRIPT_URL="https://download.clojure.org/install/linux-install-${CLOJURE_CLI_VERSION}.sh"
+
+	if ! curl --retry 3 --retry-connrefused --connect-timeout 5 -sSfL --max-time 60 -o "${CLOJURE_INSTALL_SCRIPT}" "${CLOJURE_INSTALL_SCRIPT_URL}"; then
+		output::error <<-EOF
+			Error: Unable to download the Clojure CLI tools installer.
+
+			Failed to download the installer script for Clojure CLI tools ${CLOJURE_CLI_VERSION} from:
+			${CLOJURE_INSTALL_SCRIPT_URL}
+
+			This can happen if the requested version doesn't exist. If you
+			set the CLOJURE_CLI_VERSION config var, check that it refers to
+			a valid Clojure CLI tools release:
+			https://clojure.org/releases/tools
+
+			In other cases, this happens due to a temporary issue with the
+			network connection or the Clojure download server. Try building
+			again to see if the error resolves itself.
+		EOF
+
+		metrics::set_string "failure_reason" "clojure_cli_installer_download_failed"
+		exit 1
+	fi
+
+	chmod +x "${CLOJURE_INSTALL_SCRIPT}"
+
+	if ! "${CLOJURE_INSTALL_SCRIPT}" --prefix "/app/${CLOJURE_CLI_DIR}" |& output::indent; then
+		output::error <<-EOF
+			Error: Unable to install Clojure CLI tools.
+
+			The installer for Clojure CLI tools ${CLOJURE_CLI_VERSION} failed. See
+			the output above for details.
+
+			The installer downloads the Clojure CLI tools from GitHub. In
+			some cases, this fails due to a temporary issue with the
+			network connection or GitHub.
+
+			Try building again to see if the error resolves itself.
+
+			If that doesn't help, check the status of GitHub here:
+			https://www.githubstatus.com/
+		EOF
+
+		metrics::set_string "failure_reason" "clojure_cli_install_failed"
+		exit 1
+	fi
+
+	rm -rf "${CLOJURE_CLI_CACHE_DIR:?}"
+	mkdir -p "${CLOJURE_CLI_VERSION_CACHE_DIR}"
+	cp -pr "${BUILD_DIR}/${CLOJURE_CLI_DIR}"/. "${CLOJURE_CLI_VERSION_CACHE_DIR}"
+fi
+
 chmod +x "/app/${CLOJURE_CLI_DIR}/bin/"*
 export PATH="/app/${CLOJURE_CLI_DIR}/bin:${PATH}"
 
