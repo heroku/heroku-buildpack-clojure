@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* Cache the Clojure CLI tools installation between builds. ([#247](https://github.com/heroku/heroku-buildpack-clojure/pull/247))
+* Improve error messages when the Clojure CLI tools installation fails, including when `CLOJURE_CLI_VERSION` refers to a version that doesn't exist. ([#247](https://github.com/heroku/heroku-buildpack-clojure/pull/247))
 
 ## [v98] - 2026-06-09
 

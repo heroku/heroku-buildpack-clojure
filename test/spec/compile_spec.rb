@@ -141,14 +141,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
-          remote:        Downloading and expanding tar
-          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
-          remote:        Installing libs into /app/.heroku/clj/lib/clojure
-          remote:        Installing clojure and clj into /app/.heroku/clj/bin
-          remote:        Installing man pages into /app/.heroku/clj/share/man/man1
-          remote:        Removing download
-          remote:        Use clj -h for help.
+          remote: -----> Using cached Clojure 1.12.4.1597 CLI tools
           remote: -----> Reading Leiningen project properties
           remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
@@ -306,14 +299,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
-          remote:        Downloading and expanding tar
-          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
-          remote:        Installing libs into /app/.heroku/clj/lib/clojure
-          remote:        Installing clojure and clj into /app/.heroku/clj/bin
-          remote:        Installing man pages into /app/.heroku/clj/share/man/man1
-          remote:        Removing download
-          remote:        Use clj -h for help.
+          remote: -----> Using cached Clojure 1.12.4.1597 CLI tools
           remote: -----> Reading Leiningen project properties
           remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
