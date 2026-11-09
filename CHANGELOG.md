@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v99] - 2026-11-09
+
 * Cache the Clojure CLI tools installation between builds. ([#247](https://github.com/heroku/heroku-buildpack-clojure/pull/247))
 * Improve error messages when the Clojure CLI tools installation fails, including when `CLOJURE_CLI_VERSION` refers to a version that doesn't exist. ([#247](https://github.com/heroku/heroku-buildpack-clojure/pull/247))
 
@@ -169,7 +172,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v98...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v99...main
+[v99]: https://github.com/heroku/heroku-buildpack-clojure/compare/v98...v99
 [v98]: https://github.com/heroku/heroku-buildpack-clojure/compare/v97...v98
 [v97]: https://github.com/heroku/heroku-buildpack-clojure/compare/v96...v97
 [v96]: https://github.com/heroku/heroku-buildpack-clojure/compare/v95...v96
