@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v100] - 2026-11-11
+
 * Upgrade the default Clojure CLI version to `1.12.6.1673`. ([#249](https://github.com/heroku/heroku-buildpack-clojure/pull/249))
 
 ## [v99] - 2026-11-09
@@ -173,7 +176,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v99...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v100...main
+[v100]: https://github.com/heroku/heroku-buildpack-clojure/compare/v99...v100
 [v99]: https://github.com/heroku/heroku-buildpack-clojure/compare/v98...v99
 [v98]: https://github.com/heroku/heroku-buildpack-clojure/compare/v97...v98
 [v97]: https://github.com/heroku/heroku-buildpack-clojure/compare/v96...v97
