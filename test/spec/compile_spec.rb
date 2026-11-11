@@ -9,9 +9,9 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
+          remote: -----> Installing Clojure 1.12.6.1673 CLI tools
           remote:        Downloading and expanding tar
-          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
+          remote:        clojure-tools-1.12.6.1673.tar.gz: OK
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
           remote:        Installing man pages into /app/.heroku/clj/share/man/man1
@@ -131,7 +131,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 111M
+          remote:        Done: 108.1M
         OUTPUT
 
         app.commit!
@@ -141,7 +141,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Using cached Clojure 1.12.4.1597 CLI tools
+          remote: -----> Using cached Clojure 1.12.6.1673 CLI tools
           remote: -----> Reading Leiningen project properties
           remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
@@ -157,7 +157,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 111M
+          remote:        Done: 108.1M
         OUTPUT
       end
     end
@@ -169,9 +169,9 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
+          remote: -----> Installing Clojure 1.12.6.1673 CLI tools
           remote:        Downloading and expanding tar
-          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
+          remote:        clojure-tools-1.12.6.1673.tar.gz: OK
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
           remote:        Installing man pages into /app/.heroku/clj/share/man/man1
@@ -289,7 +289,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 108.5M
+          remote:        Done: 105.7M
         OUTPUT
 
         app.commit!
@@ -299,7 +299,7 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Using cached Clojure 1.12.4.1597 CLI tools
+          remote: -----> Using cached Clojure 1.12.6.1673 CLI tools
           remote: -----> Reading Leiningen project properties
           remote: -----> Installing Leiningen 2.12.0
           remote: -----> Building with Leiningen
@@ -313,7 +313,7 @@ describe 'Clojure' do
           remote:        Default types for buildpack -> web
 
           remote: -----> Compressing...
-          remote:        Done: 108.5M
+          remote:        Done: 105.7M
         OUTPUT
       end
     end
@@ -375,9 +375,9 @@ describe 'Clojure' do
         expect(clean_output(app.output)).to eq(<<~OUTPUT)
           remote: -----> Clojure app detected
           remote: -----> Installing Azul Zulu OpenJDK $VERSION
-          remote: -----> Installing Clojure 1.12.4.1597 CLI tools
+          remote: -----> Installing Clojure 1.12.6.1673 CLI tools
           remote:        Downloading and expanding tar
-          remote:        clojure-tools-1.12.4.1597.tar.gz: OK
+          remote:        clojure-tools-1.12.6.1673.tar.gz: OK
           remote:        Installing libs into /app/.heroku/clj/lib/clojure
           remote:        Installing clojure and clj into /app/.heroku/clj/bin
           remote:        Installing man pages into /app/.heroku/clj/share/man/man1

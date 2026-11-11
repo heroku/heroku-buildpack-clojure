@@ -19,8 +19,8 @@ RSpec.describe 'Clojure buildpack runtime' do
           3. git add Aptfile && git commit -m "Add rlwrap support"
           4. git push heroku main
 
-          Downloading: org/clojure/clojure/1.12.4/clojure-1.12.4.pom from central
-          Downloading: org/clojure/clojure/1.12.4/clojure-1.12.4.jar from central
+          Downloading: org/clojure/clojure/1.12.6/clojure-1.12.6.pom from central
+          Downloading: org/clojure/clojure/1.12.6/clojure-1.12.6.jar from central
           Clojure works
         OUTPUT
 

@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Upgrade the default Clojure CLI version to `1.12.6.1673`. ([#249](https://github.com/heroku/heroku-buildpack-clojure/pull/249))
 
 ## [v99] - 2026-11-09
 
