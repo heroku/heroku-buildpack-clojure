@@ -53,6 +53,7 @@ Configure the buildpack by setting environment variables:
 | `LEIN_BUILD_TASK` | Leiningen task to execute | `uberjar` (if `:uberjar-name` is set) or `with-profile production compile :all` |
 | `LEIN_INCLUDE_IN_SLUG` | Include Leiningen in the slug for runtime use | `no` |
 | `CLOJURE_CLI_VERSION` | Clojure CLI tools version | `1.12.6.1673` |
+| `MAVEN_CENTRAL_MIRROR` | Set to `false` to resolve Maven Central artifacts from Maven Central instead of the Google Maven Central mirror. The mirror is only configured when the app has no `.lein/profiles.clj`, and any `:mirrors` in `project.clj` take precedence over it. | `true` |
 
 You can also override the default build behavior by including a `bin/build` script in your repository. The buildpack will execute this script instead of the default build command.
 
