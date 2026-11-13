@@ -21,6 +21,9 @@ source "${BUILDPACK_DIR}/lib/lein.sh"
 
 util::export_env_dir "${ENV_DIR}" "." "JAVA_OPTS"
 
+# Temporary workaround for rate limiting by Maven Central.
+MAVEN_CENTRAL_MIRROR_URL="https://maven-central.storage-download.googleapis.com/maven2/"
+
 metrics::init "${CACHE_DIR}" "clojure"
 metrics::setup
 
@@ -127,7 +130,12 @@ export PATH="/app/${CLOJURE_CLI_DIR}/bin:${PATH}"
 
 # Pre-warm Clojure CLI cache to avoid download messages for its own dependencies when its used for the first time by
 # the buildpack or the user at runtime.
-clojure -e "(println)" &>/dev/null
+clojure_cli_prewarm_opts=()
+if [[ "${MAVEN_CENTRAL_MIRROR:-}" != "false" ]]; then
+	clojure_cli_prewarm_opts+=(-Sdeps "{:mvn/repos {\"central\" {:url \"${MAVEN_CENTRAL_MIRROR_URL}\"}}}")
+fi
+
+clojure "${clojure_cli_prewarm_opts[@]}" -e "(println)" &>/dev/null
 
 output::step "Reading Leiningen project properties"
 
@@ -247,7 +255,21 @@ metrics::set_string "clojure_cli_version" "${CLOJURE_CLI_VERSION:-1.10.0.411}"
 # create user-level profiles
 mkdir -p "${BUILD_DIR}/.lein"
 if [[ ! -e "${BUILD_DIR}/.lein/profiles.clj" ]]; then
-	echo '{}' >"${BUILD_DIR}/.lein/profiles.clj"
+	if [[ "${MAVEN_CENTRAL_MIRROR:-}" == "false" ]]; then
+		metrics::set_raw "maven_central_mirror" "false"
+		echo '{}' >"${BUILD_DIR}/.lein/profiles.clj"
+	else
+		metrics::set_raw "maven_central_mirror" "true"
+
+		# Leiningen fails when more than one mirror matches a repository. With ^:displace, any :mirrors from the
+		# project replace this mirror instead of being merged with it. The "central" name keeps artifacts in the
+		# existing local repository cache valid.
+		cat >"${BUILD_DIR}/.lein/profiles.clj" <<-EOF
+			{:user {:mirrors ^:displace {"central" {:name "central" :url "${MAVEN_CENTRAL_MIRROR_URL}"}}}}
+		EOF
+	fi
+else
+	metrics::set_raw "maven_central_mirror" "false"
 fi
 
 output::step "Building with Leiningen"
