@@ -34,8 +34,9 @@ RSpec.describe 'Clojure buildpack' do
       end
 
       app.deploy do
-        expect(clean_output(app.output)).to include('from user-mirror')
-        expect(clean_output(app.output)).not_to match(/Retrieving \S+ from central/)
+        # clean_output replaces repository names, so this matches against the raw output.
+        expect(app.output).to include('from user-mirror')
+        expect(app.output).not_to match(/Retrieving \S+ from central/)
       end
     end
   end
