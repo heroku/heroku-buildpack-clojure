@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+
+## [v101] - 2026-11-16
+
 * Upgrade default Leiningen to `2.13.1`. ([#254](https://github.com/heroku/heroku-buildpack-clojure/pull/254))
 * Show an error message when downloading the Clojure CLI tools dependencies fails. ([#255](https://github.com/heroku/heroku-buildpack-clojure/pull/255))
 * Resolve Maven Central artifacts from the Google Maven Central mirror to avoid Maven Central rate limiting. Set `MAVEN_CENTRAL_MIRROR` to `false` to opt out. ([#253](https://github.com/heroku/heroku-buildpack-clojure/pull/253))
@@ -179,7 +182,8 @@
 * Initial release.
 * Use Leiningen `1.5.2`.
 
-[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v100...main
+[unreleased]: https://github.com/heroku/heroku-buildpack-clojure/compare/v101...main
+[v101]: https://github.com/heroku/heroku-buildpack-clojure/compare/v100...v101
 [v100]: https://github.com/heroku/heroku-buildpack-clojure/compare/v99...v100
 [v99]: https://github.com/heroku/heroku-buildpack-clojure/compare/v98...v99
 [v98]: https://github.com/heroku/heroku-buildpack-clojure/compare/v97...v98
