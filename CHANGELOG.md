@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+* Show an error message when downloading the Clojure CLI tools dependencies fails. ([#255](https://github.com/heroku/heroku-buildpack-clojure/pull/255))
 * Resolve Maven Central artifacts from the Google Maven Central mirror to avoid Maven Central rate limiting. Set `MAVEN_CENTRAL_MIRROR` to `false` to opt out. ([#253](https://github.com/heroku/heroku-buildpack-clojure/pull/253))
 
 ## [v100] - 2026-11-11

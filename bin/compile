@@ -135,7 +135,25 @@ if [[ "${MAVEN_CENTRAL_MIRROR:-}" != "false" ]]; then
 	clojure_cli_prewarm_opts+=(-Sdeps "{:mvn/repos {\"central\" {:url \"${MAVEN_CENTRAL_MIRROR_URL}\"}}}")
 fi
 
-clojure "${clojure_cli_prewarm_opts[@]}" -e "(println)" &>/dev/null
+if ! clojure_cli_prewarm_output=$(clojure "${clojure_cli_prewarm_opts[@]}" -M -e nil 2>&1); then
+	output::indent <<<"${clojure_cli_prewarm_output}"
+
+	output::error <<-EOF
+		Error: Unable to download Clojure CLI tools dependencies.
+
+		The Clojure CLI tools failed to download their own dependencies,
+		such as Clojure itself. See the output above for details.
+
+		In some cases, this happens due to a temporary issue with the
+		network connection or the Maven repository, such as rate
+		limiting (HTTP 429).
+
+		Try building again to see if the error resolves itself.
+	EOF
+
+	metrics::set_string "failure_reason" "clojure_cli_prewarm_failed"
+	exit 1
+fi
 
 output::step "Reading Leiningen project properties"
 
