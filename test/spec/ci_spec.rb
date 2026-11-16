@@ -19,11 +19,11 @@ RSpec.describe 'Clojure buildpack' do
                  Removing download
                  Use clj -h for help.
           -----> Reading Leiningen project properties
-          -----> Installing Leiningen 2.12.0
+          -----> Installing Leiningen 2.13.1
           -----> Building with Leiningen
                  Running: lein deps
-                 Downloading Leiningen to /app/.lein/self-installs/leiningen-2.12.0-standalone.jar now...
-                 /app/.lein/self-installs/leiningen-2.12.0-standalone.jar.pending: OK
+                 Downloading Leiningen to /app/.lein/self-installs/leiningen-2.13.1-standalone.jar now...
+                 /app/.lein/self-installs/leiningen-2.13.1-standalone.jar.pending: OK
                  Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
                  Retrieving $DEPENDENCY from $REPO
@@ -146,11 +146,11 @@ RSpec.describe 'Clojure buildpack' do
           -----> Installing Azul Zulu OpenJDK $VERSION
           -----> Using cached Clojure 1.12.6.1673 CLI tools
           -----> Reading Leiningen project properties
-          -----> Installing Leiningen 2.12.0
+          -----> Installing Leiningen 2.13.1
           -----> Building with Leiningen
                  Running: lein deps
-                 Downloading Leiningen to /app/.lein/self-installs/leiningen-2.12.0-standalone.jar now...
-                 /app/.lein/self-installs/leiningen-2.12.0-standalone.jar.pending: OK
+                 Downloading Leiningen to /app/.lein/self-installs/leiningen-2.13.1-standalone.jar now...
+                 /app/.lein/self-installs/leiningen-2.13.1-standalone.jar.pending: OK
           -----> No test-setup command provided. Skipping.
           -----> Running Clojure buildpack tests...
           Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8 -XX:MaxRAM=2684354560 -XX:MaxRAMPercentage=80.0
