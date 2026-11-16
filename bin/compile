@@ -221,9 +221,9 @@ else
 	LEIN_BIN_PATH="${BUILD_DIR}/.lein/bin/lein"
 	# Leiningen's GitHub mirror is no longer updated. Its tags for 2.13.0 and later point to a stale commit whose bin/lein
 	# has the wrong version, and Codeberg is too unreliable to download from during builds. The vendored script still
-	# downloads the Leiningen jar from GitHub releases. Keep LEIN_VERSION in sync with opt/lein.
+	# downloads the Leiningen jar from GitHub releases.
 	mkdir -p "$(dirname "${LEIN_BIN_PATH}")"
-	cp "${BUILDPACK_DIR}/opt/lein" "${LEIN_BIN_PATH}"
+	cp "${BUILDPACK_DIR}/opt/lein-${LEIN_VERSION}" "${LEIN_BIN_PATH}"
 fi
 
 # Collect metrics
